@@ -3,7 +3,13 @@
     "id": "http://KirunaExplorer.com/schemas/document.json",
     "title": "Schema for a document",
     "type": "object",
+    "additionalProperties": false,
     "properties": {
+        "$schema": {
+            "type": "string",
+            "format": "uri",
+            "description": "path to the JSON schema to use for the validation of the JSON file describing a document"
+        },
         "id": {
             "type": "integer",
             "description": "The unique identifier of the document"

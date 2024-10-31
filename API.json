@@ -1,8 +1,9 @@
 {
     "openapi": "3.0.1",
     "info": {
-        "title": "Kiruna eXplorer API",
-        "description": "This API provides access to the Kiruna eXplorer application.",
+        "title": "Kiruna eXplorer",
+        "description": "REST APIs for the interaction with the Kiruna eXplorer service.",
+        "termsOfService": "http://swagger.io/terms/",
         "version": "0.1"
     },
     "components": {
