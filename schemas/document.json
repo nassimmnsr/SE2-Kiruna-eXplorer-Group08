@@ -1,0 +1,109 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "id": "http://KirunaExplorer.com/schemas/document.json",
+    "title": "Schema for a document",
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "integer",
+            "description": "The unique identifier of the document"
+        },
+        "title": {
+            "type": "string",
+            "description": "The title of the document",
+            "minLength": 2,
+            "maxLength": 64
+        },
+        "stakeholder": {
+            "type": "string",
+            "description": "The stakeholder of the document",
+            "minLength": 2,
+            "maxLength": 64
+        },
+        "scale": {
+            "description": "The scale of the document",
+            "type": "string",
+            "oneOf": [
+                {
+                    "pattern": "text"
+                },
+                {
+                    "pattern": "blueprint/material effects"
+                },
+                {
+                    "pattern": "^1:[1-9][0-9]*$"
+                }
+            ]
+        },
+        "issuance_date": {
+            "type": "string",
+            "description": "The issuance date of the document in the format YYYY-MM-DD",
+            "format": "date"
+        },
+        "type": {
+            "type": "string",
+            "description": "The type of the document",
+            "enum": [
+                "Design document",
+                "Material effect",
+                "Technical document",
+                "Prescriptive document",
+                "Informative document"
+            ]
+        },
+        "nr_connections": {
+            "type": "integer",
+            "description": "The number of connections of the document"
+        },
+        "language": {
+            "type": "string",
+            "description": "The language of the document",
+            "minLength": 2,
+            "maxLength": 64
+        },
+        "nr_pages": {
+            "type": "integer",
+            "description": "The number of pages of the document",
+            "minimum": 1
+        },
+        "geolocation": {
+            "description": "The coordinates of the document",
+            "oneOf": [
+                {
+                    "type": "object",
+                    "description": "Coordinates in point notation",
+                    "properties": {
+                        "latitude": {
+                            "type": "string",
+                            "pattern": "^(\\+|-)?(90(\\.0+)?|[0-8]?\\d(\\.\\d+)?)$"
+                        },
+                        "longitude": {
+                            "type": "string",
+                            "pattern": "^(\\+|-)?(180(\\.0+)?|1[0-7]\\d(\\.\\d+)?|0?\\d{1,2}(\\.\\d+)?)$"
+                        }
+                    }
+                },
+                {
+                    "type": "string",
+                    "description": "The area of the document",
+                    "minLength": 2,
+                    "maxLength": 64
+                }
+            ]
+        },
+        "description": {
+            "type": "string",
+            "description": "The description of the document",
+            "maxLength": 1000
+        }
+    },
+    "required": [
+        "id",
+        "title",
+        "stakeholder",
+        "scale",
+        "issuance_date",
+        "type",
+        "geolocation"
+    ]
+}
