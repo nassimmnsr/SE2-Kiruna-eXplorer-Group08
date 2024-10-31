@@ -71,7 +71,7 @@
             "oneOf": [
                 {
                     "type": "object",
-                    "description": "Coordinates in degrees, minutes and seconds",
+                    "description": "Coordinates in point notation",
                     "properties": {
                         "latitude": {
                             "type": "string",
