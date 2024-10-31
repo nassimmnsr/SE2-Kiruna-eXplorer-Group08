@@ -3,13 +3,13 @@
     "id": 64,
     "title": "Town hall demolition",
     "stakeholder": "LKAB",
-    "scale": "blueprints/effects",
+    "scale": "text",
     "issuance_date": "2019-04-01",
     "type": "Material effect",
     "nr_connections": 3,
-    "coordinates": {
-        "latitude": "67º51'09.0\"N",
-        "longitude": "20º13'20.8 \"E"
+    "geolocation": {
+        "latitude": "67°51'09.0\"N",
+        "longitude": "20°13'20.8\"E"
     },
 "description": "After the construction of the new town hall was completed, the old building, nicknamed \"The Igloo,\" was demolished. The only elements preserved were the door handles, a masterpiece of Sami art made of wood and bone, and the clock tower, which once stood on the roof of the old town hall. The clock tower was relocated to the central square of New Kiruna, in front of the new building."
 }

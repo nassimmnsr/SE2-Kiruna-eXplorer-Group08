@@ -10,19 +10,34 @@
         },
         "title": {
             "type": "string",
-            "description": "The title of the document"
+            "description": "The title of the document",
+            "minLength": 2,
+            "maxLength": 64
         },
         "stakeholder": {
             "type": "string",
-            "description": "The stakeholder of the document"
+            "description": "The stakeholder of the document",
+            "minLength": 2,
+            "maxLength": 64
         },
         "scale": {
+            "description": "The scale of the document",
             "type": "string",
-            "description": "The architectural scale of the document"
+            "oneOf": [
+                {
+                    "pattern": "text"
+                },
+                {
+                    "pattern": "blueprint/material effects"
+                },
+                {
+                    "pattern": "^1:[1-9][0-9]*$"
+                }
+            ]
         },
         "issuance_date": {
             "type": "string",
-            "description": "The issuance date of the document",
+            "description": "The issuance date of the document in the format YYYY-MM-DD",
             "format": "date"
         },
         "type": {
@@ -42,29 +57,39 @@
         },
         "language": {
             "type": "string",
-            "description": "The language of the document"
+            "description": "The language of the document",
+            "minLength": 2,
+            "maxLength": 64
         },
         "nr_pages": {
             "type": "integer",
-            "description": "The number of pages of the document"
+            "description": "The number of pages of the document",
+            "minimum": 1
         },
-        "coordinates": {
-            "type": "object",
+        "geolocation": {
             "description": "The coordinates of the document",
-            "properties": {
-                "latitude": {
-                    "type": "string",
-                    "format": "^[+-]?(90|[0-8]?\\d)°\\s*(\\d{1,2})'\\s*(\\d{1,2}(?:\\.\\d+)?)\"?\\s*[NS]$"
+            "oneOf": [
+                {
+                    "type": "object",
+                    "description": "Coordinates in degrees, minutes and seconds",
+                    "properties": {
+                        "latitude": {
+                            "type": "string",
+                            "pattern": "^[+-]?(90|[0-8]?\\d)°\\s*(\\d{1,2})'\\s*(\\d{1,2}(?:\\.\\d+)?)\"?\\s*[NS]$"
+                        },
+                        "longitude": {
+                            "type": "string",
+                            "pattern": "^[+-]?(180|1[0-7]\\d|[0-9]?\\d)°\\s*(\\d{1,2})'\\s*(\\d{1,2}(?:\\.\\d+)?)\"?\\s*[EW]$"
+                        }
+                    }
                 },
-                "longitude": { 
+                {
                     "type": "string",
-                    "format": "^[+-]?(180|1[0-7]\\d|[0-9]?\\d)°\\s*(\\d{1,2})'\\s*(\\d{1,2}(?:\\.\\d+)?)\"?\\s*[EW]$"
+                    "description": "The area of the document",
+                    "minLength": 2,
+                    "maxLength": 64
                 }
-            }
-        },
-        "area": {
-            "type": "string",
-            "description": "The area of the document"
+            ]
         },
         "description": {
             "type": "string",
@@ -78,18 +103,7 @@
         "stakeholder",
         "scale",
         "issuance_date",
-        "type"
-    ],
-    "anyOf": [
-        {
-            "required": [
-                "coordinates"
-            ]
-        },
-        {
-            "required": [
-                "description"
-            ]
-        }
+        "type",
+        "geolocation"
     ]
 }
