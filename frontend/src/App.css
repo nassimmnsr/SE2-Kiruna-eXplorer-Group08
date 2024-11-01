@@ -1,0 +1,122 @@
+/* Full height for container and alignment setup */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.container-fluid {
+  padding: 0;
+}
+
+/* Styling for the table container */
+.table-container {
+  padding-top: 20px;
+}
+
+.table-container .table {
+  margin-top: 70px;
+  margin-bottom: 70px;
+}
+
+.table-container .table tbody tr {
+  height: 60px;
+}
+
+/* Custom button styling */
+.brick-button {
+  background-color: #2f354b !important;
+  border-color: #2f354b !important;
+  color: white !important;
+}
+.divider {
+  border-bottom: 2px solid #e7ebda; /* Thin line divider */
+  margin: 0; /* Margin for spacing */
+}
+.brick-button:hover {
+  background-color: #51576d !important;
+  border-color: #51576d !important;
+}
+
+.document-modal {
+  width: 70%;
+  border-radius: 8px;
+}
+
+.modal-header {
+  background-color: #f8f9fa; /* Light background for the header */
+  border-bottom: none; /* Remove border */
+}
+
+.modal-title {
+  font-weight: 600; /* Slightly bolder font */
+  color: #333; /* Dark text color for better contrast */
+}
+
+.modal-body {
+  display: flex; /* Use flexbox to arrange items */
+  padding: 1.5rem; /* Padding around the body */
+}
+
+.document-info {
+  display: flex;
+  flex: 1; /* Allow this to grow and fill space */
+}
+
+.info-section {
+  flex: 1; /* Take equal space for document info */
+  margin-right: 1rem; /* Space between sections */
+}
+
+.description-area {
+  flex: 1; /* Take equal space for the description */
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between; /* Space between label and value */
+  align-items: center; /* Align items vertically */
+}
+
+.info-item label {
+  font-weight: 500; /* Medium weight for labels */
+  color: #555; /* Subtle gray for labels */
+  width: 40%; /* Fixed width for labels */
+}
+
+.info-item span {
+  flex: 1; /* Allow value to take the remaining space */
+  text-align: right; /* Align values to the right */
+}
+
+.divider {
+  border-bottom: 1px solid #e7ebda; /* Thin line divider */
+  margin: 0.5rem 0; /* Margin for spacing */
+}
+
+.divider-vertical {
+  width: 1px; /* Thin vertical line */
+  background-color: #e7ebda; /* Line color */
+  margin: 0 1rem; /* Horizontal spacing */
+}
+
+.description-textarea {
+  width: 100%; /* Full width */
+  border: 1px solid #ced4da; /* Subtle border color */
+  border-radius: 4px; /* Rounded corners */
+  padding: 0.5rem; /* Padding for text area */
+  resize: none; /* Disable resizing */
+}
+
+.modal-footer {
+  border-top: none; /* Remove border */
+  justify-content: space-between; /* Space buttons evenly */
+}
+
+button {
+  transition: background-color 0.2s ease; /* Smooth background change */
+}
+
+button:hover {
+  background-color: #0056b3; /* Darker background on hover for buttons */
+}

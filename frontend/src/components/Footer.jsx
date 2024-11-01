@@ -1,0 +1,16 @@
+// Footer.js
+import React from 'react';
+import { Container, Navbar } from 'react-bootstrap';
+import dayjs from 'dayjs';
+
+export default function Footer() {
+    const currentYear = dayjs().year();
+
+    return (
+        <Navbar style={{ backgroundColor: "#2f354b" }} fixed="bottom">
+            <Container fluid className="px-3">
+                <Navbar.Text className="text-white"> © {currentYear} Kiruna Explorer - All rights reserved</Navbar.Text>
+            </Container>
+        </Navbar>
+    );
+}
