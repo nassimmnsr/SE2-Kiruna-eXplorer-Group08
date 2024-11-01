@@ -1,0 +1,24 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "id": "http://KirunaExplorer.com/schemas/stakeholders.json",
+    "title": "Stakeholder",
+    "description": "JSON schema for a stakeholder data structure",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "id": {
+            "type": "integer",
+            "description": "The unique identifier of the stakeholder"
+        },
+        "name": {
+            "type": "string",
+            "description": "The name of the stakeholder",
+            "minLength": 2,
+            "maxLength": 64
+        }
+    },
+    "required": [
+        "id",
+        "name"
+    ] 
+}

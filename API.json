@@ -9,12 +9,21 @@
     "components": {
         "schemas": {
             "document": {
-                "$ref": "schemas/document.json"
+                "$ref": "./schemas/document.json"
             },
             "documents": {
                 "type": "array",
                 "items": {
                     "$ref": "#/components/schemas/document"
+                }
+            },
+            "stakeholder": {
+                "$ref": "./schemas/stakeholder.json"
+            },
+            "stakeholders": {
+                "type": "array",
+                "items": {
+                    "$ref": "#/components/schemas/stakeholder"
                 }
             }
         }
@@ -163,6 +172,170 @@
                 "summary": "Delete a document",
                 "tags": [
                     "document"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                }
+            }
+        },
+        "/stakeholders": {
+            "get": {
+                "summary": "Get all stakeholders",
+                "tags": [
+                    "stakeholders"
+                ],
+                "parameters": [
+                    {
+                        "name": "keyword",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/stakeholders"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a new stakeholder",
+                "tags": [
+                    "stakeholders"
+                ],
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/stakeholder"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string",
+                                    "description": "The reason why the request was bad"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/stakeholders/{id}": {
+            "get": {
+                "summary": "Get a stakeholder",
+                "tags": [
+                    "stakeholder"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/stakeholder"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update a stakeholder",
+                "tags": [
+                    "stakeholder"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/stakeholder"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string",
+                                    "description": "The reason why the request was bad"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a stakeholder",
+                "tags": [
+                    "stakeholder"
                 ],
                 "parameters": [
                     {

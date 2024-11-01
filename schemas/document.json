@@ -20,11 +20,12 @@
             "minLength": 2,
             "maxLength": 64
         },
-        "stakeholder": {
-            "type": "string",
-            "description": "The stakeholder of the document",
-            "minLength": 2,
-            "maxLength": 64
+        "stakeholders": {
+            "type": "array",
+            "description": "Unique identifiers of the stakeholders",
+            "items": {
+                "type": "integer"
+            }
         },
         "scale": {
             "description": "The scale of the document",
