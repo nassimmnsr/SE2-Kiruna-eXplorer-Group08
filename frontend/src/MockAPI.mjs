@@ -152,7 +152,7 @@ const getAvailableDocuments = async () => {
     //});
 }
 
-const saveDescription = async (id, description) => {
+const updateDocument = async (id, nextDocument) => {
     /*return await fetch(`${serverURL}/documents/${id}`, {
         method: 'PUT',
         headers: {
@@ -194,7 +194,7 @@ async function mapAPIDocumentsToDocuments(apiDocuments) {
 
 const API = {
     getAvailableDocuments,
-    saveDescription  
+    updateDocument  
 };
 
 export default API;

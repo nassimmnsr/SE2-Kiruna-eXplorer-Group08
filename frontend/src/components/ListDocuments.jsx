@@ -1,15 +1,18 @@
 // ListDocuments.js
 import { useEffect, useState } from "react";
-import { Container, Button, Table } from "react-bootstrap";
+import { Container, Table, Row } from "react-bootstrap";
+
 import "../App.css";
 import DocumentModal from "./DocumentModal";
 import API from "../MockAPI";
+// import API from "../API";
 // import Document from "../model/Document";
 
 function ListDocuments() {
   const [documents, setDocuments] = useState([]);
   const [show, setShow] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState(null);
+  const [hoveredRow, setHoveredRow] = useState(null); // State to track hovered row
 
   useEffect(() => {
     API.getAvailableDocuments()
@@ -26,50 +29,28 @@ function ListDocuments() {
     console.log(documents);
   }, [documents]);
 
-  const handleDescription = (document) => {
+  const handleSelection = (document) => {
     setSelectedDocument(document);
     setShow(true);
   };
 
-  const handleSave = (description) => {
-    API.saveDescription(selectedDocument.id, description).catch((error) => {
-      console.error(error);
-    });
+  const handleSave = (document) => {
+    API.updateDocument(document.id, document);
     setShow(false);
   };
 
   return (
-    <Container
-      fluid
-      className="d-flex flex-column vh-100 justify-content-center align-items-center p-3 mt-3"
-    >
-      <Table
-        className="w-80 mt-3 mb-3"
-        style={{ width: "80%", tableLayout: "fixed" }}
-      >
-        <thead>
-          <tr>
-            <th style={{ fontSize: 20, fontWeight: "500" }}>
-              Available documents
-            </th>
-            <th></th>
-          </tr>
-        </thead>
-      </Table>
-
-      {selectedDocument && (
-        <DocumentModal
-          show={show}
-          onHide={() => {
-            setSelectedDocument(null);
-            setShow(false);
-          }}
-          document={selectedDocument}
-          handleSave={handleSave}
-        />
-      )}
+    <Container fluid className="d-flex flex-column vh-100 p-3 mt-3">
+      <Row className="mt-5">
+        <h1>Documents</h1>
+      </Row>
+      <Row>
+        <p>Here you can find all the documents about Kiruna&apos;s relocation process.</p>
+        <p>Click on a document to see more details.</p>
+      </Row>
       {/* Scrollable table body */}
       <div
+        className="mx-auto"
         style={{
           width: "80%",
           height: "60vh",
@@ -77,23 +58,53 @@ function ListDocuments() {
           marginBottom: "70px",
         }}
       >
-        <Table hover>
+        <Table hover className="mt-5">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Title</th>
+              <th>Scale</th>
+              <th>Issuance Date</th>
+              <th>Type</th>
+            </tr>
+          </thead>
           <tbody>
-            {documents.map((document) => (
-              <tr key={document.id} style={{ height: "60px" }}>
-                <td className="align-middle">{document.title}</td>
-                <td className="text-end align-middle">
-                  <Button
-                    className="brick-button"
-                    onClick={() => handleDescription(document)}
-                  >
-                    Add new description
-                  </Button>
+            {documents.map((document, index) => (
+              <tr
+                key={document.id}
+                style={{ height: "60px", cursor: "pointer" }}
+                onClick={() => handleSelection(document)}
+                onMouseEnter={() => setHoveredRow(index)}
+                onMouseLeave={() => setHoveredRow(null)}
+              >
+                <td
+                  className="align-middle"
+                  style={{ width: "50px", textAlign: "center" }}
+                >
+                  {hoveredRow === index && <i className="bi bi-eye-fill "></i>}
                 </td>
+                <td className="align-middle">
+                  <em>{document.title}</em>
+                </td>
+                <td className="align-middle">{document.scale}</td>
+                <td className="align-middle">{document.issuance_date}</td>
+                <td className="align-middle">{document.type}</td>
               </tr>
             ))}
           </tbody>
         </Table>
+
+        {selectedDocument && (
+          <DocumentModal
+            show={show}
+            onHide={() => {
+              setSelectedDocument(null);
+              setShow(false);
+            }}
+            document={selectedDocument}
+            handleSave={handleSave}
+          />
+        )}
       </div>
     </Container>
   );

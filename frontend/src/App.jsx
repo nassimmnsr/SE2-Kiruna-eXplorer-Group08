@@ -4,6 +4,7 @@ import { Routes, Route, Outlet } from "react-router-dom";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ListDocuments from "./components/ListDocuments";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 function App() {
   return (
