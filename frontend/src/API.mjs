@@ -64,7 +64,8 @@ const deleteDocument = async (documentId) => {
 const getAllStakeholders = async () => {
   const stakeholders = await fetch(`${SERVER_URL}/stakeholders`)
     .then(handleInvalidResponse)
-    .then((response) => response.json());
+    .then((response) => response.json())
+    .then(mapAPIStakeholdersToStakeholders);
   return stakeholders;
 };
 
@@ -120,23 +121,28 @@ function handleInvalidResponse(response) {
   return response;
 }
 
-function mapAPIStakeholderToStakeholder(apiStakeholder) {
-  return new Stakeholder(apiStakeholder.id, apiStakeholder.name);
+function mapAPIStakeholdersToStakeholders(apiStakeholders) {
+  return apiStakeholders.map(
+    (apiStakeholder) => new Stakeholder(apiStakeholder.id, apiStakeholder.name)
+  );
 }
 
 async function mapAPIDocumentsToDocuments(apiDocuments) {
-  return new Document(
-    apiDocument.id,
-    apiDocument.title,
-    apiDocument.stakeholders.map(mapAPIStakeholderToStakeholder),
-    apiDocument.scale,
-    apiDocument.issuance_date,
-    apiDocument.type,
-    apiDocument.nr_connections,
-    apiDocument.language,
-    apiDocument.nr_pages,
-    apiDocument.geolocation,
-    apiDocument.description
+  return apiDocuments.map(
+    (apiDocument) =>
+      new Document(
+        apiDocument.id,
+        apiDocument.title,
+        mapAPIStakeholdersToStakeholders(apiDocument.stakeholders),
+        apiDocument.scale,
+        apiDocument.issuance_date,
+        apiDocument.type,
+        apiDocument.nr_connections,
+        apiDocument.language,
+        apiDocument.nr_pages,
+        apiDocument.geolocation,
+        apiDocument.description
+      )
   );
 }
 
