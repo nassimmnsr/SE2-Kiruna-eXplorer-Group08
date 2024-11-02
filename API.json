@@ -33,7 +33,7 @@
             "get": {
                 "summary": "Get all documents",
                 "tags": [
-                    "documents"
+                    "document"
                 ],
                 "parameters": [
                     {
@@ -60,7 +60,7 @@
             "post": {
                 "summary": "Create a new document",
                 "tags": [
-                    "documents"
+                    "document"
                 ],
                 "parameters": [],
                 "requestBody": {
@@ -197,7 +197,7 @@
             "get": {
                 "summary": "Get all stakeholders",
                 "tags": [
-                    "stakeholders"
+                    "stakeholder"
                 ],
                 "parameters": [
                     {
@@ -224,7 +224,7 @@
             "post": {
                 "summary": "Create a new stakeholder",
                 "tags": [
-                    "stakeholders"
+                    "stakeholder"
                 ],
                 "parameters": [],
                 "requestBody": {

@@ -22,9 +22,9 @@
         },
         "stakeholders": {
             "type": "array",
-            "description": "Unique identifiers of the stakeholders",
+            "description": "The stakeholders of the document",
             "items": {
-                "type": "integer"
+                "$ref": "./stakeholder.json"
             }
         },
         "scale": {
