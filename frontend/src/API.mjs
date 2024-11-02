@@ -1,5 +1,5 @@
-import Document from "./Document.mjs";
-import Stakeholder from "./Stakeholder.mjs";
+import Document from "./model/Document.mjs";
+import Stakeholder from "./model/Stakeholder.mjs";
 
 const SERVER_URL = "http://localhost:8080/api";
 

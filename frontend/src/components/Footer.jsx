@@ -1,5 +1,4 @@
 // Footer.js
-import React from 'react';
 import { Container, Navbar } from 'react-bootstrap';
 import dayjs from 'dayjs';
 

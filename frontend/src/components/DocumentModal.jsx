@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 
 function DocumentModal(props) {
@@ -17,7 +17,7 @@ function DocumentModal(props) {
   };
 
   return (
-    <Modal show={props.show} onHide={props.onHide} centered className="document-modal">
+    <Modal show={props.show} onHide={props.onHide} centered className="document-modal" size='lg'>
       <Modal.Header closeButton className="modal-header">
         <Modal.Title>{props.document.title}</Modal.Title>
       </Modal.Header>
@@ -26,7 +26,7 @@ function DocumentModal(props) {
           <div className="info-section">
             <div className="info-item">
               <label>Stakeholders:</label>
-              <span>{props.document.stakeholder}</span>
+              <span>{props.document.stakeholders}</span>
             </div>
             <div className="divider"></div>
             <div className="info-item">
@@ -36,7 +36,7 @@ function DocumentModal(props) {
             <div className="divider"></div>
             <div className="info-item">
               <label>Issuance Date:</label>
-              <span>{props.document.issDate}</span>
+              <span>{props.document.issuance_date}</span>
             </div>
             <div className="divider"></div>
             <div className="info-item">
@@ -46,7 +46,7 @@ function DocumentModal(props) {
             <div className="divider"></div>
             <div className="info-item">
               <label>Connections:</label>
-              <span>{props.document.connections}</span>
+              <span>{props.document.nr_connections}</span>
             </div>
             <div className="divider"></div>
             <div className="info-item">
@@ -56,12 +56,12 @@ function DocumentModal(props) {
             <div className="divider"></div>
             <div className="info-item">
               <label>Pages:</label>
-              <span>{props.document.pages}</span>
+              <span>{props.document.nr_pages}</span>
             </div>
             <div className="divider"></div>
             <div className="info-item">
               <label>Coordinates:</label>
-              <span>{props.document.coordinates}</span>
+              <span>{props.document.geolocation}</span>
             </div>
           </div>
           <div className="divider-vertical"></div>
@@ -72,6 +72,7 @@ function DocumentModal(props) {
               value={description}
               onChange={(e) => setDescription(e.target.value)} // Allow user to edit
               className="description-textarea"
+              autoFocus
             />
           </div>
         </div>
