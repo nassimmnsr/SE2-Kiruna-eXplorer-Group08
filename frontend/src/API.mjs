@@ -125,27 +125,18 @@ function mapAPIStakeholderToStakeholder(apiStakeholder) {
 }
 
 async function mapAPIDocumentsToDocuments(apiDocuments) {
-  return await Promise.all(
-    apiDocuments.map(async (apiDocument) => {
-      const stakeholders = await Promise.all(
-        apiDocument.stakeholders.map(async (stakeholderId) => {
-          return await getStakeholderById(stakeholderId);
-        })
-      );
-      return new Document(
-        apiDocument.id,
-        apiDocument.title,
-        stakeholders.map(mapAPIStakeholderToStakeholder),
-        apiDocument.scale,
-        apiDocument.issuance_date,
-        apiDocument.type,
-        apiDocument.nr_connections,
-        apiDocument.language,
-        apiDocument.nr_pages,
-        apiDocument.geolocation,
-        apiDocument.description
-      );
-    })
+  return new Document(
+    apiDocument.id,
+    apiDocument.title,
+    apiDocument.stakeholders.map(mapAPIStakeholderToStakeholder),
+    apiDocument.scale,
+    apiDocument.issuance_date,
+    apiDocument.type,
+    apiDocument.nr_connections,
+    apiDocument.language,
+    apiDocument.nr_pages,
+    apiDocument.geolocation,
+    apiDocument.description
   );
 }
 
@@ -155,5 +146,10 @@ const API = {
   getDocumentById,
   updateDocument,
   deleteDocument,
+  getAllStakeholders,
+  addStakeholder,
+  getStakeholderById,
+  updateStakeholder,
+  deleteStakeholder,
 };
 export default API;
