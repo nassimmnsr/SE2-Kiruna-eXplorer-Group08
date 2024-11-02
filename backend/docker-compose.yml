@@ -6,9 +6,8 @@ services:
       POSTGRES_USER: ${PG_USER}
       POSTGRES_PASSWORD: ${PG_PASSWORD}
       POSTGRES_DB: ${PG_DB}
-      PGDATA: /data/postgres
     volumes:
-      - db:/data/postgres
+      - db:/var/lib/postgresql/data
     ports:
       - "5332:5432"
     networks:
