@@ -1,8 +1,8 @@
 package com.kirunaexplorer.app.service;
 
-import com.kirunaexplorer.app.dto.DocumentDTO;
-import com.kirunaexplorer.app.dto.GeolocationDTO;
-import com.kirunaexplorer.app.dto.StakeholderDTO;
+import com.kirunaexplorer.app.dto.inout.DocumentDTO;
+import com.kirunaexplorer.app.dto.inout.GeolocationDTO;
+import com.kirunaexplorer.app.dto.inout.StakeholderDTO;
 import com.kirunaexplorer.app.dto.response.DocumentResponseDTO;
 import com.kirunaexplorer.app.model.Document;
 import com.kirunaexplorer.app.repository.DocumentRepository;
