@@ -1,6 +1,6 @@
 package com.kirunaexplorer.app.controller;
 
-import com.kirunaexplorer.app.dto.response.DocumentResponseDTO;
+import com.kirunaexplorer.app.dto.response.DocumentBriefResponseDTO;
 import com.kirunaexplorer.app.service.DocumentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,12 +19,12 @@ public class DocumentController {
     }
 
     /***
-     * Endpoint to get all documents
-     * @return List of DocumentResponseDTO
+     * Endpoint to get all documents in brief format
+     * @return List of DocumentBriefResponseDTO
      */
     @GetMapping
-    public ResponseEntity<List<DocumentResponseDTO>> getAllDocuments() {
-        List<DocumentResponseDTO> documents = documentService.getAllDocuments();
+    public ResponseEntity<List<DocumentBriefResponseDTO>> getAllDocuments() {
+        List<DocumentBriefResponseDTO> documents = documentService.getAllDocuments();
         return ResponseEntity.ok(documents);
     }
 }
