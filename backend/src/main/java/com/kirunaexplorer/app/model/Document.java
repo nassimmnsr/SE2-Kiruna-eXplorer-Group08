@@ -14,6 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
+@Table(name =   "DOCUMENT")
 public class Document {
 
     public enum DatePrecision {
@@ -27,6 +28,8 @@ public class Document {
     private Integer id;
 
     private String title;
+
+    @Column(length = 1000)
     private String description;
     private String stakeholders;
     private String type;
