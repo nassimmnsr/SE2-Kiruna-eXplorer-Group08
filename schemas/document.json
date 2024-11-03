@@ -24,7 +24,7 @@
             "type": "array",
             "description": "The stakeholders of the document",
             "items": {
-                "$ref": "./stakeholder.json"
+                "name": "string"
             }
         },
         "scale": {

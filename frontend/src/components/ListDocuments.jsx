@@ -39,9 +39,14 @@ function ListDocuments() {
     setShow(false);
   };
 
+  const handleDelete = (documentId) => {
+    API.deleteDocument(documentId);
+    setShow(false);
+  }
+
   return (
-    <Container fluid className="d-flex flex-column vh-100 p-3 mt-3">
-      <Row className="mt-5">
+    <Container fluid className="d-flex flex-column vh-100 p-3">
+      <Row >
         <h1>Documents</h1>
       </Row>
       <Row>
@@ -103,6 +108,7 @@ function ListDocuments() {
             }}
             document={selectedDocument}
             handleSave={handleSave}
+            handleDelete={handleDelete}
           />
         )}
       </div>

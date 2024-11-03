@@ -133,7 +133,7 @@ async function mapAPIDocumentsToDocuments(apiDocuments) {
       new Document(
         apiDocument.id,
         apiDocument.title,
-        mapAPIStakeholdersToStakeholders(apiDocument.stakeholders),
+        apiDocument.stakeholders,
         apiDocument.scale,
         apiDocument.issuance_date,
         apiDocument.type,

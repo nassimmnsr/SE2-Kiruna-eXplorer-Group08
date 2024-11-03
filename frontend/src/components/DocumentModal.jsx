@@ -7,7 +7,7 @@ function DocumentModal(props) {
   const [isEditable, setIsEditable] = useState(false);
 
   const [title, setTitle] = useState("");
-  const [stakeholders, setStakeholders] = useState("");
+  const [stakeholders, setStakeholders] = useState([]);
   const [scale, setScale] = useState("");
   const [issuanceDate, setIssuanceDate] = useState("");
   const [type, setType] = useState("");
@@ -20,15 +20,15 @@ function DocumentModal(props) {
   // Update the description state when the document prop changes
   useEffect(() => {
     setTitle(props.document.title);
-    setStakeholders(props.document.stakeholders || "");
-    setScale(props.document.scale || "");
-    setIssuanceDate(props.document.issuance_date || "");
-    setType(props.document.type || "");
-    setNrConnections(props.document.nr_connections || "");
-    setLanguage(props.document.language || "");
-    setNrPages(props.document.nr_pages || "");
-    setGeolocation(props.document.geolocation || "");
-    setDescription(props.document.description || "");
+    setStakeholders(props.document.stakeholders);
+    setScale(props.document.scale);
+    setIssuanceDate(props.document.issuance_date);
+    setType(props.document.type);
+    setNrConnections(props.document.nr_connections);
+    setLanguage(props.document.language);
+    setNrPages(props.document.nr_pages);
+    setGeolocation(props.document.geolocation);
+    setDescription(props.document.description);
   }, [props.document]);
 
   // Handle the save button click
@@ -55,6 +55,11 @@ function DocumentModal(props) {
     setIsEditable(true);
   };
 
+  const handleDeleteClick = () => {
+    props.handleDelete(props.document.id);
+    props.onHide();
+  }
+
   return (
     <Modal
       show={props.show}
@@ -73,7 +78,7 @@ function DocumentModal(props) {
               style={{ width: "200%" }}
             />
           ) : (
-            props.document.title
+            title
           )}
         </Modal.Title>
       </Modal.Header>
@@ -90,7 +95,9 @@ function DocumentModal(props) {
                     onChange={(e) => setStakeholders(e.target.value)}
                   />
                 ) : (
-                  props.document.stakeholders
+                  stakeholders.map((stakeholder, index) => (
+                    <div key={index}>{stakeholder}</div>
+                  ))
                 )}
               </span>
             </div>
@@ -105,7 +112,7 @@ function DocumentModal(props) {
                     onChange={(e) => setScale(e.target.value)}
                   />
                 ) : (
-                  props.document.scale
+                  scale
                 )}
               </span>
             </div>
@@ -120,7 +127,7 @@ function DocumentModal(props) {
                     onChange={(e) => setIssuanceDate(e.target.value)}
                   />
                 ) : (
-                  props.document.issuance_date
+                  issuanceDate
                 )}
               </span>
             </div>
@@ -150,7 +157,7 @@ function DocumentModal(props) {
                     onChange={(e) => setNrConnections(e.target.value)}
                   />
                 ) : (
-                  props.document.nr_connections
+                  nrConnections
                 )}
               </span>
             </div>
@@ -180,13 +187,13 @@ function DocumentModal(props) {
                     onChange={(e) => setNrPages(e.target.value)}
                   />
                 ) : (
-                  props.document.nr_pages
+                  nrPages
                 )}
               </span>
             </div>
             <div className="divider"></div>
             <div className="info-item">
-              <label>Coordinates:</label>
+              <label>Location:</label>
               <span>
                 {isEditable ? (
                   <input
@@ -195,7 +202,7 @@ function DocumentModal(props) {
                     onChange={(e) => setGeolocation(e.target.value)}
                   />
                 ) : (
-                  props.document.geolocation
+                  geolocation
                 )}
               </span>
             </div>
@@ -224,10 +231,16 @@ function DocumentModal(props) {
             </Button>
           </>
         ) : (
-          <Button variant="primary" onClick={handleModifyClick}>
-            <i className="bi bi-pencil-fill me-3" />
-            Modify
-          </Button>
+          <>
+            <Button variant="primary" onClick={handleModifyClick}>
+              <i className="bi bi-pencil-fill me-3" />
+              Modify
+            </Button>
+            <Button variant="danger" onClick={handleDeleteClick}>
+              <i className="bi bi-trash-fill me-3" />
+              Delete
+            </Button>
+          </>
         )}
       </Modal.Footer>
     </Modal>
@@ -239,6 +252,7 @@ DocumentModal.propTypes = {
   onHide: PropTypes.func,
   document: PropTypes.object,
   handleSave: PropTypes.func,
+  handleDelete: PropTypes.func,
 };
 
 export default DocumentModal;
