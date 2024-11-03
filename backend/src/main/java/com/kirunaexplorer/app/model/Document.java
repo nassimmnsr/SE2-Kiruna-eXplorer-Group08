@@ -41,4 +41,13 @@ public class Document {
     private Integer pages;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "document")
+    private Set<DocumentLink> documentLinks;
+
+    @OneToOne(mappedBy = "document", cascade = CascadeType.ALL, orphanRemoval = true)
+    private GeoReference geoReference; // One-to-one relationship
+
+    @OneToMany(mappedBy = "id")
+    private Set<DocumentFile> documentFiles;
 }
