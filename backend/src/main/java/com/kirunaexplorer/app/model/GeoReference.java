@@ -14,16 +14,17 @@ import org.locationtech.jts.geom.Point;
 public class GeoReference {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @Column(name = "document_id") // Primary key and foreign key
+    private Integer documentId;
 
-    @ManyToOne
+    @OneToOne
+    @MapsId
     @JoinColumn(name = "document_id")
     private Document document;
 
-    @Column(columnDefinition = "geography(Point, 4326)")
-    private Point location;
+    private boolean isEntireMunicipality; // True if it refers to the whole municipality
 
-    private String areaDescription;
+    @Column(columnDefinition = "geography(Point, 4326)", nullable = true)
+    private Point location; // Nullable, used only for specific point
 
 }

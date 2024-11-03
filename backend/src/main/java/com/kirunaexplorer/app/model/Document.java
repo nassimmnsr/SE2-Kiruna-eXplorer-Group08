@@ -14,6 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
+@Table(name =   "DOCUMENT")
 public class Document {
 
     public enum DatePrecision {
@@ -27,7 +28,10 @@ public class Document {
     private Integer id;
 
     private String title;
+
+    @Column(length = 1000)
     private String description;
+    private String stakeholders;
     private String type;
     private String scale;
     private LocalDate issuanceDate;
@@ -41,17 +45,9 @@ public class Document {
     @OneToMany(mappedBy = "document")
     private Set<DocumentLink> documentLinks;
 
-    @OneToMany(mappedBy = "document")
-    private Set<GeoReference> geoReferences;
+    @OneToOne(mappedBy = "document", cascade = CascadeType.ALL, orphanRemoval = true)
+    private GeoReference geoReference; // One-to-one relationship
 
     @OneToMany(mappedBy = "id")
     private Set<DocumentFile> documentFiles;
-
-    @ManyToMany
-    @JoinTable(
-            name = "DocumentStakeholders",
-            joinColumns = @JoinColumn(name = "document_id"),
-            inverseJoinColumns = @JoinColumn(name = "stakeholder_id")
-    )
-    private Set<Stakeholder> stakeholders;
 }
