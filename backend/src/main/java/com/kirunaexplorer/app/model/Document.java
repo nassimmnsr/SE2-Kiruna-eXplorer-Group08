@@ -1,35 +1,44 @@
 package com.kirunaexplorer.app.model;
 
-import java.time.LocalDate;
-
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name= "DOCUMENT")
+@EqualsAndHashCode
+@ToString
+@Table(name =   "DOCUMENT")
 public class Document {
-    
+
+    public enum DatePrecision {
+        YEAR_ONLY,
+        MONTH_YEAR,
+        FULL_DATE
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long docId;
+    private Integer id;
 
-    @Column(nullable = false)
     private String title;
 
     @Column(length = 1000)
     private String description;
     private String stakeholders;
-    private String scale;
-    private LocalDate issuance_date;
     private String type;
+    private String scale;
+    private LocalDate issuanceDate;
+    @Enumerated(EnumType.STRING)
+    private DatePrecision datePrecision;
     private String language;
     private Integer pages;
-    private LocalDate created_at;
-    private LocalDate updated_at;
-
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }
