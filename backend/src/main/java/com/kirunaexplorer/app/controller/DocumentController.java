@@ -1,9 +1,11 @@
 package com.kirunaexplorer.app.controller;
 
 import com.kirunaexplorer.app.dto.response.DocumentBriefResponseDTO;
+import com.kirunaexplorer.app.dto.response.DocumentResponseDTO;
 import com.kirunaexplorer.app.service.DocumentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,4 +29,16 @@ public class DocumentController {
         List<DocumentBriefResponseDTO> documents = documentService.getAllDocuments();
         return ResponseEntity.ok(documents);
     }
+
+    /***
+     * Endpoint to get a document by id
+     * @param id Document id
+     * @return DocumentResponseDTO
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<DocumentResponseDTO> getDocumentById(@PathVariable Long id) {
+        DocumentResponseDTO document = documentService.getDocumentById(id);
+        return ResponseEntity.ok(document);
+    }
 }
+
