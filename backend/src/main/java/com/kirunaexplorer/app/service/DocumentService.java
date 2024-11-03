@@ -7,8 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.kirunaexplorer.app.constants.AppConstants.DOCUMENTS_URI;
-
 @Service
 public class DocumentService {
     private final DocumentRepository documentRepository;
@@ -26,7 +24,13 @@ public class DocumentService {
 
         return documents.stream()
             .map(
-                document -> new DocumentBriefResponseDTO(DOCUMENTS_URI + document.getId(), document.getTitle())
+                document -> new DocumentBriefResponseDTO(
+                    document.getId(),
+                    document.getTitle(),
+                    document.getScale(),
+                    document.getIssuanceDate().toString(),
+                    document.getType()
+                )
             ).toList();
     }
 }
