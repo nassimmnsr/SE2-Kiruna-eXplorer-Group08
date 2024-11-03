@@ -14,7 +14,63 @@
             "documents": {
                 "type": "array",
                 "items": {
-                    "$ref": "#/components/schemas/document"
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "$schema": {
+                            "type": "string",
+                            "format": "uri",
+                            "description": "path to the JSON schema to use for the validation of the JSON file describing a document"
+                        },
+                        "id": {
+                            "type": "integer",
+                            "description": "The unique identifier of the document"
+                        },
+                        "title": {
+                            "type": "string",
+                            "description": "The title of the document",
+                            "minLength": 2,
+                            "maxLength": 64
+                        },
+                        "scale": {
+                            "description": "The scale of the document",
+                            "type": "string",
+                            "oneOf": [
+                                {
+                                    "pattern": "text"
+                                },
+                                {
+                                    "pattern": "blueprint/material effects"
+                                },
+                                {
+                                    "pattern": "^1:[1-9][0-9]*$"
+                                }
+                            ]
+                        },
+                        "issuance_date": {
+                            "type": "string",
+                            "description": "The issuance date of the document in the format YYYY-MM-DD",
+                            "format": "date"
+                        },
+                        "type": {
+                            "type": "string",
+                            "description": "The type of the document",
+                            "enum": [
+                                "Design document",
+                                "Material effect",
+                                "Technical document",
+                                "Prescriptive document",
+                                "Informative document"
+                            ]
+                        }
+                    },
+                    "required": [
+                        "id",
+                        "title",
+                        "scale",
+                        "issuance_date",
+                        "type"
+                    ]
                 }
             },
             "stakeholder": {
@@ -54,6 +110,9 @@
                                 }
                             }
                         }
+                    },
+                    "500": {
+                        "description": "Internal server error"
                     }
                 }
             },
@@ -87,6 +146,47 @@
                                 }
                             }
                         }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update a document",
+                "tags": [
+                    "document"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/document"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string",
+                                    "description": "The reason why the request was bad"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
                     }
                 }
             }
@@ -120,51 +220,9 @@
                     },
                     "404": {
                         "description": "Not found"
-                    }
-                }
-            },
-            "put": {
-                "summary": "Update a document",
-                "tags": [
-                    "document"
-                ],
-                "parameters": [
-                    {
-                        "name": "id",
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/document"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "204": {
-                        "description": "No content"
                     },
-                    "400": {
-                        "description": "Bad request",
-                        "content": {
-                            "text/plain": {
-                                "schema": {
-                                    "type": "string",
-                                    "description": "The reason why the request was bad"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Not found"
+                    "500": {
+                        "description": "Internal server error"
                     }
                 }
             },
@@ -189,6 +247,9 @@
                     },
                     "404": {
                         "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
                     }
                 }
             }
@@ -218,6 +279,9 @@
                                 }
                             }
                         }
+                    },
+                    "500": {
+                        "description": "Internal server error"
                     }
                 }
             },
@@ -251,6 +315,47 @@
                                 }
                             }
                         }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update a stakeholder",
+                "tags": [
+                    "stakeholder"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/stakeholder"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string",
+                                    "description": "The reason why the request was bad"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
                     }
                 }
             }
@@ -284,51 +389,9 @@
                     },
                     "404": {
                         "description": "Not found"
-                    }
-                }
-            },
-            "put": {
-                "summary": "Update a stakeholder",
-                "tags": [
-                    "stakeholder"
-                ],
-                "parameters": [
-                    {
-                        "name": "id",
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/stakeholder"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "204": {
-                        "description": "No content"
                     },
-                    "400": {
-                        "description": "Bad request",
-                        "content": {
-                            "text/plain": {
-                                "schema": {
-                                    "type": "string",
-                                    "description": "The reason why the request was bad"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Not found"
+                    "500": {
+                        "description": "Internal server error"
                     }
                 }
             },
@@ -353,6 +416,9 @@
                     },
                     "404": {
                         "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
                     }
                 }
             }

@@ -1,4 +1,4 @@
-import Document from "./model/Document.mjs";
+import {Document, DocumentSnippet} from "./model/Document.mjs";
 import Stakeholder from "./model/Stakeholder.mjs";
 
 const SERVER_URL = "http://localhost:8080/api";
@@ -7,14 +7,14 @@ const SERVER_URL = "http://localhost:8080/api";
  *       Documents APIs       *
  * ************************** */
 
-// Retrieve all documents
-const getAllDocuments = async (filter) => {
+// Retrieve all documents snippets
+const getAllDocumentSnippets = async (filter) => {
   const documents = await fetch(
     `${SERVER_URL}/documents` + (filter ? `?filter=${filter}` : "")
   )
     .then(handleInvalidResponse)
     .then((response) => response.json())
-    .then(mapAPIDocumentsToDocuments);
+    .then(mapAPISnippetsToSnippet);
   return documents;
 };
 
@@ -39,13 +39,13 @@ const getDocumentById = async (documentId) => {
 };
 
 // Update a document given its id
-const updateDocument = async (documentId) => {
-  return await fetch(`${SERVER_URL}/documents/${documentId}`, {
+const updateDocument = async (documentId, nextDocument) => {
+  return await fetch(`${SERVER_URL}/documents/`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(document),
+    body: JSON.stringify(nextDocument),
   }).then(handleInvalidResponse);
 };
 
@@ -89,13 +89,13 @@ const getStakeholderById = async (stakeholderId) => {
 };
 
 // Update a stakeholder given its id
-const updateStakeholder = async (stakeholderId, stakeholder) => {
-  return await fetch(`${SERVER_URL}/stakeholders/${stakeholderId}`, {
+const updateStakeholder = async (stakeholderId, nextStakeholder) => {
+  return await fetch(`${SERVER_URL}/stakeholders/`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(stakeholder),
+    body: JSON.stringify(nextStakeholder),
   }).then(handleInvalidResponse);
 };
 
@@ -146,8 +146,21 @@ async function mapAPIDocumentsToDocuments(apiDocuments) {
   );
 }
 
+async function mapAPISnippetsToSnippet(apiSnippets) {
+  return new  apiSnippets.map(
+    (apiSnippet) =>
+      new DocumentSnippet(
+        apiSnippet.id,
+        apiSnippet.title,
+        apiSnippet.scale,
+        apiSnippet.issuance_date,
+        apiSnippet.type
+      )
+  );
+}
+
 const API = {
-  getAllDocuments,
+  getAllDocumentSnippets,
   addDocument,
   getDocumentById,
   updateDocument,
