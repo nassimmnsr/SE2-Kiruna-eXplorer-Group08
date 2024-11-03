@@ -28,6 +28,7 @@ public class Document {
 
     private String title;
     private String description;
+    private String stakeholders;
     private String type;
     private String scale;
     private LocalDate issuanceDate;
@@ -46,12 +47,4 @@ public class Document {
 
     @OneToMany(mappedBy = "id")
     private Set<DocumentFile> documentFiles;
-
-    @ManyToMany
-    @JoinTable(
-            name = "DocumentStakeholders",
-            joinColumns = @JoinColumn(name = "document_id"),
-            inverseJoinColumns = @JoinColumn(name = "stakeholder_id")
-    )
-    private Set<Stakeholder> stakeholders;
 }
