@@ -1,6 +1,7 @@
 package com.kirunaexplorer.app.config;
 
 //import com.kirunaexplorer.app.model.User;
+
 import com.kirunaexplorer.app.model.Document;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -20,15 +21,15 @@ public class DataInitializer implements CommandLineRunner {
     //private final UserRepository userRepository;
     private final DocumentRepository documentRepository;
 
-    public DataInitializer (DocumentRepository documentRepository) {
-        
+    public DataInitializer(DocumentRepository documentRepository) {
+
         this.documentRepository = documentRepository;
     }
 
 
     @Override
     @Transactional
-    public void run(String...  args) throws Exception {
+    public void run(String... args) throws Exception {
         /* 
         // Insert data into User table
         User user1 = new User(null, "UBuser1", URBAN_PLANNER, null);
@@ -39,7 +40,26 @@ public class DataInitializer implements CommandLineRunner {
         userRepository.saveAll(List.of(user1, user2, user3, user4));
         */
         // Insert data into Document table
-        Document document1 = new Document(null, 
+
+        Document document1 = new Document(
+            null,
+            "Title 1",
+            "Description 1",
+            "Stakeholder 1",
+            "Type 1",
+            "Scale 1",
+            LocalDate.of(2021, 1, 1),
+            DatePrecision.FULL_DATE,
+            "Language 1",
+            1,
+            LocalDateTime.now(),
+            null,
+            null,
+            null,
+            null
+        );
+
+        /*Document document1 = new Document(null,
                                           "Compilation of responses 'So what the people of Kiruna think?'", 
                                           "This document is a compilation of the responses to the survey 'What is your impression of Kiruna?' From the citizens' responses to this last part of the survey, it is evident that certain buildings, such as the Kiruna Church, the Hjalmar Lundbohmsgärden, and the Town Hall, are considered of significant value to the population. The municipality views the experience of this survey positively, to the extent that over the years it will propose various consultation opportunities.", 
                                           "Kiruna kommun/Residents", 
@@ -124,13 +144,11 @@ public class DataInitializer implements CommandLineRunner {
                                           null, 
                                           null, 
                                           LocalDateTime.now(), 
-                                          null);  
+                                          null);  */
 
-        documentRepository.saveAll(List.of(document1, document2, document3, document4, document5, document6, document7));
-
-
+        documentRepository.saveAll(List.of(document1));
 
 
     }
-    
+
 }
