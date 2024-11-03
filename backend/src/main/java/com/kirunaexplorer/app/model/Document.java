@@ -41,8 +41,8 @@ public class Document {
     @OneToMany(mappedBy = "document")
     private Set<DocumentLink> documentLinks;
 
-    @OneToMany(mappedBy = "document")
-    private Set<GeoReference> geoReferences;
+    @OneToOne(mappedBy = "document", cascade = CascadeType.ALL, orphanRemoval = true)
+    private GeoReference geoReference; // One-to-one relationship
 
     @OneToMany(mappedBy = "id")
     private Set<DocumentFile> documentFiles;
