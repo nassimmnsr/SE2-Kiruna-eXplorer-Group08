@@ -93,6 +93,7 @@
                 {
                     "type": "string",
                     "description": "The area of the document",
+                    "pattern": "Whole municipality",
                     "minLength": 2,
                     "maxLength": 64
                 }

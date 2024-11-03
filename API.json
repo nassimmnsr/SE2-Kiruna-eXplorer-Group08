@@ -9,7 +9,120 @@
     "components": {
         "schemas": {
             "document": {
-                "$ref": "./schemas/document.json"
+                "title": "Document",
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "$schema": {
+                        "type": "string",
+                        "format": "uri",
+                        "description": "path to the JSON schema to use for the validation of the JSON file describing a document"
+                    },
+                    "id": {
+                        "type": "integer",
+                        "description": "The unique identifier of the document"
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "The title of the document",
+                        "minLength": 2,
+                        "maxLength": 64
+                    },
+                    "stakeholders": {
+                        "type": "array",
+                        "description": "The stakeholders of the document",
+                        "items": {
+                            "type": "string",
+                            "description": "The name of the stakeholder"
+                        }
+                    },
+                    "scale": {
+                        "description": "The scale of the document",
+                        "type": "string",
+                        "oneOf": [
+                            {
+                                "pattern": "text"
+                            },
+                            {
+                                "pattern": "blueprint/material effects"
+                            },
+                            {
+                                "pattern": "^1:[1-9][0-9]*$"
+                            }
+                        ]
+                    },
+                    "issuance_date": {
+                        "type": "string",
+                        "description": "The issuance date of the document in the format YYYY-MM-DD",
+                        "format": "date"
+                    },
+                    "type": {
+                        "type": "string",
+                        "description": "The type of the document",
+                        "enum": [
+                            "Design document",
+                            "Material effect",
+                            "Technical document",
+                            "Prescriptive document",
+                            "Informative document"
+                        ]
+                    },
+                    "nr_connections": {
+                        "type": "integer",
+                        "description": "The number of connections of the document"
+                    },
+                    "language": {
+                        "type": "string",
+                        "description": "The language of the document",
+                        "minLength": 2,
+                        "maxLength": 64
+                    },
+                    "nr_pages": {
+                        "type": "integer",
+                        "description": "The number of pages of the document",
+                        "minimum": 1
+                    },
+                    "geolocation": {
+                        "description": "The coordinates of the document",
+                        "oneOf": [
+                            {
+                                "type": "object",
+                                "description": "Coordinates in point notation",
+                                "properties": {
+                                    "latitude": {
+                                        "type": "string",
+                                        "pattern": "^(\\+|-)?(90(\\.0+)?|[0-8]?\\d(\\.\\d+)?)$"
+                                    },
+                                    "longitude": {
+                                        "type": "string",
+                                        "pattern": "^(\\+|-)?(180(\\.0+)?|1[0-7]\\d(\\.\\d+)?|0?\\d{1,2}(\\.\\d+)?)$"
+                                    }
+                                }
+                            },
+                            {
+                                "type": "string",
+                                "description": "The area of the document",
+                                "pattern": "Whole municipality",
+                                "minLength": 2,
+                                "maxLength": 64
+                            }
+                        ]
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "The description of the document",
+                        "maxLength": 1000
+                    }
+                },
+                "required": [
+                    "id",
+                    "title",
+                    "stakeholder",
+                    "scale",
+                    "issuance_date",
+                    "type",
+                    "geolocation"
+                ]
             },
             "documents": {
                 "type": "array",
@@ -74,7 +187,26 @@
                 }
             },
             "stakeholder": {
-                "$ref": "./schemas/stakeholder.json"
+                "title": "Stakeholder",
+                "description": "JSON schema for a stakeholder data structure",
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "The unique identifier of the stakeholder"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "The name of the stakeholder",
+                        "minLength": 2,
+                        "maxLength": 64
+                    }
+                },
+                "required": [
+                    "id",
+                    "name"
+                ]
             },
             "stakeholders": {
                 "type": "array",

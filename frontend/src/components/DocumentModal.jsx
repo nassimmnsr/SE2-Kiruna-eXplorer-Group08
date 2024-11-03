@@ -58,7 +58,7 @@ function DocumentModal(props) {
   const handleDeleteClick = () => {
     props.handleDelete(props.document.id);
     props.onHide();
-  }
+  };
 
   return (
     <Modal
@@ -66,7 +66,7 @@ function DocumentModal(props) {
       onHide={props.onHide}
       centered
       className="document-modal"
-      size="lg"
+      size="xl"
     >
       <Modal.Header closeButton className="modal-header">
         <Modal.Title>
@@ -91,7 +91,7 @@ function DocumentModal(props) {
                 {isEditable ? (
                   <input
                     type="text"
-                    value={stakeholders}
+                    value={stakeholders.join(", ")}
                     onChange={(e) => setStakeholders(e.target.value)}
                   />
                 ) : (
@@ -196,11 +196,27 @@ function DocumentModal(props) {
               <label>Location:</label>
               <span>
                 {isEditable ? (
-                  <input
-                    type="text"
-                    value={geolocation}
-                    onChange={(e) => setGeolocation(e.target.value)}
-                  />
+                  <>
+                    <input
+                      type="text"
+                      value={geolocation}
+                      onChange={(e) => setGeolocation(e.target.value)}
+                      disabled={geolocation === "Whole municipality"}
+                    />
+                    <br />
+                    <input
+                      type="checkbox"
+                      checked={geolocation === "Whole municipality"}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setGeolocation("Whole municipality");
+                        } else {
+                          setGeolocation("");
+                        }
+                      }}
+                    />
+                    <label className="ms-3 me-3">Whole&nbsp;municipality</label>
+                  </>
                 ) : (
                   geolocation
                 )}
