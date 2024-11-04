@@ -15,7 +15,7 @@ public class GeoReference {
 
     @Id
     @Column(name = "document_id") // Primary key and foreign key
-    private Integer documentId;
+    private Long documentId;
 
     @OneToOne
     @MapsId
