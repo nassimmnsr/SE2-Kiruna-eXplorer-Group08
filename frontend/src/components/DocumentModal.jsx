@@ -19,16 +19,19 @@ function DocumentModal(props) {
 
   // Update the state when the document prop changes
   useEffect(() => {
-    setTitle(props.document.title);
-    setStakeholders(props.document.stakeholders || []);
-    setScale(props.document.scale);
-    setIssuanceDate(props.document.issuance_date);
-    setType(props.document.type);
-    setNrConnections(props.document.nr_connections);
-    setLanguage(props.document.language);
-    setNrPages(props.document.nr_pages);
-    setGeolocation(props.document.geolocation);
-    setDescription(props.document.description);
+    if(props.document){
+      setIsEditable(props.document.isEditable || false);
+      setTitle(props.document.title);
+      setStakeholders(props.document.stakeholders || []);
+      setScale(props.document.scale);
+      setIssuanceDate(props.document.issuance_date);
+      setType(props.document.type);
+      setNrConnections(props.document.nr_connections);
+      setLanguage(props.document.language);
+      setNrPages(props.document.nr_pages);
+      setGeolocation(props.document.geolocation);
+      setDescription(props.document.description);
+    }
   }, [props.document]);
 
   // Handle the save button click
@@ -266,7 +269,7 @@ function DocumentFormComponent(props) {
             </Button>
           </div>
         ))}
-        <Button variant="primary" onClick={handleAddStakeholder}>
+        <br></br><Button variant="primary" onClick={handleAddStakeholder}>
           Add Stakeholder
         </Button>
       </Form.Group>
