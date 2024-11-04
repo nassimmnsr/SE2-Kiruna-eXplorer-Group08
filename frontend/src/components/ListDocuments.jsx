@@ -1,33 +1,25 @@
 // ListDocuments.js
 import { useEffect, useState } from "react";
-import { Container, Table, Row } from "react-bootstrap";
+import { Container, Row, Col, Card } from "react-bootstrap";
 
 import "../App.css";
 import DocumentModal from "./DocumentModal";
 import API from "../MockAPI";
-// import API from "../API";
-// import Document from "../model/Document";
 
 function ListDocuments() {
   const [documents, setDocuments] = useState([]);
   const [show, setShow] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState(null);
-  const [hoveredRow, setHoveredRow] = useState(null); // State to track hovered row
 
   useEffect(() => {
     API.getAvailableDocuments()
       .then((response) => {
         setDocuments(response);
-        console.log(documents);
       })
       .catch((error) => {
         console.error(error);
       });
   }, []);
-
-  useEffect(() => {
-    console.log(documents);
-  }, [documents]);
 
   const handleSelection = (document) => {
     setSelectedDocument(document);
@@ -42,62 +34,49 @@ function ListDocuments() {
   const handleDelete = (documentId) => {
     API.deleteDocument(documentId);
     setShow(false);
-  }
+  };
 
   return (
     <Container fluid className="d-flex flex-column vh-100 p-3">
-      <Row >
+      <Row>
         <h1>Documents</h1>
       </Row>
       <Row>
-        <p>Here you can find all the documents about Kiruna&apos;s relocation process.</p>
+        <p>Here you can find all the documents about Kiruna's relocation process.</p>
         <p>Click on a document to see more details.</p>
       </Row>
-      {/* Scrollable table body */}
       <div
         className="mx-auto"
         style={{
-          width: "80%",
-          height: "60vh",
-          overflowY: "auto",
-          marginBottom: "70px",
+          paddingBottom: "5rem"
         }}
       >
-        <Table hover className="mt-5">
-          <thead>
-            <tr>
-              <th></th>
-              <th>Title</th>
-              <th>Scale</th>
-              <th>Issuance Date</th>
-              <th>Type</th>
-            </tr>
-          </thead>
-          <tbody>
-            {documents.map((document, index) => (
-              <tr
-                key={document.id}
-                style={{ height: "60px", cursor: "pointer" }}
-                onClick={() => handleSelection(document)}
-                onMouseEnter={() => setHoveredRow(index)}
-                onMouseLeave={() => setHoveredRow(null)}
-              >
-                <td
-                  className="align-middle"
-                  style={{ width: "50px", textAlign: "center" }}
-                >
-                  {hoveredRow === index && <i className="bi bi-eye-fill "></i>}
-                </td>
-                <td className="align-middle">
-                  <em>{document.title}</em>
-                </td>
-                <td className="align-middle">{document.scale}</td>
-                <td className="align-middle">{document.issuance_date}</td>
-                <td className="align-middle">{document.type}</td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
+         <Row xs={1} sm={2} md={3} lg={4} className="g-4 mx-auto" style={{ width: "100%" }}>
+        {documents.map((document) => (
+          <Col key={document.id}>
+            <Card
+              className="document-card h-100"
+              onClick={() => handleSelection(document)}
+            >
+              <Card.Body>
+                <Card.Title className="document-card-title">
+                  {document.title}
+                </Card.Title>
+                <div className="divider" />
+                <Card.Text className="document-card-text">
+                  <strong>Scale:</strong> {document.scale}
+                </Card.Text>
+                <Card.Text className="document-card-text">
+                  <strong>Issuance Date:</strong> {document.issuance_date}
+                </Card.Text>
+                <Card.Text className="document-card-text">
+                  <strong>Type:</strong> {document.type}
+                </Card.Text>
+              </Card.Body>
+            </Card>
+          </Col>
+        ))}
+      </Row>
 
         {selectedDocument && (
           <DocumentModal
