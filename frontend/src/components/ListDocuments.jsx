@@ -5,6 +5,7 @@ import { Container, Row, Col, Card } from "react-bootstrap";
 import "../App.css";
 import DocumentModal from "./DocumentModal";
 import API from "../MockAPI";
+import { Button } from "react-bootstrap";
 
 function ListDocuments() {
   const [documents, setDocuments] = useState([]);
@@ -41,9 +42,22 @@ function ListDocuments() {
       <Row>
         <h1>Documents</h1>
       </Row>
-      <Row>
-        <p>Here you can find all the documents about Kiruna's relocation process.</p>
-        <p>Click on a document to see more details.</p>
+      <Row className="d-flex justify-content-between align-items-center mb-3">
+      <Col xs="auto">
+          <p>Here you can find all the documents about Kiruna's relocation process.</p>
+          <p>Click on a document to see more details.</p>
+      </Col>
+        <Col xs="auto">
+          <Button 
+          variant="primary"
+          style={{ width: "150px" }}
+          onClick={() => {
+            setSelectedDocument({ isEditable: true }); 
+            setShow(true);
+          }}>
+          Add new card
+          </Button>
+        </Col>
       </Row>
       <div
         className="mx-auto"
