@@ -269,7 +269,7 @@ function DocumentFormComponent(props) {
             </Button>
           </div>
         ))}
-        <Button variant="primary" onClick={handleAddStakeholder}>
+        <br></br><Button variant="primary" onClick={handleAddStakeholder}>
           Add Stakeholder
         </Button>
       </Form.Group>
