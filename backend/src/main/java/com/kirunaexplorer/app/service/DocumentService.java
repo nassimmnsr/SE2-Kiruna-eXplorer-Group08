@@ -13,6 +13,7 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -74,6 +75,7 @@ public class DocumentService {
      * @param document DocumentRequestDTO
      * @return DocumentRequestDTO
      */
+    @Transactional
     public DocumentRequestDTO createDocument(DocumentRequestDTO document) {
         Document newDocument = new Document(
             document.id(),
@@ -145,9 +147,23 @@ public class DocumentService {
 
     /***
      * Update a document
-     * @param document
+     * @param id Document id
+     * @param updatedDocument Document
+     * @return Document
      */
-    public void updateDocument(DocumentRequestDTO document) {
-        documentRepository.updateDocumentById(Integer.parseInt(String.valueOf(document.id())));
+    @Transactional
+    public Document updateDocument(DocumentRequestDTO updatedDocument) {
+        return documentRepository.findById(Long.valueOf(updatedDocument.id())).map(existingDocument -> {
+            existingDocument.setTitle(updatedDocument.title());
+            existingDocument.setDescription(updatedDocument.description());
+            existingDocument.setStakeholders(String.join(";", updatedDocument.stakeholders()));
+            existingDocument.setType(updatedDocument.type());
+            existingDocument.setScale(updatedDocument.scale());
+            existingDocument.setIssuanceDate(LocalDate.parse(updatedDocument.issuance_date()));
+            existingDocument.setLanguage(updatedDocument.language());
+            existingDocument.setPages(updatedDocument.nr_pages());
+            existingDocument.setUpdatedAt(LocalDateTime.now()); // Update timestamp
+            return documentRepository.save(existingDocument); // Save the updated document
+        }).orElseThrow(() -> new RuntimeException("Document not found"));
     }
 }
