@@ -1,7 +1,5 @@
 package com.kirunaexplorer.app.dto.response;
 
-import com.kirunaexplorer.app.dto.inout.GeolocationDTO;
-import com.kirunaexplorer.app.dto.inout.StakeholderDTO;
 import com.kirunaexplorer.app.model.GeoReference;
 
 import java.util.List;
