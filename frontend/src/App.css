@@ -56,6 +56,8 @@ html, body, #root {
 .modal-body {
   display: flex; /* Use flexbox to arrange items */
   padding: 1.5rem; /* Padding around the body */
+  max-height: 70vh; /* Adjust as needed */
+  overflow-y: auto;
 }
 
 .document-info {
@@ -70,6 +72,12 @@ html, body, #root {
 
 .description-area {
   flex: 1; /* Take equal space for the description */
+}
+
+.description-area label {
+  font-weight: 500; /* Medium weight for labels */
+  color: #555; /* Subtle gray for labels */
+  width: 40%; /* Fixed width for labels */
 }
 
 .info-item {
@@ -106,6 +114,12 @@ html, body, #root {
   border-radius: 4px; /* Rounded corners */
   padding: 0.5rem; /* Padding for text area */
   resize: none; /* Disable resizing */
+}
+
+.description-textarea label {
+  font-weight: 500; /* Medium weight for labels */
+  color: #555; /* Subtle gray for labels */
+  width: 40%; /* Fixed width for labels */
 }
 
 .modal-footer {
