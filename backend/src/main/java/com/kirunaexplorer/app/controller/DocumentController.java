@@ -56,5 +56,15 @@ public class DocumentController {
         return ResponseEntity.created(location).build();
     }
 
+    /***
+     * Endpoint to update a document
+     * @param document DocumentRequestDTO
+     * @return ResponseEntity<Void>
+     */
+    @PutMapping
+    public ResponseEntity<Void> updateDocument(@RequestBody DocumentRequestDTO document) {
+        documentService.updateDocument(document);
+        return ResponseEntity.noContent().build();
+    }
 }
 

@@ -142,4 +142,12 @@ public class DocumentService {
     private Integer getIdFromUri(String uri) {
         return Integer.parseInt(uri.substring(uri.lastIndexOf('/') + 1));
     }
+
+    /***
+     * Update a document
+     * @param document
+     */
+    public void updateDocument(DocumentRequestDTO document) {
+        documentRepository.updateDocumentById(Integer.parseInt(String.valueOf(document.id())));
+    }
 }
