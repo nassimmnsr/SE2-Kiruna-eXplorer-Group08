@@ -24,7 +24,8 @@
             "type": "array",
             "description": "The stakeholders of the document",
             "items": {
-                "name": "string"
+                "type": "string",
+                "description": "The name of the stakeholder"
             }
         },
         "scale": {
@@ -82,10 +83,12 @@
                     "properties": {
                         "latitude": {
                             "type": "string",
+                            "description": "The latitude of the document",
                             "pattern": "^(\\+|-)?(90(\\.0+)?|[0-8]?\\d(\\.\\d+)?)$"
                         },
                         "longitude": {
                             "type": "string",
+                            "description": "The longitude of the document",
                             "pattern": "^(\\+|-)?(180(\\.0+)?|1[0-7]\\d(\\.\\d+)?|0?\\d{1,2}(\\.\\d+)?)$"
                         }
                     }
@@ -103,6 +106,31 @@
             "type": "string",
             "description": "The description of the document",
             "maxLength": 1000
+        },
+        "links": {
+            "type": "array",
+            "description": "The links of the document",
+            "items": {
+                "type": "object",
+                "description": "The type of link and the URI to that resource",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "description": "The type of the link",
+                        "enum": [
+                            "Direct consequence",
+                            "Collateral consequence",
+                            "Projection",
+                            "Update"
+                        ]
+                    },
+                    "uri": {
+                        "type": "integer",
+                        "format": "id",
+                        "description": "The id of the document linked"
+                    }
+                }
+            }
         }
     },
     "required": [
