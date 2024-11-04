@@ -52,7 +52,7 @@ public class DocumentService {
             document.getType(),
             document.getDocumentLinks().size(),
             document.getLanguage(),
-            0,//document.getNrPages(),  // how tf do I get this?
+            document.getPages(),
             document.getGeoReference(),
             document.getDescription()
         );
