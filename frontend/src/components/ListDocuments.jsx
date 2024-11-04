@@ -32,6 +32,24 @@ function ListDocuments() {
     setShow(false);
   };
 
+  const handleAdd = (document) => {
+    API.addDocument(document)
+    .then(() => {
+      API.getAvailableDocuments()
+      .then((response) => {
+        setDocuments(response);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+    setShow(false);
+
+  }
+
   const handleDelete = (documentId) => {
     API.deleteDocument(documentId);
     setShow(false);
@@ -50,7 +68,7 @@ function ListDocuments() {
         <Col xs="auto">
           <Button 
           variant="primary"
-          style={{ width: "150px" }}
+          style={{ width: "150px"}}
           onClick={() => {
             setSelectedDocument({ isEditable: true }); 
             setShow(true);
@@ -102,6 +120,7 @@ function ListDocuments() {
             document={selectedDocument}
             handleSave={handleSave}
             handleDelete={handleDelete}
+            handleAdd={handleAdd}
           />
         )}
       </div>

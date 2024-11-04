@@ -16,57 +16,123 @@ function DocumentModal(props) {
   const [nrPages, setNrPages] = useState("");
   const [geolocation, setGeolocation] = useState("");
   const [description, setDescription] = useState("");
+  const [errors, setErrors] = useState({});
 
   // Update the state when the document prop changes
   useEffect(() => {
     if(props.document){
       setIsEditable(props.document.isEditable || false);
-      setTitle(props.document.title);
+      setTitle(props.document.title || '');
       setStakeholders(props.document.stakeholders || []);
-      setScale(props.document.scale);
-      setIssuanceDate(props.document.issuance_date);
-      setType(props.document.type);
-      setNrConnections(props.document.nr_connections);
-      setLanguage(props.document.language);
-      setNrPages(props.document.nr_pages);
-      setGeolocation(props.document.geolocation);
-      setDescription(props.document.description);
+      setScale(props.document.scale || '');
+      setIssuanceDate(props.document.issuance_date || '');
+      setType(props.document.type || '');
+      setNrConnections(props.document.nr_connections  || '');
+      setLanguage(props.document.language || '');
+      setNrPages(props.document.nr_pages  || '');
+      setGeolocation(props.document.geolocation || '');
+      setDescription(props.document.description || '');
     }
+    setErrors({});
   }, [props.document]);
 
-  // Handle the save button click
-  const handleSaveClick = () => {
-    if (
-      !title ||
-      !scale ||
-      !issuanceDate ||
-      !type ||
-      !nrConnections ||
-      !language ||
-      !nrPages ||
-      !geolocation ||
-      !description
-    ) {
-      alert("Please fill in all required fields.");
-    } else {
-      props.handleSave(
-        new Document(
-          props.document.id,
-          title,
-          stakeholders,
-          scale,
-          issuanceDate,
-          type,
-          nrConnections,
-          language,
-          nrPages,
-          geolocation,
-          description
-        )
-      );
-      props.onHide();
+  const validateForm = () => {
+    const validationErrors = {};
+    
+    if(title.trim() === '' || title === null ){
+        validationErrors.title = 'This field cannot be empty.';
+    } else if(title.length < 2){
+        validationErrors.title = 'Title must be at least 2 characters long.';
+    } else if(title.length > 64){
+        validationErrors.title = 'Title must be at most 64 characters long.';
+    } 
+
+    if(scale.trim() === '' || scale === null ){
+        validationErrors.scale = 'This field cannot be empty.';
+    } else if (scale !== 'text' && scale !== 'blueprint/material effects' && !scale.match('^1:[1-9][0-9]*$')) {
+        validationErrors.scale = 'Please enter a valid scale. (ex. text, blueprint/material effects, 1:100)';
     }
-  };
+
+    if(issuanceDate.trim() === '' || issuanceDate === null ){
+        validationErrors.issuanceDate = 'This field cannot be empty.';
+    } else if(!issuanceDate.match( '\b(?:(?:(?:0[1-9]|1\d|2[0-8])/(0[1-9]|1[0-2])|(?:29|30)/(0[13-9]|1[0-2])|31/(0[13578]|1[02]))/(\d{4})|29/02/(?:(?:\d{2}(?:0[48]|[2468][048]|[13579][26]))|(?:[02468][048]00|[13579][26]00)))\b')){
+        validationErrors.issuanceDate = 'Please enter a valid date. (ex. 01/01/2021)';
+    }
+
+    if(type.trim() === '' || type === null ){
+        validationErrors.type = 'This field cannot be empty.';
+    }
+
+    if(description.trim() === '' || description === null ){
+        validationErrors.description = 'This field cannot be empty.';
+    } else if(description.length < 2){
+        validationErrors.description = 'Description must be at least 2 characters long.';
+    } else if(description.length > 1000){
+        validationErrors.description = 'Description must be at most 1000 characters long.';
+    }
+
+    if(stakeholders.length === 0){
+        validationErrors.stakeholders = 'This field cannot be empty.';
+    } else {
+      for (let s of stakeholders) {
+        if (s.trim() === '' || s === null) {
+          validationErrors.stakeholders = 'This field cannot be empty.';
+        } 
+      }
+    }
+
+    if(language.trim() !== '' && language !== null && language.length > 64){
+        validationErrors.language = 'Language must be at most 64 characters long.';
+    }
+
+    if(!isNaN(nrPages)){
+        validationErrors.nrPages = 'Please enter a valid number of pages.';
+    }
+
+    if(geolocation.trim() !== '' && geolocation !== null 
+     //&& !geolocation.match(/^(\+|-)?(90(\.0+)?|[0-8]?\d(\.\d+)?),\s*(\+|-)?(180(\.0+)?|1[0-7]\d(\.\d+)?|0?\d{1,2}(\.\d+)?)$/)
+      && geolocation !== 'Whole municipality'
+    ){
+        validationErrors.geolocation = 'Please enter a valid geolocation. (ex. ';
+    } else if(geolocation === "Whole municipality" && geolocation.length > 64){
+        validationErrors.geolocation = 'Geolocation must be at most 64 characters long.';
+    }
+    
+    
+    return validationErrors;
+}
+
+const handleSubmit = (e) => { 
+  e.preventDefault();
+
+  const validationErrors = validateForm();
+  if (Object.keys(validationErrors).length > 0) {
+    setErrors(validationErrors);
+    return;
+  }
+
+  if (props.document.id === null) {
+    props.handleAdd(new Document(null, title, stakeholders, scale, issuanceDate, type, language, nrPages, geolocation, description));
+  } else {
+    props.handleSave(
+      new Document(
+        props.document.id,
+        title,
+        stakeholders,
+        scale,
+        issuanceDate,
+        type,
+        nrConnections,
+        language,
+        nrPages,
+        geolocation,
+        description
+      )
+    );
+  }
+  props.onHide();
+};
+
 
   const handleModifyClick = () => {
     setIsEditable(true);
@@ -109,6 +175,9 @@ function DocumentModal(props) {
             setNrPages={setNrPages}
             setGeolocation={setGeolocation}
             setDescription={setDescription}
+            errors={errors}
+            setErrors={setErrors}
+            handleSubmit={handleSubmit}
           />
         ) : (
           <ModalBodyComponent
@@ -130,8 +199,8 @@ function DocumentModal(props) {
           Close
         </Button>
         {isEditable ? (
-          <Button variant="primary" onClick={handleSaveClick}>
-            Save Changes
+          <Button variant="primary" onClick={handleSubmit}>
+            Save
           </Button>
         ) : (
           <Button variant="primary" onClick={handleModifyClick}>
@@ -244,10 +313,14 @@ function DocumentFormComponent(props) {
           type="text"
           value={props.title}
           onChange={(e) => props.setTitle(e.target.value)}
+          isInvalid={!!props.errors.title}
           minLength={2}
           maxLength={64}
           required
         />
+        {props.errors.title && (
+          <Form.Control.Feedback type="invalid">{props.errors.title}</Form.Control.Feedback>
+        )}
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="formDocumentStakeholders">
@@ -258,6 +331,7 @@ function DocumentFormComponent(props) {
               type="text"
               value={stakeholder}
               onChange={(e) => handleStakeholderChange(index, e.target.value)}
+              isInvalid={!!props.errors.stakeholders}
               required
             />
             <Button
@@ -269,7 +343,10 @@ function DocumentFormComponent(props) {
             </Button>
           </div>
         ))}
-        <br></br><Button variant="primary" onClick={handleAddStakeholder}>
+        {props.errors.stakeholders && (
+          <Form.Control.Feedback type="invalid">{props.errors.stakeholders}</Form.Control.Feedback>
+        )}
+        <Button variant="primary" onClick={handleAddStakeholder}>
           Add Stakeholder
         </Button>
       </Form.Group>
@@ -280,8 +357,12 @@ function DocumentFormComponent(props) {
           type="text"
           value={props.scale}
           onChange={(e) => props.setScale(e.target.value)}
+          isInvalid={!!props.errors.scale}
           required
         />
+        {props.errors.scale && (
+          <Form.Control.Feedback type="invalid">{props.errors.scale}</Form.Control.Feedback>
+        )}
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="formDocumentIssuanceDate">
@@ -290,8 +371,12 @@ function DocumentFormComponent(props) {
           type="date"
           value={props.issuanceDate}
           onChange={(e) => props.setIssuanceDate(e.target.value)}
+          isInvalid={!!props.errors.issuanceDate}
           required
         />
+        {props.errors.issuanceDate && (
+          <Form.Control.Feedback type="invalid">{props.errors.issuanceDate}</Form.Control.Feedback>
+        )}
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="formDocumentType">
@@ -300,6 +385,7 @@ function DocumentFormComponent(props) {
           as="select"
           value={props.type}
           onChange={(e) => props.setType(e.target.value)}
+          isInvalid={!!props.errors.type}
           required
         >
           <option value="">Select type</option>
@@ -309,49 +395,44 @@ function DocumentFormComponent(props) {
           <option value="Prescriptive document">Prescriptive document</option>
           <option value="Informative document">Informative document</option>
         </Form.Control>
+        {props.errors.type && (
+          <Form.Control.Feedback type="invalid">{props.errors.type}</Form.Control.Feedback>
+        )}
       </Form.Group>
-
-      <Form.Group className="mb-3" controlId="formDocumentNrConnections">
+      {/*<Form.Group className="mb-3" controlId="formDocumentNrConnections">
         <Form.Label>Connections</Form.Label>
         <Form.Control
           type="text"
           value={props.nrConnections}
           onChange={(e) => props.setNrConnections(e.target.value)}
-          required
         />
-      </Form.Group>
-
+      </Form.Group>*/}      
       <Form.Group className="mb-3" controlId="formDocumentLanguage">
         <Form.Label>Language</Form.Label>
         <Form.Control
           type="text"
           value={props.language}
           onChange={(e) => props.setLanguage(e.target.value)}
-          required
         />
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="formDocumentNrPages">
-        <Form.Label>Number of Pages</Form.Label>
+        <Form.Label>Pages</Form.Label>
         <Form.Control
           type="text"
           value={props.nrPages}
           onChange={(e) => props.setNrPages(e.target.value)}
-          required
         />
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="formDocumentGeolocation">
-        <Form.Label>Geolocation</Form.Label>
+        <Form.Label>Location</Form.Label>
         <Form.Control
           type="text"
           value={props.geolocation}
           onChange={(e) => props.setGeolocation(e.target.value)}
-          required
         />
-        
       </Form.Group>
-
       <Form.Group className="mb-3" controlId="formDocumentWholeMunicipality">
         <Form.Check
           type="checkbox"
@@ -369,6 +450,9 @@ function DocumentFormComponent(props) {
           Enter geolocation in the format <em>latitude, longitude</em> or check the box to select the entire municipality area.
         </Form.Text>
       </Form.Group>
+          {props.errors.geolocation && (
+            <Form.Control.Feedback type="invalid">{props.errors.geolocation}</Form.Control.Feedback>
+          )}
       <Form.Group className="mb-3" controlId="formDocumentDescription">
         <Form.Label>Description</Form.Label>
         <Form.Control
@@ -376,12 +460,17 @@ function DocumentFormComponent(props) {
           rows={3}
           value={props.description}
           onChange={(e) => props.setDescription(e.target.value)}
+          isInvalid={!!props.errors.description}
           required
         />
+        {props.errors.description && (
+          <Form.Control.Feedback type="invalid">{props.errors.description}</Form.Control.Feedback>
+        )}
       </Form.Group>
     </Form>
   );
 }
+
 
 DocumentFormComponent.propTypes = {
   title: PropTypes.string.isRequired,
@@ -404,6 +493,8 @@ DocumentFormComponent.propTypes = {
   setNrPages: PropTypes.func.isRequired,
   setGeolocation: PropTypes.func.isRequired,
   setDescription: PropTypes.func.isRequired,
+  errors: PropTypes.object.isRequired,
+  setErrors: PropTypes.func.isRequired,
 };
 
 export default DocumentModal;
