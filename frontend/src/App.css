@@ -150,3 +150,20 @@ button:hover {
   color: gray;
   margin-bottom: 0.5rem; 
 }
+
+.splash-background {
+  background-image: url('./public/KX_BckG.webp');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.splash-title {
+  color: white;
+  font-size: 8rem;
+}

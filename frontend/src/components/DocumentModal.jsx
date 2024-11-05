@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import { Button, Modal, Form } from "react-bootstrap";
 import Document from "../model/Document.mjs";
+import dayjs from "dayjs";
 
 function DocumentModal(props) {
   const [isEditable, setIsEditable] = useState(false);
@@ -20,119 +21,145 @@ function DocumentModal(props) {
 
   // Update the state when the document prop changes
   useEffect(() => {
-    if(props.document){
+    if (props.document) {
       setIsEditable(props.document.isEditable || false);
-      setTitle(props.document.title || '');
+      setTitle(props.document.title || "");
       setStakeholders(props.document.stakeholders || []);
-      setScale(props.document.scale || '');
-      setIssuanceDate(props.document.issuance_date || '');
-      setType(props.document.type || '');
-      setNrConnections(props.document.nr_connections  || '');
-      setLanguage(props.document.language || '');
-      setNrPages(props.document.nr_pages  || '');
-      setGeolocation(props.document.geolocation || '');
-      setDescription(props.document.description || '');
+      setScale(props.document.scale || "");
+      setIssuanceDate(props.document.issuance_date || "");
+      setType(props.document.type || "");
+      setNrConnections(props.document.nr_connections || "");
+      setLanguage(props.document.language || "");
+      setNrPages(props.document.nr_pages || "");
+      setGeolocation(props.document.geolocation || "");
+      setDescription(props.document.description || "");
     }
     setErrors({});
   }, [props.document]);
 
   const validateForm = () => {
     const validationErrors = {};
-    
-    if(title.trim() === '' || title === null ){
-        validationErrors.title = 'This field cannot be empty.';
-    } else if(title.length < 2){
-        validationErrors.title = 'Title must be at least 2 characters long.';
-    } else if(title.length > 64){
-        validationErrors.title = 'Title must be at most 64 characters long.';
-    } 
 
-    if(scale.trim() === '' || scale === null ){
-        validationErrors.scale = 'This field cannot be empty.';
-    } else if (scale !== 'text' && scale !== 'blueprint/material effects' && !scale.match('^1:[1-9][0-9]*$')) {
-        validationErrors.scale = 'Please enter a valid scale. (ex. text, blueprint/material effects, 1:100)';
+    if (title.trim() === "" || title === null) {
+      validationErrors.title = "This field cannot be empty.";
+    } else if (title.length < 2) {
+      validationErrors.title = "Title must be at least 2 characters long.";
+    } else if (title.length > 64) {
+      validationErrors.title = "Title must be at most 64 characters long.";
     }
 
-    if(issuanceDate.trim() === '' || issuanceDate === null ){
-        validationErrors.issuanceDate = 'This field cannot be empty.';
-    } else if(!issuanceDate.match( '\b(?:(?:(?:0[1-9]|1\d|2[0-8])/(0[1-9]|1[0-2])|(?:29|30)/(0[13-9]|1[0-2])|31/(0[13578]|1[02]))/(\d{4})|29/02/(?:(?:\d{2}(?:0[48]|[2468][048]|[13579][26]))|(?:[02468][048]00|[13579][26]00)))\b')){
-        validationErrors.issuanceDate = 'Please enter a valid date. (ex. 01/01/2021)';
+    if (scale.trim() === "" || scale === null) {
+      validationErrors.scale = "This field cannot be empty.";
+    } else if (
+      scale !== "text" &&
+      scale !== "blueprint/material effects" &&
+      !scale.match("^1:[1-9][0-9]*$")
+    ) {
+      validationErrors.scale =
+        "Please enter a valid scale. (ex. text, blueprint/material effects, 1:100)";
     }
 
-    if(type.trim() === '' || type === null ){
-        validationErrors.type = 'This field cannot be empty.';
+    if (issuanceDate.trim() === "" || issuanceDate === null) {
+      validationErrors.issuanceDate = "This field cannot be empty.";
+    } else if (!dayjs(issuanceDate, "YYYY-MM-DD").isValid()) {
+      validationErrors.issuanceDate =
+        "Please enter a valid date. (ex. 01/01/2021)";
     }
 
-    if(description.trim() === '' || description === null ){
-        validationErrors.description = 'This field cannot be empty.';
-    } else if(description.length < 2){
-        validationErrors.description = 'Description must be at least 2 characters long.';
-    } else if(description.length > 1000){
-        validationErrors.description = 'Description must be at most 1000 characters long.';
+    if (type.trim() === "" || type === null) {
+      validationErrors.type = "This field cannot be empty.";
     }
 
-    if(stakeholders.length === 0){
-        validationErrors.stakeholders = 'This field cannot be empty.';
+    if (description.trim() === "" || description === null) {
+      validationErrors.description = "This field cannot be empty.";
+    } else if (description.length < 2) {
+      validationErrors.description =
+        "Description must be at least 2 characters long.";
+    } else if (description.length > 1000) {
+      validationErrors.description =
+        "Description must be at most 1000 characters long.";
+    }
+
+    if (stakeholders.length === 0) {
+      validationErrors.stakeholders = "This field cannot be empty.";
     } else {
       for (let s of stakeholders) {
-        if (s.trim() === '' || s === null) {
-          validationErrors.stakeholders = 'This field cannot be empty.';
-        } 
+        if (s.trim() === "" || s === null) {
+          validationErrors.stakeholders = "This field cannot be empty.";
+        }
       }
     }
 
-    if(language.trim() !== '' && language !== null && language.length > 64){
-        validationErrors.language = 'Language must be at most 64 characters long.';
+    if (language.trim() !== "" && language !== null && language.length > 64) {
+      validationErrors.language =
+        "Language must be at most 64 characters long.";
     }
 
-    if(!isNaN(nrPages)){
-        validationErrors.nrPages = 'Please enter a valid number of pages.';
+    if (!isNaN(nrPages)) {
+      validationErrors.nrPages = "Please enter a valid number of pages.";
     }
 
-    if(geolocation.trim() !== '' && geolocation !== null 
-     //&& !geolocation.match(/^(\+|-)?(90(\.0+)?|[0-8]?\d(\.\d+)?),\s*(\+|-)?(180(\.0+)?|1[0-7]\d(\.\d+)?|0?\d{1,2}(\.\d+)?)$/)
-      && geolocation !== 'Whole municipality'
-    ){
-        validationErrors.geolocation = 'Please enter a valid geolocation. (ex. ';
-    } else if(geolocation === "Whole municipality" && geolocation.length > 64){
-        validationErrors.geolocation = 'Geolocation must be at most 64 characters long.';
+    if (
+      geolocation.trim() !== "" &&
+      geolocation !== null &&
+      //&& !geolocation.match(/^(\+|-)?(90(\.0+)?|[0-8]?\d(\.\d+)?),\s*(\+|-)?(180(\.0+)?|1[0-7]\d(\.\d+)?|0?\d{1,2}(\.\d+)?)$/)
+      geolocation !== "Whole municipality"
+    ) {
+      validationErrors.geolocation = "Please enter a valid geolocation. (ex. ";
+    } else if (
+      geolocation === "Whole municipality" &&
+      geolocation.length > 64
+    ) {
+      validationErrors.geolocation =
+        "Geolocation must be at most 64 characters long.";
     }
-    
-    
+
     return validationErrors;
-}
+  };
 
-const handleSubmit = (e) => { 
-  e.preventDefault();
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-  const validationErrors = validateForm();
-  if (Object.keys(validationErrors).length > 0) {
-    setErrors(validationErrors);
-    return;
-  }
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
 
-  if (props.document.id === null) {
-    props.handleAdd(new Document(null, title, stakeholders, scale, issuanceDate, type, language, nrPages, geolocation, description));
-  } else {
-    props.handleSave(
-      new Document(
-        props.document.id,
-        title,
-        stakeholders,
-        scale,
-        issuanceDate,
-        type,
-        nrConnections,
-        language,
-        nrPages,
-        geolocation,
-        description
-      )
-    );
-  }
-  props.onHide();
-};
-
+    if (props.document.id === null) {
+      props.handleAdd(
+        new Document(
+          null,
+          title,
+          stakeholders,
+          scale,
+          issuanceDate,
+          type,
+          language,
+          nrPages,
+          geolocation,
+          description
+        )
+      );
+    } else {
+      props.handleSave(
+        new Document(
+          props.document.id,
+          title,
+          stakeholders,
+          scale,
+          issuanceDate,
+          type,
+          nrConnections,
+          language,
+          nrPages,
+          geolocation,
+          description
+        )
+      );
+    }
+    props.onHide();
+  };
 
   const handleModifyClick = () => {
     setIsEditable(true);
@@ -217,6 +244,7 @@ DocumentModal.propTypes = {
   onHide: PropTypes.func.isRequired,
   document: PropTypes.object.isRequired,
   handleSave: PropTypes.func.isRequired,
+  handleAdd: PropTypes.func.isRequired,
 };
 
 function ModalBodyComponent(props) {
@@ -319,7 +347,9 @@ function DocumentFormComponent(props) {
           required
         />
         {props.errors.title && (
-          <Form.Control.Feedback type="invalid">{props.errors.title}</Form.Control.Feedback>
+          <Form.Control.Feedback type="invalid">
+            {props.errors.title}
+          </Form.Control.Feedback>
         )}
       </Form.Group>
 
@@ -344,7 +374,9 @@ function DocumentFormComponent(props) {
           </div>
         ))}
         {props.errors.stakeholders && (
-          <Form.Control.Feedback type="invalid">{props.errors.stakeholders}</Form.Control.Feedback>
+          <Form.Control.Feedback type="invalid">
+            {props.errors.stakeholders}
+          </Form.Control.Feedback>
         )}
         <Button variant="primary" onClick={handleAddStakeholder}>
           Add Stakeholder
@@ -361,7 +393,9 @@ function DocumentFormComponent(props) {
           required
         />
         {props.errors.scale && (
-          <Form.Control.Feedback type="invalid">{props.errors.scale}</Form.Control.Feedback>
+          <Form.Control.Feedback type="invalid">
+            {props.errors.scale}
+          </Form.Control.Feedback>
         )}
       </Form.Group>
 
@@ -375,7 +409,9 @@ function DocumentFormComponent(props) {
           required
         />
         {props.errors.issuanceDate && (
-          <Form.Control.Feedback type="invalid">{props.errors.issuanceDate}</Form.Control.Feedback>
+          <Form.Control.Feedback type="invalid">
+            {props.errors.issuanceDate}
+          </Form.Control.Feedback>
         )}
       </Form.Group>
 
@@ -396,7 +432,9 @@ function DocumentFormComponent(props) {
           <option value="Informative document">Informative document</option>
         </Form.Control>
         {props.errors.type && (
-          <Form.Control.Feedback type="invalid">{props.errors.type}</Form.Control.Feedback>
+          <Form.Control.Feedback type="invalid">
+            {props.errors.type}
+          </Form.Control.Feedback>
         )}
       </Form.Group>
       {/*<Form.Group className="mb-3" controlId="formDocumentNrConnections">
@@ -406,7 +444,7 @@ function DocumentFormComponent(props) {
           value={props.nrConnections}
           onChange={(e) => props.setNrConnections(e.target.value)}
         />
-      </Form.Group>*/}      
+      </Form.Group>*/}
       <Form.Group className="mb-3" controlId="formDocumentLanguage">
         <Form.Label>Language</Form.Label>
         <Form.Control
@@ -447,12 +485,15 @@ function DocumentFormComponent(props) {
         />
         <Form.Text>
           <i className="bi bi-info-circle me-2"></i>
-          Enter geolocation in the format <em>latitude, longitude</em> or check the box to select the entire municipality area.
+          Enter geolocation in the format <em>latitude, longitude</em> or check
+          the box to select the entire municipality area.
         </Form.Text>
       </Form.Group>
-          {props.errors.geolocation && (
-            <Form.Control.Feedback type="invalid">{props.errors.geolocation}</Form.Control.Feedback>
-          )}
+      {props.errors.geolocation && (
+        <Form.Control.Feedback type="invalid">
+          {props.errors.geolocation}
+        </Form.Control.Feedback>
+      )}
       <Form.Group className="mb-3" controlId="formDocumentDescription">
         <Form.Label>Description</Form.Label>
         <Form.Control
@@ -464,13 +505,14 @@ function DocumentFormComponent(props) {
           required
         />
         {props.errors.description && (
-          <Form.Control.Feedback type="invalid">{props.errors.description}</Form.Control.Feedback>
+          <Form.Control.Feedback type="invalid">
+            {props.errors.description}
+          </Form.Control.Feedback>
         )}
       </Form.Group>
     </Form>
   );
 }
-
 
 DocumentFormComponent.propTypes = {
   title: PropTypes.string.isRequired,
