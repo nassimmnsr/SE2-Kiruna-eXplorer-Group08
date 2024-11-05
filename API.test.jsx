@@ -1,5 +1,5 @@
 const request = require('supertest');
-const baseURL = 'http://localhost:5332'; // Adjust as necessary
+const baseURL = 'http://localhost:8080/api'; // Adjust as necessary
 
 describe('KirunaExplorer API Tests', () => {
 
