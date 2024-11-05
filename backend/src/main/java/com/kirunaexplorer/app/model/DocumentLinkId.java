@@ -10,9 +10,11 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Embeddable
+@AllArgsConstructor
+@NoArgsConstructor
 public class DocumentLinkId implements Serializable {
     @Column(name = "document_id")
-    private Integer documentId;
+    private Long documentId;
     @Column(name = "linked_document_id")
-    private Integer linkedDocumentId;
+    private Long linkedDocumentId;
 }

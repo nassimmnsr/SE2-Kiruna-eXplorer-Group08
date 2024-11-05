@@ -14,7 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
-@Table(name =   "DOCUMENT")
+@Table(name = "DOCUMENT")
 public class Document {
 
     public enum DatePrecision {
@@ -25,7 +25,7 @@ public class Document {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     private String title;
 

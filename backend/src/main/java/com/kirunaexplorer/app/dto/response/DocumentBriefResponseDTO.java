@@ -1,7 +1,7 @@
 package com.kirunaexplorer.app.dto.response;
 
 public record DocumentBriefResponseDTO(
-    Integer id,
+    Long id,
     String title,
     String scale,
     String issuance_date,
