@@ -1,7 +1,7 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "id": "http://KirunaExplorer.com/schemas/document.json",
-    "title": "Schema for a document",
+    "title": "Document",
     "type": "object",
     "additionalProperties": false,
     "properties": {
@@ -20,11 +20,13 @@
             "minLength": 2,
             "maxLength": 64
         },
-        "stakeholder": {
-            "type": "string",
-            "description": "The stakeholder of the document",
-            "minLength": 2,
-            "maxLength": 64
+        "stakeholders": {
+            "type": "array",
+            "description": "The stakeholders of the document",
+            "items": {
+                "type": "string",
+                "description": "The name of the stakeholder"
+            }
         },
         "scale": {
             "description": "The scale of the document",
@@ -81,10 +83,12 @@
                     "properties": {
                         "latitude": {
                             "type": "string",
+                            "description": "The latitude of the document",
                             "pattern": "^(\\+|-)?(90(\\.0+)?|[0-8]?\\d(\\.\\d+)?)$"
                         },
                         "longitude": {
                             "type": "string",
+                            "description": "The longitude of the document",
                             "pattern": "^(\\+|-)?(180(\\.0+)?|1[0-7]\\d(\\.\\d+)?|0?\\d{1,2}(\\.\\d+)?)$"
                         }
                     }
@@ -92,6 +96,7 @@
                 {
                     "type": "string",
                     "description": "The area of the document",
+                    "pattern": "Whole municipality",
                     "minLength": 2,
                     "maxLength": 64
                 }
@@ -101,6 +106,31 @@
             "type": "string",
             "description": "The description of the document",
             "maxLength": 1000
+        },
+        "links": {
+            "type": "array",
+            "description": "The links of the document",
+            "items": {
+                "type": "object",
+                "description": "The type of link and the URI to that resource",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "description": "The type of the link",
+                        "enum": [
+                            "Direct consequence",
+                            "Collateral consequence",
+                            "Projection",
+                            "Update"
+                        ]
+                    },
+                    "uri": {
+                        "type": "integer",
+                        "format": "id",
+                        "description": "The id of the document linked"
+                    }
+                }
+            }
         }
     },
     "required": [

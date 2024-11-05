@@ -9,12 +9,236 @@
     "components": {
         "schemas": {
             "document": {
-                "$ref": "schemas/document.json"
+                "title": "Document",
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "$schema": {
+                        "type": "string",
+                        "format": "uri",
+                        "description": "path to the JSON schema to use for the validation of the JSON file describing a document"
+                    },
+                    "id": {
+                        "type": "integer",
+                        "description": "The unique identifier of the document"
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "The title of the document",
+                        "minLength": 2,
+                        "maxLength": 64
+                    },
+                    "stakeholders": {
+                        "type": "array",
+                        "description": "The stakeholders of the document",
+                        "items": {
+                            "type": "string",
+                            "description": "The name of the stakeholder"
+                        }
+                    },
+                    "scale": {
+                        "description": "The scale of the document",
+                        "type": "string",
+                        "oneOf": [
+                            {
+                                "pattern": "text"
+                            },
+                            {
+                                "pattern": "blueprint/material effects"
+                            },
+                            {
+                                "pattern": "^1:[1-9][0-9]*$"
+                            }
+                        ]
+                    },
+                    "issuance_date": {
+                        "type": "string",
+                        "description": "The issuance date of the document in the format YYYY-MM-DD",
+                        "format": "date"
+                    },
+                    "type": {
+                        "type": "string",
+                        "description": "The type of the document",
+                        "enum": [
+                            "Design document",
+                            "Material effect",
+                            "Technical document",
+                            "Prescriptive document",
+                            "Informative document"
+                        ]
+                    },
+                    "nr_connections": {
+                        "type": "integer",
+                        "description": "The number of connections of the document"
+                    },
+                    "language": {
+                        "type": "string",
+                        "description": "The language of the document",
+                        "minLength": 2,
+                        "maxLength": 64
+                    },
+                    "nr_pages": {
+                        "type": "integer",
+                        "description": "The number of pages of the document",
+                        "minimum": 1
+                    },
+                    "geolocation": {
+                        "description": "The coordinates of the document",
+                        "oneOf": [
+                            {
+                                "type": "object",
+                                "description": "Coordinates in point notation",
+                                "properties": {
+                                    "latitude": {
+                                        "type": "string",
+                                        "description": "The latitude of the document",
+                                        "pattern": "^(\\+|-)?(90(\\.0+)?|[0-8]?\\d(\\.\\d+)?)$"
+                                    },
+                                    "longitude": {
+                                        "type": "string",
+                                        "description": "The longitude of the document",
+                                        "pattern": "^(\\+|-)?(180(\\.0+)?|1[0-7]\\d(\\.\\d+)?|0?\\d{1,2}(\\.\\d+)?)$"
+                                    }
+                                }
+                            },
+                            {
+                                "type": "string",
+                                "description": "The area of the document",
+                                "pattern": "Whole municipality",
+                                "minLength": 2,
+                                "maxLength": 64
+                            }
+                        ]
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "The description of the document",
+                        "maxLength": 1000
+                    },
+                    "links": {
+                        "type": "array",
+                        "description": "The links of the document",
+                        "items": {
+                            "type": "object",
+                            "description": "The type of link and the URI to that resource",
+                            "properties": {
+                                "type": {
+                                    "type": "string",
+                                    "description": "The type of the link",
+                                    "enum": [
+                                        "Direct consequence",
+                                        "Collateral consequence",
+                                        "Projection",
+                                        "Update"
+                                    ]
+                                },
+                                "uri": {
+                                    "type": "integer",
+                                    "format": "id",
+                                    "description": "The id of the document linked"
+                                }
+                            }
+                        }
+                    }
+                },
+                "required": [
+                    "id",
+                    "title",
+                    "stakeholder",
+                    "scale",
+                    "issuance_date",
+                    "type",
+                    "geolocation"
+                ]
             },
             "documents": {
                 "type": "array",
                 "items": {
-                    "$ref": "#/components/schemas/document"
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "$schema": {
+                            "type": "string",
+                            "format": "uri",
+                            "description": "path to the JSON schema to use for the validation of the JSON file describing a document"
+                        },
+                        "id": {
+                            "type": "integer",
+                            "description": "The unique identifier of the document"
+                        },
+                        "title": {
+                            "type": "string",
+                            "description": "The title of the document",
+                            "minLength": 2,
+                            "maxLength": 64
+                        },
+                        "scale": {
+                            "description": "The scale of the document",
+                            "type": "string",
+                            "oneOf": [
+                                {
+                                    "pattern": "text"
+                                },
+                                {
+                                    "pattern": "blueprint/material effects"
+                                },
+                                {
+                                    "pattern": "^1:[1-9][0-9]*$"
+                                }
+                            ]
+                        },
+                        "issuance_date": {
+                            "type": "string",
+                            "description": "The issuance date of the document in the format YYYY-MM-DD",
+                            "format": "date"
+                        },
+                        "type": {
+                            "type": "string",
+                            "description": "The type of the document",
+                            "enum": [
+                                "Design document",
+                                "Material effect",
+                                "Technical document",
+                                "Prescriptive document",
+                                "Informative document"
+                            ]
+                        }
+                    },
+                    "required": [
+                        "id",
+                        "title",
+                        "scale",
+                        "issuance_date",
+                        "type"
+                    ]
+                }
+            },
+            "stakeholder": {
+                "title": "Stakeholder",
+                "description": "JSON schema for a stakeholder data structure",
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "The unique identifier of the stakeholder"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "The name of the stakeholder",
+                        "minLength": 2,
+                        "maxLength": 64
+                    }
+                },
+                "required": [
+                    "id",
+                    "name"
+                ]
+            },
+            "stakeholders": {
+                "type": "array",
+                "items": {
+                    "$ref": "#/components/schemas/stakeholder"
                 }
             }
         }
@@ -24,7 +248,7 @@
             "get": {
                 "summary": "Get all documents",
                 "tags": [
-                    "documents"
+                    "document"
                 ],
                 "parameters": [
                     {
@@ -45,13 +269,16 @@
                                 }
                             }
                         }
+                    },
+                    "500": {
+                        "description": "Internal server error"
                     }
                 }
             },
             "post": {
                 "summary": "Create a new document",
                 "tags": [
-                    "documents"
+                    "document"
                 ],
                 "parameters": [],
                 "requestBody": {
@@ -78,6 +305,47 @@
                                 }
                             }
                         }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update a document",
+                "tags": [
+                    "document"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/document"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string",
+                                    "description": "The reason why the request was bad"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
                     }
                 }
             }
@@ -111,11 +379,14 @@
                     },
                     "404": {
                         "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
                     }
                 }
             },
-            "put": {
-                "summary": "Update a document",
+            "delete": {
+                "summary": "Delete a document",
                 "tags": [
                     "document"
                 ],
@@ -128,6 +399,97 @@
                         "in": "path",
                         "required": true
                     }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/documents/{id}/links": {
+            "parameters": [
+                {
+                    "name": "id",
+                    "schema": {
+                        "type": "integer"
+                    },
+                    "in": "path",
+                    "required": true
+                }
+            ],
+            "get": {
+                "summary": "Get all links of a document",
+                "tags": [
+                    "document"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/documents"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a new link for a document",
+                "tags": [
+                    "document"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/document"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "203": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string",
+                                    "description": "The reason why the request was bad"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update a link for a document",
+                "tags": [
+                    "document"
                 ],
                 "requestBody": {
                     "required": true,
@@ -156,11 +518,14 @@
                     },
                     "404": {
                         "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
                     }
                 }
             },
             "delete": {
-                "summary": "Delete a document",
+                "summary": "Delete a link for a document",
                 "tags": [
                     "document"
                 ],
@@ -180,6 +545,178 @@
                     },
                     "404": {
                         "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/stakeholders": {
+            "get": {
+                "summary": "Get all stakeholders",
+                "tags": [
+                    "stakeholder"
+                ],
+                "parameters": [
+                    {
+                        "name": "keyword",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/stakeholders"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a new stakeholder",
+                "tags": [
+                    "stakeholder"
+                ],
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/stakeholder"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string",
+                                    "description": "The reason why the request was bad"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update a stakeholder",
+                "tags": [
+                    "stakeholder"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/stakeholder"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string",
+                                    "description": "The reason why the request was bad"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/stakeholders/{id}": {
+            "get": {
+                "summary": "Get a stakeholder",
+                "tags": [
+                    "stakeholder"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/stakeholder"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a stakeholder",
+                "tags": [
+                    "stakeholder"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
                     }
                 }
             }
