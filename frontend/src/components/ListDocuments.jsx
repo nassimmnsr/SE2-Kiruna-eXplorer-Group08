@@ -4,7 +4,7 @@ import { Container, Row, Col, Card } from "react-bootstrap";
 
 import "../App.css";
 import DocumentModal from "./DocumentModal";
-import API from "../API";
+import API from "../MockAPI";
 import { Button } from "react-bootstrap";
 
 function ListDocuments() {
