@@ -6,11 +6,15 @@ import "../App.css";
 import DocumentModal from "./DocumentModal";
 import API from "../MockAPI";
 import { Button } from "react-bootstrap";
+import LinkModal from "./LinkModal";
 
 function ListDocuments() {
   const [documents, setDocuments] = useState([]);
   const [show, setShow] = useState(false);
+  const [showLinkModal, setShowLinkModal] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState(null);
+  const [linking, setLinking] = useState(false);
+  const [selectedLinkDocuments, setSelectedLinkDocuments] = useState([]);
 
   useEffect(() => {
     API.getAvailableDocuments()
@@ -24,12 +28,20 @@ function ListDocuments() {
 
   const handleSelection = (document) => {
     setSelectedDocument(document);
-    setShow(true);
+    if(linking) {
+      setShowLinkModal(true);
+    } else{
+      setShow(true);
+    }
   };
 
   const handleSave = (document) => {
     API.updateDocument(document.id, document);
     setShow(false);
+  };
+
+  const handleLinkToClick = () => {
+    setLinking(true);
   };
 
   const handleAdd = (document) => {
@@ -55,18 +67,49 @@ function ListDocuments() {
     setShow(false);
   };
 
+  const handleLinkConfirm = (linkedDocument) => {
+    setSelectedDocuments((prevDocuments) => [
+      ...prevDocuments,
+      linkedDocument,
+    ]);
+    setShowLinkModal(false);
+  };
+
   return (
     <Container fluid className="d-flex flex-column vh-100 p-3">
       <Row>
-        <h1>Documents</h1>
+        {linking ? (
+          <h1>Link a document</h1>
+        ) : (
+          <h1>Documents</h1>
+        )}
       </Row>
       <Row className="d-flex justify-content-between align-items-center mb-3">
       <Col xs="auto">
-          <p>Here you can find all the documents about Kiruna&apos;s relocation process.</p>
-          <p>Click on a document to see more details.</p>
+      {linking ? (
+            <p>Choose the document you want to link</p>
+          ) : (
+            <>
+              <p>Here you can find all the documents about Kiruna&apos;s relocation process.</p>
+              <p>Click on a document to see more details.</p>
+            </>
+          )}
       </Col>
         <Col xs="auto">
-          <Button 
+          {linking ? (
+            <Button 
+            variant="primary"
+            style={{ width: "90px"}}
+            onClick={() => {
+              console.log(selectedLinkDocuments);
+              //setSelectedDocument({ isEditable: true });
+              alert("All the selected links have been confirmed!")
+              setLinking(false);
+            }}>
+             Link ({selectedLinkDocuments.length})
+            </Button>
+          ) : (
+            <Button 
           variant="primary"
           style={{ width: "150px"}}
           onClick={() => {
@@ -75,6 +118,7 @@ function ListDocuments() {
           }}>
           Add new card
           </Button>
+          )}
         </Col>
       </Row>
       <div
@@ -111,7 +155,20 @@ function ListDocuments() {
       </Row>
 
         {selectedDocument && (
+          <>
+          <LinkModal
+              showModal={showLinkModal}
+              handleClose={() => {
+                setSelectedDocument(null);
+                setShowLinkModal(false);
+              }}
+              setSelectedLinkDocuments={setSelectedLinkDocuments}
+              selectedLinkDocuments={selectedLinkDocuments}
+              document={selectedDocument}
+              onLinkConfirm={handleLinkConfirm}
+            />
           <DocumentModal
+            onLinkToClick={handleLinkToClick}
             show={show}
             onHide={() => {
               setSelectedDocument(null);
@@ -122,6 +179,8 @@ function ListDocuments() {
             handleDelete={handleDelete}
             handleAdd={handleAdd}
           />
+          
+          </>
         )}
       </div>
     </Container>
