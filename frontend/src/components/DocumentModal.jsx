@@ -165,6 +165,11 @@ function DocumentModal(props) {
     setIsEditable(true);
   };
 
+  const handleLinkToClick = () => {
+    props.onHide();
+    props.onLinkToClick();
+  }
+
   return (
     <Modal
       show={props.show}
@@ -230,9 +235,14 @@ function DocumentModal(props) {
             Save
           </Button>
         ) : (
-          <Button variant="primary" onClick={handleModifyClick}>
+          <div className="d-flex align-items-center">
+          <Button variant="primary" onClick={handleLinkToClick} className="me-2">
+            Link to
+          </Button>
+          <Button variant="primary" onClick={handleModifyClick} className="me-2">
             Modify
           </Button>
+        </div>
         )}
       </Modal.Footer>
     </Modal>
