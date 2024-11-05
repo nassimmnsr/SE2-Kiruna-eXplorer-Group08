@@ -1,5 +1,6 @@
 package com.kirunaexplorer.app.model;
 
+import com.kirunaexplorer.app.constants.DocumentLinkType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,6 +28,7 @@ public class DocumentLink {
     @JoinColumn(name = "linked_document_id")
     private Document linkedDocument;
 
-    private String linkType;
+    @Enumerated(EnumType.STRING)
+    private DocumentLinkType type;
     private LocalDateTime createdAt;
 }
