@@ -48,10 +48,10 @@ public class DocumentController {
      */
     @PostMapping
     public ResponseEntity<Void> createDocument(@RequestBody DocumentRequestDTO document) {
-        DocumentRequestDTO createdDocument = documentService.createDocument(document);
+        Long documentId = documentService.createDocument(document);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
             .path("/{id}")
-            .buildAndExpand(createdDocument.id())
+            .buildAndExpand(documentId)
             .toUri();
         return ResponseEntity.created(location).build();
     }

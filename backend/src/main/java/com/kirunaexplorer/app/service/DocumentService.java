@@ -9,6 +9,7 @@ import com.kirunaexplorer.app.model.DocumentLink;
 import com.kirunaexplorer.app.model.DocumentLinkId;
 import com.kirunaexplorer.app.model.GeoReference;
 import com.kirunaexplorer.app.repository.DocumentRepository;
+import com.kirunaexplorer.app.repository.GeoReferenceRepository;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
@@ -23,8 +24,10 @@ import java.util.stream.Collectors;
 @Service
 public class DocumentService {
     private final DocumentRepository documentRepository;
+    private final GeoReferenceRepository geoReferenceRepository;
 
-    public DocumentService(DocumentRepository documentRepository) {
+    public DocumentService(DocumentRepository documentRepository, GeoReferenceRepository geoReferenceRepository) {
+        this.geoReferenceRepository = geoReferenceRepository;
         this.documentRepository = documentRepository;
     }
 
@@ -76,56 +79,11 @@ public class DocumentService {
      * @return DocumentRequestDTO
      */
     @Transactional
-    public DocumentRequestDTO createDocument(DocumentRequestDTO document) {
-        Document newDocument = new Document(
-            Long.valueOf(document.id()),
-            document.title(),
-            document.description(),
-            String.join(";", document.stakeholders()),
-            document.type(),
-            document.scale(),
-            LocalDate.parse(document.issuance_date()),
-            Document.DatePrecision.FULL_DATE,
-            document.language(),
-            document.nr_pages(),
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            null,
-            null,
-            /*document.links().stream()
-                .map(link -> new DocumentLink(
-                    new DocumentLinkId(document.id(), getIdFromUri(link.uri())),
-                    documentRepository.findById(Long.valueOf(document.id())).orElseThrow(),
-                    documentRepository.findById(Long.valueOf(getIdFromUri(link.uri()))).orElseThrow(),
-                    link.type(),
-                    LocalDateTime.now()
-                ))
-                .collect(Collectors.toSet()),
-            new GeoReference(
-                document.id(),
-                documentRepository.findById(Long.valueOf(document.id())).orElseThrow(),
-                document.geolocation().municipality() != null,  // if municipality is not null, then set it to true, otherwise false
-                document.geolocation().municipality() == null ? createPoint(document.geolocation().latitude(), document.geolocation().longitude()) : null       // if municipality is null, then create a point, otherwise set it to null
-            ),*/
-            null
-        );
+    public Long createDocument(DocumentRequestDTO document) {
+        Document newDocument = documentRepository.save(document.toDocument());
+        geoReferenceRepository.save(document.geolocation().toGeoReference(newDocument));
 
-        newDocument = documentRepository.save(newDocument);
-
-        return new DocumentRequestDTO(
-            Math.toIntExact(newDocument.getId()),
-            newDocument.getTitle(),
-            List.of(newDocument.getStakeholders().split(";")),
-            newDocument.getScale(),
-            newDocument.getIssuanceDate().toString(),
-            newDocument.getType(),
-            newDocument.getDocumentLinks().size(),
-            newDocument.getLanguage(),
-            newDocument.getPages(),
-            document.geolocation(),         // this needs to be swapped to a conversion from Point to GeolocationDTO
-            newDocument.getDescription(),
-            document.links()                // this needs to be swapped to a conversion from DocumentLink to LinksDTO
-        );
+        return newDocument.getId();
     }
 
     /***
@@ -149,8 +107,7 @@ public class DocumentService {
 
     /***
      * Update a document
-     * @param id Document id
-     * @param updatedDocument Document
+     * @param updatedDocument DocumentRequestDTO
      * @return Document
      */
     @Transactional
