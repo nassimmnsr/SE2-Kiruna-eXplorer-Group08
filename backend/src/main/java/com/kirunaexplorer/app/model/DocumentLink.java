@@ -31,4 +31,6 @@ public class DocumentLink {
     @Enumerated(EnumType.STRING)
     private DocumentLinkType type;
     private LocalDateTime createdAt;
+
+    // TODO write mapping function to convert DocumentLink to DocumentLinkDTO
 }

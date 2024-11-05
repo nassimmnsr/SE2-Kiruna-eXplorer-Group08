@@ -1,5 +1,7 @@
 package com.kirunaexplorer.app.dto.response;
 
+import com.kirunaexplorer.app.dto.inout.GeolocationDTO;
+import com.kirunaexplorer.app.dto.inout.LinksDTO;
 import com.kirunaexplorer.app.model.GeoReference;
 
 import java.util.List;
@@ -14,7 +16,8 @@ public record DocumentResponseDTO(
     Integer nr_connections,
     String language,
     Integer nr_pages,
-    GeoReference geolocation,
-    String description
+    GeolocationDTO geolocation,
+    String description,
+    List<LinksDTO> links
 ) {
 }
