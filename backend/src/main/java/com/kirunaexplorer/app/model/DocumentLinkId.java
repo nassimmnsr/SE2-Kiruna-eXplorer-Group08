@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
-@Embeddable
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Embeddable
 public class DocumentLinkId implements Serializable {
     @Column(name = "document_id")
     private Long documentId;
