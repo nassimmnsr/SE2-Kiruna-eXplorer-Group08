@@ -10,8 +10,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Embeddable
-@AllArgsConstructor
-@NoArgsConstructor
 public class DocumentLinkId implements Serializable {
     @Column(name = "document_id")
     private Long documentId;

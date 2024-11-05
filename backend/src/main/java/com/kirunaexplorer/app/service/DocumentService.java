@@ -56,7 +56,7 @@ public class DocumentService {
         Document document = documentRepository.findById(id).orElseThrow();
 
         return new DocumentResponseDTO(
-            document.getId(),
+            Math.toIntExact(document.getId()),
             document.getTitle(),
             List.of(document.getStakeholders().split(";")),
             document.getScale(),
@@ -78,7 +78,7 @@ public class DocumentService {
     @Transactional
     public DocumentRequestDTO createDocument(DocumentRequestDTO document) {
         Document newDocument = new Document(
-            document.id(),
+            Long.valueOf(document.id()),
             document.title(),
             document.description(),
             String.join(";", document.stakeholders()),
@@ -90,7 +90,9 @@ public class DocumentService {
             document.nr_pages(),
             LocalDateTime.now(),
             LocalDateTime.now(),
-            document.links().stream()
+            null,
+            null,
+            /*document.links().stream()
                 .map(link -> new DocumentLink(
                     new DocumentLinkId(document.id(), getIdFromUri(link.uri())),
                     documentRepository.findById(Long.valueOf(document.id())).orElseThrow(),
@@ -104,14 +106,14 @@ public class DocumentService {
                 documentRepository.findById(Long.valueOf(document.id())).orElseThrow(),
                 document.geolocation().municipality() != null,  // if municipality is not null, then set it to true, otherwise false
                 document.geolocation().municipality() == null ? createPoint(document.geolocation().latitude(), document.geolocation().longitude()) : null       // if municipality is null, then create a point, otherwise set it to null
-            ),
+            ),*/
             null
         );
 
         newDocument = documentRepository.save(newDocument);
 
         return new DocumentRequestDTO(
-            newDocument.getId(),
+            Math.toIntExact(newDocument.getId()),
             newDocument.getTitle(),
             List.of(newDocument.getStakeholders().split(";")),
             newDocument.getScale(),
