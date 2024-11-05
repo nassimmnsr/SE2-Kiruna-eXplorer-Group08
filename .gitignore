@@ -105,3 +105,9 @@ libs/
 *.bak
 *.tmp
 *.log
+
+# environment variables
+.env
+
+# vite cache
+*/.vite/
