@@ -1,18 +1,20 @@
-package com.kirunaexplorer.app.dto.inout;
+package com.kirunaexplorer.app.dto.response;
+
+import com.kirunaexplorer.app.model.GeoReference;
 
 import java.util.List;
 
-public record DocumentDTO(
+public record DocumentResponseDTO(
     Integer id,
     String title,
-    List<StakeholderDTO> stakeholders,
+    List<String> stakeholders,
     String scale,
     String issuance_date,
     String type,
     Integer nr_connections,
     String language,
     Integer nr_pages,
-    GeolocationDTO geolocation,
+    GeoReference geolocation,
     String description
 ) {
 }
