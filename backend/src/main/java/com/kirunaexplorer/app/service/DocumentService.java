@@ -53,7 +53,7 @@ public class DocumentService {
     public Long createDocument(DocumentRequestDTO document) {
         Document newDocument = documentRepository.save(document.toDocument());
         geoReferenceRepository.save(document.geolocation().toGeoReference(newDocument));
-
+        // TODO add links
         return newDocument.getId();
     }
 
@@ -65,6 +65,7 @@ public class DocumentService {
     public void updateDocument(DocumentRequestDTO updatedDocument) {
         documentRepository.findById(Long.valueOf(updatedDocument.id())).map(existingDocument -> {
             existingDocument.updateDocument(updatedDocument);
+            // TODO update the links
             geoReferenceRepository.save(existingDocument.getGeoReference());
             return documentRepository.save(existingDocument);
         }).orElseThrow(() -> new RuntimeException("Document not found"));
