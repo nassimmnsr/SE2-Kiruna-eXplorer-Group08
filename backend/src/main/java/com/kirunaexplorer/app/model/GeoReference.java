@@ -12,6 +12,7 @@ import org.locationtech.jts.geom.Point;
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
+@Table(name = "GEO_REFERENCE")
 public class GeoReference {
 
     @Id

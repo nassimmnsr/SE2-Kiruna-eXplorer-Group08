@@ -11,7 +11,7 @@ export class Document {
     nr_connections = 0,
     language = undefined,
     nr_pages = 0,
-    geolocation = { latitude: 0 , longitude: 0},
+    geolocation = { latitude: 0 , longitude: 0, municipality: "" },
     description
   ) {
     this.id = id;

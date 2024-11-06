@@ -4,12 +4,45 @@ import Stakeholder from "./model/Stakeholder.mjs";
 const SERVER_URL = "http://localhost:8080";
 
 /* ************************** *
+ *       Link APIs      *
+ * ************************** */
+
+const createLink = async (document, linkedDocument) => {
+ 
+
+  const requestBody = {
+    idDocument1: document.id,
+    idDocument2: linkedDocument.document.id,
+    type: linkedDocument.linkType.toUpperCase(),
+  }
+
+  ("REQUEST BODY: ", requestBody);
+  requestBody.type = linkedDocument.linkType.toUpperCase().replace(/ /g, "_");
+
+  try{
+    const response = await fetch(`${SERVER_URL}/api/v1/documents/links`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
+    });
+    if (response.ok) {
+      const responseData = await response.json();
+    } else {
+      console.error("Errore nella creazione del link:", response.statusText);
+    }
+  } catch (error) {
+    console.error("Errore nella richiesta:", error);
+  }
+}
+
+/* ************************** *
  *       Documents APIs       *
  * ************************** */
 
 // Retrieve all documents snippets
 const getAllDocumentSnippets = async (filter) => {
-  // console.log(`${SERVER_URL}/documents` + (filter ? `?filter=${filter}` : ""))
   const documents = await fetch(
     `${SERVER_URL}/documents` + (filter ? `?filter=${filter}` : "")
   )
@@ -21,10 +54,6 @@ const getAllDocumentSnippets = async (filter) => {
 
 // Create a new document
 const addDocument = async (document) => {
-  // console.log(" sono nelle API");
-  // console.log(document.id);
-  // console.log(document.title);
-  // console.log(JSON.stringify(document))
   return await fetch(`${SERVER_URL}/documents`, {
     method: "POST",
     headers: {
@@ -135,18 +164,6 @@ function mapAPIStakeholdersToStakeholders(apiStakeholders) {
 async function mapAPIDocumentsToDocuments(apiDocuments) {
   return apiDocuments.map(
     (apiDocument) =>{
-      // console.log(apiDocument.id);
-      // console.log(apiDocument.title);
-      // console.log(apiDocument.stakeholders);
-      // console.log(apiDocument.scale);
-      // console.log(apiDocument.issuance_date);
-      // console.log(apiDocument.type);
-      // console.log(apiDocument.nr_connections);
-      // console.log(apiDocument.language);
-      // console.log(apiDocument.nr_pages);
-      // console.log(apiDocument.geolocation);
-      // console.log(apiDocument.description);
-      // console.log("fine");
       new Document(
         apiDocument.id,
         apiDocument.title,
@@ -188,5 +205,6 @@ const API = {
   getStakeholderById,
   updateStakeholder,
   deleteStakeholder,
+  createLink,
 };
 export default API;

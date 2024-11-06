@@ -40,7 +40,6 @@ public class DocumentService {
      */
     public DocumentResponseDTO getDocumentById(Long id) {
         Document document = documentRepository.findById(id).orElseThrow();
-
         return document.toDocumentResponseDTO();
     }
 

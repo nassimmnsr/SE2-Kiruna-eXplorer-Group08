@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 const LinkModal = ({ showModal, handleClose, document, setSelectedLinkDocuments, selectedLinkDocuments }) => {
   const [selectedLink, setSelectedLink] = useState('');
   const [errors, setErrors] = useState({});
-
+  
   const handleChange = (e) => {
     setSelectedLink(e.target.value);
     if (e.target.value === '') {
@@ -16,8 +16,6 @@ const LinkModal = ({ showModal, handleClose, document, setSelectedLinkDocuments,
   };
 
   const handleConfirm = () => {
-    console.log(selectedLink);
-    console.log(document);
     if (selectedLink) {
       setSelectedLinkDocuments((prevDocuments) => [
         ...prevDocuments,
