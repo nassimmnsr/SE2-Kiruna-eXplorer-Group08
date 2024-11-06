@@ -29,14 +29,13 @@ function ListDocuments() {
   }, []);
 
   const handleSelection = async (document) => {
-    console.log(document.id);
     const newDoc = await API.getDocumentById(document.id);
     setSelectedDocument(newDoc);
     if(linking) {
       setShowLinkModal(true);
-      setSelectedDocument(document);
+      setSelectedDocument(newDoc);
     } else{
-      setSelectedDocument(document);
+      setSelectedDocument(newDoc);
       setShow(true);
     }
   };
@@ -83,7 +82,6 @@ function ListDocuments() {
   };
 
   const isLinkedDocument = (document) => {
-    console.log("Selected Link Documents: ", selectedLinkDocuments);
     return (
       linking &&
       (selectedLinkDocuments.some((doc) => doc.document.id === document.id) ||

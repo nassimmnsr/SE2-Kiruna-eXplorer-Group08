@@ -4,11 +4,7 @@ import { Modal, Button, Form } from 'react-bootstrap';
 const LinkModal = ({ showModal, handleClose, document, setSelectedLinkDocuments, selectedLinkDocuments }) => {
   const [selectedLink, setSelectedLink] = useState('');
   const [errors, setErrors] = useState({});
-
-  useEffect(() => {
-    console.log("Link Modal: ", document);
-  }, []);
-
+  
   const handleChange = (e) => {
     setSelectedLink(e.target.value);
     if (e.target.value === '') {

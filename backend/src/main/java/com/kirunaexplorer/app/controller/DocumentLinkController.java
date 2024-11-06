@@ -22,6 +22,7 @@ public class DocumentLinkController {
 
     @PostMapping
     public ResponseEntity<LinkDocumentsResponse> linkDocuments(@RequestBody LinkDocumentsRequest request) {
+        System.out.println("Received request to link documents: " + request);
         LinkDocumentsResponse response = documentLinkService.linkDocuments(request);
         return new ResponseEntity<>(response, HttpStatus.OK); // Return 200 OK on success
     }

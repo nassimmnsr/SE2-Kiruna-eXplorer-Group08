@@ -11,6 +11,46 @@ const createLink = async (document, linkedDocument) => {
   console.log("CREA LINK");
   console.log(document);
   console.log(linkedDocument);
+
+  const requestBody = {
+    id: document.id,
+    title: document.title,
+    stakeholders: document.stakeholders,
+    scale: document.scale,
+    issuance_date: document.issuance_date,
+    type: document.type,
+    nr_connections: document.nr_connections,
+    language: document.language,
+    nr_pages: document.nr_pages,
+    geolocation: document.geolocation,
+    description: document.description,
+    links: [
+      {
+        uri: linkedDocument.document.id,
+        type: linkedDocument.linkType,
+      },
+    ]
+  }
+
+  console.log("REQUEST BODY: ", requestBody);
+
+  try{
+    const response = await fetch(`${SERVER_URL}/api/v1/documents/links`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
+    });
+    if (response.ok) {
+      const responseData = await response.json();
+      console.log("Link creato con successo:", responseData);
+    } else {
+      console.error("Errore nella creazione del link:", response.statusText);
+    }
+  } catch (error) {
+    console.error("Errore nella richiesta:", error);
+  }
 }
 
 /* ************************** *

@@ -26,6 +26,7 @@ public class DocumentController {
      */
     @GetMapping
     public ResponseEntity<List<DocumentBriefResponseDTO>> getAllDocuments() {
+        System.out.println("Received request to get all documents");
         List<DocumentBriefResponseDTO> documents = documentService.getAllDocuments();
         return ResponseEntity.ok(documents);
     }
