@@ -4,7 +4,7 @@ import { Container, Row, Col, Card } from "react-bootstrap";
 
 import "../App.css";
 import DocumentModal from "./DocumentModal";
-import API from "../MockAPI";
+import API from "../API";
 import { Button } from "react-bootstrap";
 import LinkModal from "./LinkModal";
 
@@ -17,7 +17,7 @@ function ListDocuments() {
   const [selectedLinkDocuments, setSelectedLinkDocuments] = useState([]);
 
   useEffect(() => {
-    API.getAvailableDocuments()
+    API.getAllDocumentSnippets()
       .then((response) => {
         setDocuments(response);
       })

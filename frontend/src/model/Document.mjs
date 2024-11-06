@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import API from "../API.mjs";
 
 /* document class */
 export class Document {
@@ -30,7 +31,7 @@ export class Document {
   }
 }
 
-export default class DocumentSnippet {
+export class DocumentSnippet {
   constructor(id, title, scale, issuance_date, type) {
     this.id = id;
     this.title = title;
@@ -39,3 +40,5 @@ export default class DocumentSnippet {
     this.type = type;
   }
 }
+
+export default {Document, DocumentSnippet};

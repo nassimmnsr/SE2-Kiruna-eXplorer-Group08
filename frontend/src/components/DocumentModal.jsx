@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import { Button, Modal, Form } from "react-bootstrap";
-import Document from "../model/Document.mjs";
+import {DocumentSnippet} from "../model/Document.mjs";
 import dayjs from "dayjs";
 
 function DocumentModal(props) {

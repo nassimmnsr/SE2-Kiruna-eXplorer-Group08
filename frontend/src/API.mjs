@@ -1,7 +1,7 @@
 import {Document, DocumentSnippet} from "./model/Document.mjs";
 import Stakeholder from "./model/Stakeholder.mjs";
 
-const SERVER_URL = "http://localhost:8080/api";
+const SERVER_URL = "http://localhost:8080";
 
 /* ************************** *
  *       Documents APIs       *
@@ -9,6 +9,7 @@ const SERVER_URL = "http://localhost:8080/api";
 
 // Retrieve all documents snippets
 const getAllDocumentSnippets = async (filter) => {
+  console.log(`${SERVER_URL}/documents` + (filter ? `?filter=${filter}` : ""))
   const documents = await fetch(
     `${SERVER_URL}/documents` + (filter ? `?filter=${filter}` : "")
   )
@@ -147,7 +148,7 @@ async function mapAPIDocumentsToDocuments(apiDocuments) {
 }
 
 async function mapAPISnippetsToSnippet(apiSnippets) {
-  return new  apiSnippets.map(
+  return apiSnippets.map(
     (apiSnippet) =>
       new DocumentSnippet(
         apiSnippet.id,
