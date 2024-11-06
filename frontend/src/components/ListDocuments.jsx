@@ -1,7 +1,7 @@
 // ListDocuments.js
 import { useEffect, useState } from "react";
 import { Container, Row, Col, Card } from "react-bootstrap";
-import Document from "../model/Document";
+// import Document from "../model/Document";
 
 import "../App.css";
 import DocumentModal from "./DocumentModal";
@@ -28,7 +28,7 @@ function ListDocuments() {
   }, []);
 
   const handleSelection = async (document) => {
-    console.log(document.id);
+    // console.log(document.id);
     const newDoc = await API.getDocumentById(document.id);
     setSelectedDocument(newDoc);
     if(linking) {
@@ -71,7 +71,7 @@ function ListDocuments() {
   };
 
   const handleLinkConfirm = (linkedDocument) => {
-    setSelectedDocuments((prevDocuments) => [
+    setSelectedLinkDocuments((prevDocuments) => [
       ...prevDocuments,
       linkedDocument,
     ]);
@@ -104,7 +104,7 @@ function ListDocuments() {
             variant="primary"
             style={{ width: "90px"}}
             onClick={() => {
-              console.log(selectedLinkDocuments);
+              // console.log(selectedLinkDocuments);
               //setSelectedDocument({ isEditable: true });
               alert("All the selected links have been confirmed!")
               setLinking(false);

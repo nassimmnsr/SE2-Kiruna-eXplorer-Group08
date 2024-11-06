@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
+import PropTypes from 'prop-types';
 
 const LinkModal = ({ showModal, handleClose, document, setSelectedLinkDocuments, selectedLinkDocuments }) => {
   const [selectedLink, setSelectedLink] = useState('');
@@ -68,6 +69,13 @@ const LinkModal = ({ showModal, handleClose, document, setSelectedLinkDocuments,
       </Modal.Footer>
     </Modal>
   );
+};
+LinkModal.propTypes = {
+  showModal: PropTypes.bool.isRequired,
+  handleClose: PropTypes.func.isRequired,
+  document: PropTypes.object.isRequired,
+  setSelectedLinkDocuments: PropTypes.func.isRequired,
+  selectedLinkDocuments: PropTypes.array.isRequired,
 };
 
 export default LinkModal;

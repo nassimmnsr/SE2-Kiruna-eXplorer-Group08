@@ -9,7 +9,7 @@ const SERVER_URL = "http://localhost:8080";
 
 // Retrieve all documents snippets
 const getAllDocumentSnippets = async (filter) => {
-  console.log(`${SERVER_URL}/documents` + (filter ? `?filter=${filter}` : ""))
+  // console.log(`${SERVER_URL}/documents` + (filter ? `?filter=${filter}` : ""))
   const documents = await fetch(
     `${SERVER_URL}/documents` + (filter ? `?filter=${filter}` : "")
   )
@@ -21,10 +21,10 @@ const getAllDocumentSnippets = async (filter) => {
 
 // Create a new document
 const addDocument = async (document) => {
-  console.log(" sono nelle API");
-  console.log(document.id);
-  console.log(document.title);
-  console.log(JSON.stringify(document))
+  // console.log(" sono nelle API");
+  // console.log(document.id);
+  // console.log(document.title);
+  // console.log(JSON.stringify(document))
   return await fetch(`${SERVER_URL}/documents`, {
     method: "POST",
     headers: {
@@ -45,7 +45,7 @@ const getDocumentById = async (documentId) => {
 
 // Update a document given its id
 const updateDocument = async (documentId, nextDocument) => {
-  return await fetch(`${SERVER_URL}/documents/`, {
+  return await fetch(`${SERVER_URL}/documents`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -135,18 +135,18 @@ function mapAPIStakeholdersToStakeholders(apiStakeholders) {
 async function mapAPIDocumentsToDocuments(apiDocuments) {
   return apiDocuments.map(
     (apiDocument) =>{
-      console.log(apiDocument.id);
-      console.log(apiDocument.title);
-      console.log(apiDocument.stakeholders);
-      console.log(apiDocument.scale);
-      console.log(apiDocument.issuance_date);
-      console.log(apiDocument.type);
-      console.log(apiDocument.nr_connections);
-      console.log(apiDocument.language);
-      console.log(apiDocument.nr_pages);
-      console.log(apiDocument.geolocation);
-      console.log(apiDocument.description);
-      console.log("fine");
+      // console.log(apiDocument.id);
+      // console.log(apiDocument.title);
+      // console.log(apiDocument.stakeholders);
+      // console.log(apiDocument.scale);
+      // console.log(apiDocument.issuance_date);
+      // console.log(apiDocument.type);
+      // console.log(apiDocument.nr_connections);
+      // console.log(apiDocument.language);
+      // console.log(apiDocument.nr_pages);
+      // console.log(apiDocument.geolocation);
+      // console.log(apiDocument.description);
+      // console.log("fine");
       new Document(
         apiDocument.id,
         apiDocument.title,

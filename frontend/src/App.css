@@ -81,6 +81,12 @@ html, body, #root {
   flex: 1; 
 }
 
+.description-area label {
+  font-weight: 500; 
+  color: #555; 
+  width: 40%; 
+}
+
 .info-item {
   display: flex;
   justify-content: space-between; 
