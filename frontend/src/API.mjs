@@ -1,4 +1,4 @@
-import {Document, DocumentSnippet} from "./model/Document.mjs";
+import { Document, DocumentSnippet } from "./model/Document.mjs";
 import Stakeholder from "./model/Stakeholder.mjs";
 
 const SERVER_URL = "http://localhost:8080";
@@ -8,22 +8,20 @@ const SERVER_URL = "http://localhost:8080";
  * ************************** */
 
 const createLink = async (document, linkedDocument) => {
- 
-
   const requestBody = {
     idDocument1: document.id,
     idDocument2: linkedDocument.document.id,
     type: linkedDocument.linkType.toUpperCase(),
-  }
+  };
 
-  ("REQUEST BODY: ", requestBody);
+  // ("REQUEST BODY: ", requestBody);
   requestBody.type = linkedDocument.linkType.toUpperCase().replace(/ /g, "_");
 
-  try{
+  try {
     const response = await fetch(`${SERVER_URL}/api/v1/documents/links`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(requestBody),
     });
@@ -35,7 +33,7 @@ const createLink = async (document, linkedDocument) => {
   } catch (error) {
     console.error("Errore nella richiesta:", error);
   }
-}
+};
 
 /* ************************** *
  *       Documents APIs       *
@@ -61,14 +59,13 @@ const addDocument = async (document) => {
     },
     body: JSON.stringify(document),
   }).then(handleInvalidResponse);
-
 };
 
 // Retrieve a document by id
 const getDocumentById = async (documentId) => {
   const document = await fetch(`${SERVER_URL}/documents/${documentId}`)
     .then(handleInvalidResponse)
-    .then((response) => response.json())
+    .then((response) => response.json());
   return document;
 };
 
@@ -162,23 +159,21 @@ function mapAPIStakeholdersToStakeholders(apiStakeholders) {
 }
 
 async function mapAPIDocumentsToDocuments(apiDocuments) {
-  return apiDocuments.map(
-    (apiDocument) =>{
-      new Document(
-        apiDocument.id,
-        apiDocument.title,
-        apiDocument.stakeholders,
-        apiDocument.scale,
-        apiDocument.issuance_date,
-        apiDocument.type,
-        apiDocument.nr_connections,
-        apiDocument.language,
-        apiDocument.nr_pages,
-        apiDocument.geolocation,
-        apiDocument.description
-      )
-    }
-  );
+  return apiDocuments.map((apiDocument) => {
+    new Document(
+      apiDocument.id,
+      apiDocument.title,
+      apiDocument.stakeholders,
+      apiDocument.scale,
+      apiDocument.issuanceDate,
+      apiDocument.type,
+      apiDocument.nrConnections,
+      apiDocument.language,
+      apiDocument.nrPages,
+      apiDocument.geolocation,
+      apiDocument.description
+    );
+  });
 }
 
 async function mapAPISnippetsToSnippet(apiSnippets) {
@@ -188,7 +183,7 @@ async function mapAPISnippetsToSnippet(apiSnippets) {
         apiSnippet.id,
         apiSnippet.title,
         apiSnippet.scale,
-        apiSnippet.issuance_date,
+        apiSnippet.issuanceDate,
         apiSnippet.type
       )
   );

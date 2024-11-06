@@ -51,7 +51,7 @@
                             }
                         ]
                     },
-                    "issuance_date": {
+                    "issuanceDate": {
                         "type": "string",
                         "description": "The issuance date of the document in the format YYYY-MM-DD",
                         "format": "date"
@@ -67,7 +67,7 @@
                             "Informative document"
                         ]
                     },
-                    "nr_connections": {
+                    "nrConnections": {
                         "type": "integer",
                         "description": "The number of connections of the document"
                     },
@@ -77,7 +77,7 @@
                         "minLength": 2,
                         "maxLength": 64
                     },
-                    "nr_pages": {
+                    "nrPages": {
                         "type": "integer",
                         "description": "The number of pages of the document",
                         "minimum": 1
@@ -146,7 +146,7 @@
                     "title",
                     "stakeholder",
                     "scale",
-                    "issuance_date",
+                    "issuanceDate",
                     "type",
                     "geolocation"
                 ]
@@ -187,7 +187,7 @@
                                 }
                             ]
                         },
-                        "issuance_date": {
+                        "issuanceDate": {
                             "type": "string",
                             "description": "The issuance date of the document in the format YYYY-MM-DD",
                             "format": "date"
@@ -208,7 +208,7 @@
                         "id",
                         "title",
                         "scale",
-                        "issuance_date",
+                        "issuanceDate",
                         "type"
                     ]
                 }
