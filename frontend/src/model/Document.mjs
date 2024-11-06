@@ -18,7 +18,7 @@ export class Document {
     this.title = title;
     this.stakeholders = stakeholders;
     this.scale = scale;
-    this.issuance_date = issuance_date ? dayjs(issuance_date).format("MM/DD/YYYY") : "-";
+    this.issuance_date = issuance_date ? dayjs(issuance_date).format("YYYY-MM-DD") : "-";
     this.type = type;
     this.nr_connections = nr_connections;
     this.language = language;
