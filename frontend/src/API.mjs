@@ -74,7 +74,7 @@ const getDocumentById = async (documentId) => {
 
 // Update a document given its id
 const updateDocument = async (documentId, nextDocument) => {
-  return await fetch(`${SERVER_URL}/documents/`, {
+  return await fetch(`${SERVER_URL}/documents`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

@@ -1,15 +1,9 @@
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
-import {
-  Button,
-  Modal,
-  Form,
-  Overlay,
-  OverlayTrigger,
-  Tooltip,
-} from "react-bootstrap";
-import { Document, DocumentSnippet } from "../model/Document.mjs";
-import dayjs from "dayjs";
+import { Button, Modal, Form, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Document } from "../model/Document.mjs";
+// import dayjs from "dayjs";
+import "../App.css";
 
 function DocumentModal(props) {
   const [isEditable, setIsEditable] = useState(false);
@@ -49,89 +43,89 @@ function DocumentModal(props) {
     }
     setErrors({});
   }, [props.document]);
+  
 
-  const validateForm = () => {
-    const validationErrors = {};
+  // const validateForm = () => {
+  //   const validationErrors = {};
 
-    if (title.trim() === "" || title === null) {
-      validationErrors.title = "This field cannot be empty.";
-    } else if (title.length < 2) {
-      validationErrors.title = "Title must be at least 2 characters long.";
-    } else if (title.length > 64) {
-      validationErrors.title = "Title must be at most 64 characters long.";
-    }
+  //   if (title.trim() === "" || title === null) {
+  //     validationErrors.title = "This field cannot be empty.";
+  //   } else if (title.length < 2) {
+  //     validationErrors.title = "Title must be at least 2 characters long.";
+  //   } else if (title.length > 64) {
+  //     validationErrors.title = "Title must be at most 64 characters long.";
+  //   }
 
-    if (scale.trim() === "" || scale === null) {
-      validationErrors.scale = "This field cannot be empty.";
-    } else if (
-      scale !== "text" &&
-      scale !== "blueprint/material effects" &&
-      !scale.match("^1:[1-9][0-9]*$")
-    ) {
-      validationErrors.scale =
-        "Please enter a valid scale. (ex. text, blueprint/material effects, 1:100)";
-    }
+  //   if (scale.trim() === "" || scale === null) {
+  //     validationErrors.scale = "This field cannot be empty.";
+  //   } else if (
+  //     scale !== "text" &&
+  //     scale !== "blueprint/material effects" &&
+  //     !scale.match("^1:[1-9][0-9]*$")
+  //   ) {
+  //     validationErrors.scale =
+  //       "Please enter a valid scale. (ex. text, blueprint/material effects, 1:100)";
+  //   }
 
-    if (issuanceDate.trim() === "" || issuanceDate === null) {
-      validationErrors.issuanceDate = "This field cannot be empty.";
-    } else if (!dayjs(issuanceDate, "YYYY-MM-DD").isValid()) {
-      validationErrors.issuanceDate =
-        "Please enter a valid date. (ex. 01/01/2021)";
-    }
+  //   if (issuanceDate.trim() === "" || issuanceDate === null) {
+  //     validationErrors.issuanceDate = "This field cannot be empty.";
+  //   } else if (!dayjs(issuanceDate, "YYYY-MM-DD").isValid()) {
+  //     validationErrors.issuanceDate =
+  //       "Please enter a valid date. (ex. 01/01/2021)";
+  //   }
 
-    if (type.trim() === "" || type === null) {
-      validationErrors.type = "This field cannot be empty.";
-    }
+  //   if (type.trim() === "" || type === null) {
+  //     validationErrors.type = "This field cannot be empty.";
+  //   }
 
-    if (description.trim() === "" || description === null) {
-      validationErrors.description = "This field cannot be empty.";
-    } else if (description.length < 2) {
-      validationErrors.description =
-        "Description must be at least 2 characters long.";
-    } else if (description.length > 1000) {
-      validationErrors.description =
-        "Description must be at most 1000 characters long.";
-    }
+  //   if (description.trim() === "" || description === null) {
+  //     validationErrors.description = "This field cannot be empty.";
+  //   } else if (description.length < 2) {
+  //     validationErrors.description =
+  //       "Description must be at least 2 characters long.";
+  //   } else if (description.length > 1000) {
+  //     validationErrors.description =
+  //       "Description must be at most 1000 characters long.";
+  //   }
 
-    if (stakeholders.length === 0) {
-      validationErrors.stakeholders = "This field cannot be empty.";
-    } else {
-      for (let s of stakeholders) {
-        if (s.trim() === "" || s === null) {
-          validationErrors.stakeholders = "This field cannot be empty.";
-        }
-      }
-    }
+  //   if (stakeholders.length === 0) {
+  //     validationErrors.stakeholders = "This field cannot be empty.";
+  //   } else {
+  //     for (let s of stakeholders) {
+  //       if (s.trim() === "" || s === null) {
+  //         validationErrors.stakeholders = "This field cannot be empty.";
+  //       }
+  //     }
+  //   }
 
-    if (language.trim() !== "" && language !== null && language.length > 64) {
-      validationErrors.language =
-        "Language must be at most 64 characters long.";
-    }
+  //   if (language.trim() !== "" && language !== null && language.length > 64) {
+  //     validationErrors.language =
+  //       "Language must be at most 64 characters long.";
+  //   }
 
-    if (!isNaN(nrPages)) {
-      validationErrors.nrPages = "Please enter a valid number of pages.";
-    }
+  //   if (!isNaN(nrPages)) {
+  //     validationErrors.nrPages = "Please enter a valid number of pages.";
+  //   }
 
-    if (
-      geolocation &&
-      (isNaN(geolocation.latitude) || isNaN(geolocation.longitude))
-    ) {
-      validationErrors.geolocation =
-        "Please enter valid numeric values for latitude and longitude.";
-    } else if (
-      geolocation === "Whole municipality" &&
-      geolocation.length > 64
-    ) {
-      validationErrors.geolocation =
-        "Geolocation must be at most 64 characters long.";
-    }
+  //   if (
+  //     geolocation &&
+  //     (isNaN(geolocation.latitude) || isNaN(geolocation.longitude))
+  //   ) {
+  //     validationErrors.geolocation =
+  //       "Please enter valid numeric values for latitude and longitude.";
+  //   } else if (
+  //     geolocation === "Whole municipality" &&
+  //     geolocation.length > 64
+  //   ) {
+  //     validationErrors.geolocation =
+  //       "Geolocation must be at most 64 characters long.";
+  //   }
 
-    return validationErrors;
-  };
+  //   return validationErrors;
+  // };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
 
     /*const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
@@ -403,6 +397,7 @@ function DocumentFormComponent(props) {
 
   return (
     <Form style={{ width: "100%" }} className="mx-auto">
+      {/* TITLE */}
       <Form.Group className="mb-3" controlId="formDocumentTitle">
         <Form.Label>Title *</Form.Label>
         <Form.Control
@@ -420,7 +415,9 @@ function DocumentFormComponent(props) {
           </Form.Control.Feedback>
         )}
       </Form.Group>
+      <div className="divider"></div>
 
+      {/* STAKEHOLDERS */}
       <Form.Group className="mb-3" controlId="formDocumentStakeholders">
         <Form.Label>Stakeholders *</Form.Label>
         {props.stakeholders.map((stakeholder, index) => (
@@ -450,7 +447,9 @@ function DocumentFormComponent(props) {
           Add Stakeholder
         </Button>
       </Form.Group>
+      <div className="divider"></div>
 
+      {/* SCALE */}
       <Form.Group className="mb-3" controlId="formDocumentScale">
         <Form.Label>Scale *</Form.Label>
         <Form.Control
@@ -466,7 +465,9 @@ function DocumentFormComponent(props) {
           </Form.Control.Feedback>
         )}
       </Form.Group>
+      <div className="divider"></div>
 
+      {/* ISSUANCE DATE */}
       <Form.Group className="mb-3" controlId="formDocumentIssuanceDate">
         <Form.Label>Issuance Date *</Form.Label>
         <Form.Control
@@ -482,7 +483,9 @@ function DocumentFormComponent(props) {
           </Form.Control.Feedback>
         )}
       </Form.Group>
+      <div className="divider"></div>
 
+      {/* TYPE */}
       <Form.Group className="mb-3" controlId="formDocumentType">
         <Form.Label>Type *</Form.Label>
         <Form.Control
@@ -505,14 +508,9 @@ function DocumentFormComponent(props) {
           </Form.Control.Feedback>
         )}
       </Form.Group>
-      {/*<Form.Group className="mb-3" controlId="formDocumentNrConnections">
-        <Form.Label>Connections</Form.Label>
-        <Form.Control
-          type="text"
-          value={props.nrConnections}
-          onChange={(e) => props.setNrConnections(e.target.value)}
-        />
-      </Form.Group>*/}
+      <div className="divider"></div>
+
+      {/* LANGUAGE */}
       <Form.Group className="mb-3" controlId="formDocumentLanguage">
         <Form.Label>Language</Form.Label>
         <Form.Control
@@ -521,7 +519,9 @@ function DocumentFormComponent(props) {
           onChange={(e) => props.setLanguage(e.target.value)}
         />
       </Form.Group>
+      <div className="divider"></div>
 
+      {/* NR CONNECTIONS */}
       <Form.Group className="mb-3" controlId="formDocumentNrPages">
         <Form.Label>Pages</Form.Label>
         <Form.Control
@@ -530,6 +530,7 @@ function DocumentFormComponent(props) {
           onChange={(e) => props.setNrPages(e.target.value)}
         />
       </Form.Group>
+      <div className="divider"></div>
 
       <Form.Group className="mb-3" controlId="formDocumentGeolocationLatitude">
         <Form.Label>Latitude</Form.Label>
@@ -574,18 +575,17 @@ function DocumentFormComponent(props) {
             document.getElementById("formDocumentGeolocationLongitude").disabled =
               e.target.checked;
           }}
+          className="mt-2"
         />
-        <Form.Text>
-          <i className="bi bi-info-circle me-2"></i>
-          Enter geolocation in the format <em>latitude, longitude</em> or check
-          the box to select the entire municipality area.
-        </Form.Text>
       </Form.Group>
       {props.errors.geolocation && (
         <Form.Control.Feedback type="invalid">
           {props.errors.geolocation}
         </Form.Control.Feedback>
       )}
+      <div className="divider"></div>
+
+      {/* DESCRIPTION */}
       <Form.Group className="mb-3" controlId="formDocumentDescription">
         <Form.Label>Description</Form.Label>
         <Form.Control

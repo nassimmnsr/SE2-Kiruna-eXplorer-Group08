@@ -1,7 +1,7 @@
 // ListDocuments.js
 import { useEffect, useState } from "react";
 import { Container, Row, Col, Card } from "react-bootstrap";
-import Document from "../model/Document";
+// import Document from "../model/Document";
 
 import "../App.css";
 import DocumentModal from "./DocumentModal";
@@ -132,6 +132,7 @@ function ListDocuments() {
             variant="primary"
             style={{ width: "90px"}}
             onClick={() => {
+
               handleCompleteLink();
               //setSelectedDocument({ isEditable: true });
             }}>
