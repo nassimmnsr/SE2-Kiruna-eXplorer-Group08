@@ -91,6 +91,22 @@ function ListDocuments() {
     );
   };
 
+  const handleCompleteLink = async () => {
+    try {
+      await Promise.all(
+        selectedLinkDocuments.map(async (linkedDocument) => {
+          await API.createLink(selectedDocumentToLink, linkedDocument);
+        })
+      );
+      alert("All the selected links have been confirmed!");
+      setLinking(false);
+      setSelectedLinkDocuments([]); 
+    } catch (error) {
+      console.error("Error linking documents:", error);
+      alert("There was an error linking the documents. Please try again.");
+    }
+  };
+
   return (
     <Container fluid className="d-flex flex-column vh-100 p-3">
       <Row>
@@ -117,9 +133,8 @@ function ListDocuments() {
             variant="primary"
             style={{ width: "90px"}}
             onClick={() => {
+              handleCompleteLink();
               //setSelectedDocument({ isEditable: true });
-              alert("All the selected links have been confirmed!")
-              setLinking(false);
             }}>
              Link ({selectedLinkDocuments.length})
             </Button>

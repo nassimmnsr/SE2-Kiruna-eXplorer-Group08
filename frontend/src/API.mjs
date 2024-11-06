@@ -4,6 +4,16 @@ import Stakeholder from "./model/Stakeholder.mjs";
 const SERVER_URL = "http://localhost:8080";
 
 /* ************************** *
+ *       Link APIs      *
+ * ************************** */
+
+const createLink = async (document, linkedDocument) => {
+  console.log("CREA LINK");
+  console.log(document);
+  console.log(linkedDocument);
+}
+
+/* ************************** *
  *       Documents APIs       *
  * ************************** */
 
@@ -188,5 +198,6 @@ const API = {
   getStakeholderById,
   updateStakeholder,
   deleteStakeholder,
+  createLink,
 };
 export default API;
