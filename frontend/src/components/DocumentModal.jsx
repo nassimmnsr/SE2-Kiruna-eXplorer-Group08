@@ -120,28 +120,44 @@ function DocumentModal(props) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const validationErrors = validateForm();
+    console.log("Submitting form...");
+
+    /*const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
-    }
+    }*/
 
-    if (props.document.id === null) {
-      props.handleAdd(
-        new Document(
-          null,
-          title,
-          stakeholders,
-          scale,
-          issuanceDate,
-          type,
-          language,
-          nrPages,
-          geolocation,
-          description
-        )
-      );
-    } else {
+      if (props.document.id === undefined) {
+       console.log(
+          null,              // id
+          title,             // title
+          stakeholders,      // stakeholders
+          scale,             // scale
+          issuanceDate,      // issuance_date
+          type,              // type
+          0,                 // nr_connections (default 0)
+          language,          // language
+          nrPages,           // nr_pages
+          geolocation,       // geolocation
+          description        // description
+        );
+        props.handleAdd(
+          new Document(
+            null,              // id
+            title,             // title
+            stakeholders,      // stakeholders
+            scale,             // scale
+            issuanceDate,      // issuance_date
+            type,              // type
+            0,                 // nr_connections (default 0)
+            language,          // language
+            nrPages,           // nr_pages
+            geolocation,       // geolocation
+            description        // description
+          )
+        );
+      } else {
       props.handleSave(
         new Document(
           props.document.id,

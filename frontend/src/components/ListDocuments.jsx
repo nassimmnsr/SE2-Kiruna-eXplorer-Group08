@@ -27,7 +27,8 @@ function ListDocuments() {
   }, []);
 
   const handleSelection = (document) => {
-    setSelectedDocument(document);
+    const newDoc = API.getDocumentById(document.id)
+    setSelectedDocument(newDoc);
     if(linking) {
       setShowLinkModal(true);
     } else{
@@ -45,9 +46,20 @@ function ListDocuments() {
   };
 
   const handleAdd = (document) => {
+    console.log("Sono in ListDocuments")
+    console.log(document.title);
+    console.log(document.stakeholders);
+    console.log(document.scale);
+    console.log(document.issuanceDate);
+    console.log(document.type);
+    console.log(document.nrConnections);
+    console.log(document.language);
+    console.log(document.nrPages);
+    console.log(document.geolocation);
+    console.log(document.description);
     API.addDocument(document)
     .then(() => {
-      API.getAvailableDocuments()
+      API.getAllDocumentSnippets()
       .then((response) => {
         setDocuments(response);
       })

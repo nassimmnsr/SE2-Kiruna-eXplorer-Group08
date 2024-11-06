@@ -1,7 +1,5 @@
 import dayjs from "dayjs";
-import API from "../API.mjs";
 
-/* document class */
 export class Document {
   constructor(
     id,
@@ -20,8 +18,7 @@ export class Document {
     this.title = title;
     this.stakeholders = stakeholders;
     this.scale = scale;
-    this.issuance_date = issuance_date;
-    this.issuance_date ? dayjs(issuance_date).format("MM/DD/YYYY") : "-";
+    this.issuance_date = issuance_date ? dayjs(issuance_date).format("MM/DD/YYYY") : "-";
     this.type = type;
     this.nr_connections = nr_connections;
     this.language = language;
@@ -36,9 +33,9 @@ export class DocumentSnippet {
     this.id = id;
     this.title = title;
     this.scale = scale;
-    this.issuance_date ? dayjs(issuance_date).format("MM/DD/YYYY") : "-";
+    this.issuance_date = issuance_date ? dayjs(issuance_date).format("MM/DD/YYYY") : "-";
     this.type = type;
   }
 }
 
-export default {Document, DocumentSnippet};
+export default { Document, DocumentSnippet };

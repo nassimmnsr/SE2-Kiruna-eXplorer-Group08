@@ -21,6 +21,10 @@ const getAllDocumentSnippets = async (filter) => {
 
 // Create a new document
 const addDocument = async (document) => {
+  console.log(" sono nelle API");
+  console.log(document.id);
+  console.log(document.title);
+  console.log(JSON.stringify(document))
   return await fetch(`${SERVER_URL}/documents`, {
     method: "POST",
     headers: {
@@ -28,6 +32,7 @@ const addDocument = async (document) => {
     },
     body: JSON.stringify(document),
   }).then(handleInvalidResponse);
+
 };
 
 // Retrieve a document by id
@@ -36,6 +41,7 @@ const getDocumentById = async (documentId) => {
     .then(handleInvalidResponse)
     .then((response) => response.json())
     .then(mapAPIDocumentsToDocuments);
+  console.log(document);
   return document;
 };
 
