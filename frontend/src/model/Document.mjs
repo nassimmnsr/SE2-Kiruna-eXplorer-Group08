@@ -10,9 +10,9 @@ export class Document {
     type,
     nr_connections = 0,
     language = undefined,
-    nr_pages = "-",
-    geolocation,
-    description = undefined
+    nr_pages = 0,
+    geolocation = { latitude: 0 , longitude: 0},
+    description
   ) {
     this.id = id;
     this.title = title;

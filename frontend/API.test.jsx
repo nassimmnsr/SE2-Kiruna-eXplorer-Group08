@@ -19,12 +19,17 @@ describe('KirunaExplorer API Tests', () => {
     // Test POST /documents - Success
     it('should create a new document successfully', async () => {
         const newDocument = {
-            id: 2,
+            id: null,
             title: "Sample Document",
+            stakeholders:["abc"],
             scale: "1:100",
             issuance_date: "2024-01-01",
             type: "Technical document",
-            geolocation: { latitude: "60.1234", longitude: "15.1234" }
+            nr_connections: 0,
+            language: null,
+            nr_pages: 42,
+            geolocation: { latitude: 0 , longitude: 0},
+            description: "Sample description"
         };
         const response = await request(baseURL).post('/documents').send(newDocument);
         expect(response.statusCode).toBe(201);
