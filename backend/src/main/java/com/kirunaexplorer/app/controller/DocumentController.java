@@ -38,7 +38,9 @@ public class DocumentController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<DocumentResponseDTO> getDocumentById(@PathVariable Long id) {
+        System.out.println("Received request to get document by id: " + id);
         DocumentResponseDTO document = documentService.getDocumentById(id);
+        System.out.println("Returning document: " + document);
         return ResponseEntity.ok(document);
     }
 

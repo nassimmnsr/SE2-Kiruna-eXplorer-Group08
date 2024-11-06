@@ -39,8 +39,9 @@ public class DocumentService {
      * @return DocumentResponseDTO
      */
     public DocumentResponseDTO getDocumentById(Long id) {
+        System.out.println("Received request to get document by id: " + id);
         Document document = documentRepository.findById(id).orElseThrow();
-
+        System.out.println("Returning document: " + document.toDocumentResponseDTO());
         return document.toDocumentResponseDTO();
     }
 

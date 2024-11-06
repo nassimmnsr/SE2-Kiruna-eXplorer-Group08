@@ -9,30 +9,15 @@ const SERVER_URL = "http://localhost:8080";
 
 const createLink = async (document, linkedDocument) => {
   console.log("CREA LINK");
-  console.log(document);
-  console.log(linkedDocument);
 
   const requestBody = {
-    id: document.id,
-    title: document.title,
-    stakeholders: document.stakeholders,
-    scale: document.scale,
-    issuance_date: document.issuance_date,
-    type: document.type,
-    nr_connections: document.nr_connections,
-    language: document.language,
-    nr_pages: document.nr_pages,
-    geolocation: document.geolocation,
-    description: document.description,
-    links: [
-      {
-        uri: linkedDocument.document.id,
-        type: linkedDocument.linkType,
-      },
-    ]
+    idDocument1: document.id,
+    idDocument2: linkedDocument.document.id,
+    type: linkedDocument.linkType.toUpperCase(),
   }
 
   console.log("REQUEST BODY: ", requestBody);
+  requestBody.type = "DIRECT_CONSEQUENCE";
 
   try{
     const response = await fetch(`${SERVER_URL}/api/v1/documents/links`, {
@@ -87,6 +72,7 @@ const addDocument = async (document) => {
 
 // Retrieve a document by id
 const getDocumentById = async (documentId) => {
+  console.log("sono in getDocumentById: ", documentId);
   const document = await fetch(`${SERVER_URL}/documents/${documentId}`)
     .then(handleInvalidResponse)
     .then((response) => response.json())
