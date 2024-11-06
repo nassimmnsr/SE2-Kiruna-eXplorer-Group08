@@ -3,7 +3,9 @@ package com.kirunaexplorer.app.service;
 import com.kirunaexplorer.app.dto.request.DocumentRequestDTO;
 import com.kirunaexplorer.app.dto.response.DocumentBriefResponseDTO;
 import com.kirunaexplorer.app.dto.response.DocumentResponseDTO;
+import com.kirunaexplorer.app.exception.ResourceNotFoundException;
 import com.kirunaexplorer.app.model.Document;
+import com.kirunaexplorer.app.model.GeoReference;
 import com.kirunaexplorer.app.repository.DocumentRepository;
 import com.kirunaexplorer.app.repository.GeoReferenceRepository;
 import org.springframework.stereotype.Service;
@@ -26,11 +28,9 @@ public class DocumentService {
      * @return List of DocumentBriefResponseDTO
      */
     public List<DocumentBriefResponseDTO> getAllDocuments() {
-        List<Document> documents = documentRepository.findAll();
-
-        return documents.stream()
-            .map(Document::toDocumentBriefResponseDTO)
-            .toList();
+        return documentRepository.findAll().stream()
+                .map(Document::toBriefResponseDTO)
+                .toList();
     }
 
     /***
@@ -39,35 +39,45 @@ public class DocumentService {
      * @return DocumentResponseDTO
      */
     public DocumentResponseDTO getDocumentById(Long id) {
-        Document document = documentRepository.findById(id).orElseThrow();
-
-        return document.toDocumentResponseDTO();
+        return documentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Document not found with ID " + id))
+                .toResponseDTO();
     }
 
     /***
      * Create a document
-     * @param document DocumentRequestDTO
+     * @param documentRequest DocumentRequestDTO
      * @return DocumentRequestDTO
      */
     @Transactional
-    public Long createDocument(DocumentRequestDTO document) {
-        Document newDocument = documentRepository.save(document.toDocument());
-        geoReferenceRepository.save(document.geolocation().toGeoReference(newDocument));
-        // TODO add links
-        return newDocument.getId();
+    public Long createDocument(DocumentRequestDTO documentRequest) {
+        Document document = documentRequest.toDocument();
+        document = documentRepository.save(document);
+
+        GeoReference geoReference = documentRequest.geolocation().toGeoReference(document);
+        geoReferenceRepository.save(geoReference);
+
+        return document.getId();
     }
 
     /***
      * Update a document
-     * @param updatedDocument DocumentRequestDTO
+     * @param documentRequest DocumentRequestDTO
      */
     @Transactional
-    public void updateDocument(DocumentRequestDTO updatedDocument) {
-        documentRepository.findById(Long.valueOf(updatedDocument.id())).map(existingDocument -> {
-            existingDocument.updateDocument(updatedDocument);
-            // TODO update the links
-            geoReferenceRepository.save(existingDocument.getGeoReference());
-            return documentRepository.save(existingDocument);
-        }).orElseThrow(() -> new RuntimeException("Document not found"));
+    public void updateDocument(DocumentRequestDTO documentRequest) {
+        Long id = documentRequest.id();
+        Document document = documentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Document not found with ID " + id));
+
+        document.updateFromDTO(documentRequest); // Update fields
+        documentRepository.save(document);
+
+        GeoReference geoReference = geoReferenceRepository.findById(document.getId())
+                .orElseGet(() -> new GeoReference(document.getId(), document)); // Create new if not exist
+
+        geoReference.updateFromDTO(documentRequest.geolocation()); // Update geolocation
+        geoReferenceRepository.save(geoReference);
     }
 }
+

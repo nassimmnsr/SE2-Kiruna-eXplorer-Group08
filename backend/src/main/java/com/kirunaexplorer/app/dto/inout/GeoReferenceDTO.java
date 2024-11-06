@@ -6,8 +6,8 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 
-public record GeolocationDTO(String latitude, String longitude, String municipality) {
-    public GeolocationDTO {
+public record GeoReferenceDTO(String latitude, String longitude, String municipality) {
+    public GeoReferenceDTO {
         if ((latitude == null || longitude == null) && (municipality == null)) {
             throw new IllegalArgumentException("Either latitude and longitude or municipality must be provided.");
         }
@@ -17,24 +17,21 @@ public record GeolocationDTO(String latitude, String longitude, String municipal
     }
 
     /***
-     * Converts the GeolocationDTO to a GeoReference object.
-     * @param documentReference Document reference
+     * Converts the GeoReferenceDTO to a GeoReference object.
+     * @param document Document reference
      * @return GeoReference object
      */
-    public GeoReference toGeoReference(Document documentReference) {
+    public GeoReference toGeoReference(Document document) {
         return new GeoReference(
-            null,
-            documentReference,
-            municipality != null,
-            setPoint(this.municipality())
+                document,
+                municipality != null,
+                municipality == null ? createPoint(latitude, longitude) : null
         );
     }
 
-    private Point setPoint(String municipality) {
-        if (municipality != null) {
-            return null;
-        } else {
-            return new GeometryFactory().createPoint(new Coordinate(Double.parseDouble(latitude), Double.parseDouble(longitude)));
-        }
+    public Point createPoint(String latitude, String longitude) {
+        return new GeometryFactory().createPoint(new Coordinate(
+                Double.parseDouble(longitude), Double.parseDouble(latitude)
+        ));
     }
 }
