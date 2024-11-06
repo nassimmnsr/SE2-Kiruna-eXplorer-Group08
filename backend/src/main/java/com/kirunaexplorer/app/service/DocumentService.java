@@ -42,6 +42,7 @@ public class DocumentService {
         return documentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Document not found with ID " + id))
                 .toResponseDTO();
+
     }
 
     /***

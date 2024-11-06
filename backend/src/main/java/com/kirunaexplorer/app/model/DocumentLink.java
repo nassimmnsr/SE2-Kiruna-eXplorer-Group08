@@ -1,5 +1,6 @@
 package com.kirunaexplorer.app.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.kirunaexplorer.app.constants.DocumentLinkType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,8 +12,8 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
-@ToString
+@EqualsAndHashCode(exclude = {"document", "linkedDocument"})
+@ToString(exclude = {"document", "linkedDocument"})
 public class DocumentLink {
 
     @EmbeddedId
@@ -21,6 +22,7 @@ public class DocumentLink {
     @ManyToOne
     @MapsId("documentId")
     @JoinColumn(name = "document_id")
+    @JsonBackReference
     private Document document;
 
     @ManyToOne

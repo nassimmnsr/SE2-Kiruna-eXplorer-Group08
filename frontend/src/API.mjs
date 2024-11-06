@@ -1,7 +1,41 @@
 import {Document, DocumentSnippet} from "./model/Document.mjs";
 import Stakeholder from "./model/Stakeholder.mjs";
 
-const SERVER_URL = "http://localhost:8080/api";
+const SERVER_URL = "http://localhost:8080";
+
+/* ************************** *
+ *       Link APIs      *
+ * ************************** */
+
+const createLink = async (document, linkedDocument) => {
+ 
+
+  const requestBody = {
+    idDocument1: document.id,
+    idDocument2: linkedDocument.document.id,
+    type: linkedDocument.linkType.toUpperCase(),
+  }
+
+  ("REQUEST BODY: ", requestBody);
+  requestBody.type = linkedDocument.linkType.toUpperCase().replace(/ /g, "_");
+
+  try{
+    const response = await fetch(`${SERVER_URL}/api/v1/documents/links`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
+    });
+    if (response.ok) {
+      const responseData = await response.json();
+    } else {
+      console.error("Errore nella creazione del link:", response.statusText);
+    }
+  } catch (error) {
+    console.error("Errore nella richiesta:", error);
+  }
+}
 
 /* ************************** *
  *       Documents APIs       *
@@ -27,6 +61,7 @@ const addDocument = async (document) => {
     },
     body: JSON.stringify(document),
   }).then(handleInvalidResponse);
+
 };
 
 // Retrieve a document by id
@@ -34,13 +69,12 @@ const getDocumentById = async (documentId) => {
   const document = await fetch(`${SERVER_URL}/documents/${documentId}`)
     .then(handleInvalidResponse)
     .then((response) => response.json())
-    .then(mapAPIDocumentsToDocuments);
   return document;
 };
 
 // Update a document given its id
 const updateDocument = async (documentId, nextDocument) => {
-  return await fetch(`${SERVER_URL}/documents/`, {
+  return await fetch(`${SERVER_URL}/documents`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -129,7 +163,7 @@ function mapAPIStakeholdersToStakeholders(apiStakeholders) {
 
 async function mapAPIDocumentsToDocuments(apiDocuments) {
   return apiDocuments.map(
-    (apiDocument) =>
+    (apiDocument) =>{
       new Document(
         apiDocument.id,
         apiDocument.title,
@@ -143,11 +177,12 @@ async function mapAPIDocumentsToDocuments(apiDocuments) {
         apiDocument.geolocation,
         apiDocument.description
       )
+    }
   );
 }
 
 async function mapAPISnippetsToSnippet(apiSnippets) {
-  return new  apiSnippets.map(
+  return apiSnippets.map(
     (apiSnippet) =>
       new DocumentSnippet(
         apiSnippet.id,
@@ -170,5 +205,6 @@ const API = {
   getStakeholderById,
   updateStakeholder,
   deleteStakeholder,
+  createLink,
 };
 export default API;

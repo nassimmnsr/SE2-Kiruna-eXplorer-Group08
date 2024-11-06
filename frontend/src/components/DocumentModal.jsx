@@ -1,8 +1,9 @@
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
-import { Button, Modal, Form } from "react-bootstrap";
-import Document from "../model/Document.mjs";
-import dayjs from "dayjs";
+import { Button, Modal, Form, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Document } from "../model/Document.mjs";
+// import dayjs from "dayjs";
+import "../App.css";
 
 function DocumentModal(props) {
   const [isEditable, setIsEditable] = useState(false);
@@ -12,13 +13,17 @@ function DocumentModal(props) {
   const [scale, setScale] = useState("");
   const [issuanceDate, setIssuanceDate] = useState("");
   const [type, setType] = useState("");
-  const [nrConnections, setNrConnections] = useState("");
+  const [nrConnections, setNrConnections] = useState(0);
   const [language, setLanguage] = useState("");
-  const [nrPages, setNrPages] = useState("");
-  const [geolocation, setGeolocation] = useState("");
+  const [nrPages, setNrPages] = useState(0);
+  const [geolocation, setGeolocation] = useState({
+    latitude: 0.0,
+    longitude: 0.0,
+    municipality: ""
+  });
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState({});
-
+  
   // Update the state when the document prop changes
   useEffect(() => {
     if (props.document) {
@@ -28,117 +33,120 @@ function DocumentModal(props) {
       setScale(props.document.scale || "");
       setIssuanceDate(props.document.issuance_date || "");
       setType(props.document.type || "");
-      setNrConnections(props.document.nr_connections || "");
+      setNrConnections(props.document.nr_connections || 0);
       setLanguage(props.document.language || "");
-      setNrPages(props.document.nr_pages || "");
-      setGeolocation(props.document.geolocation || "");
+      setNrPages(props.document.nr_pages || 0);
+      setGeolocation(
+        props.document.geolocation || { latitude: 0.0, longitude: 0.0 , municipality: ""}
+      );
       setDescription(props.document.description || "");
     }
     setErrors({});
   }, [props.document]);
+  
 
-  const validateForm = () => {
-    const validationErrors = {};
+  // const validateForm = () => {
+  //   const validationErrors = {};
 
-    if (title.trim() === "" || title === null) {
-      validationErrors.title = "This field cannot be empty.";
-    } else if (title.length < 2) {
-      validationErrors.title = "Title must be at least 2 characters long.";
-    } else if (title.length > 64) {
-      validationErrors.title = "Title must be at most 64 characters long.";
-    }
+  //   if (title.trim() === "" || title === null) {
+  //     validationErrors.title = "This field cannot be empty.";
+  //   } else if (title.length < 2) {
+  //     validationErrors.title = "Title must be at least 2 characters long.";
+  //   } else if (title.length > 64) {
+  //     validationErrors.title = "Title must be at most 64 characters long.";
+  //   }
 
-    if (scale.trim() === "" || scale === null) {
-      validationErrors.scale = "This field cannot be empty.";
-    } else if (
-      scale !== "text" &&
-      scale !== "blueprint/material effects" &&
-      !scale.match("^1:[1-9][0-9]*$")
-    ) {
-      validationErrors.scale =
-        "Please enter a valid scale. (ex. text, blueprint/material effects, 1:100)";
-    }
+  //   if (scale.trim() === "" || scale === null) {
+  //     validationErrors.scale = "This field cannot be empty.";
+  //   } else if (
+  //     scale !== "text" &&
+  //     scale !== "blueprint/material effects" &&
+  //     !scale.match("^1:[1-9][0-9]*$")
+  //   ) {
+  //     validationErrors.scale =
+  //       "Please enter a valid scale. (ex. text, blueprint/material effects, 1:100)";
+  //   }
 
-    if (issuanceDate.trim() === "" || issuanceDate === null) {
-      validationErrors.issuanceDate = "This field cannot be empty.";
-    } else if (!dayjs(issuanceDate, "YYYY-MM-DD").isValid()) {
-      validationErrors.issuanceDate =
-        "Please enter a valid date. (ex. 01/01/2021)";
-    }
+  //   if (issuanceDate.trim() === "" || issuanceDate === null) {
+  //     validationErrors.issuanceDate = "This field cannot be empty.";
+  //   } else if (!dayjs(issuanceDate, "YYYY-MM-DD").isValid()) {
+  //     validationErrors.issuanceDate =
+  //       "Please enter a valid date. (ex. 01/01/2021)";
+  //   }
 
-    if (type.trim() === "" || type === null) {
-      validationErrors.type = "This field cannot be empty.";
-    }
+  //   if (type.trim() === "" || type === null) {
+  //     validationErrors.type = "This field cannot be empty.";
+  //   }
 
-    if (description.trim() === "" || description === null) {
-      validationErrors.description = "This field cannot be empty.";
-    } else if (description.length < 2) {
-      validationErrors.description =
-        "Description must be at least 2 characters long.";
-    } else if (description.length > 1000) {
-      validationErrors.description =
-        "Description must be at most 1000 characters long.";
-    }
+  //   if (description.trim() === "" || description === null) {
+  //     validationErrors.description = "This field cannot be empty.";
+  //   } else if (description.length < 2) {
+  //     validationErrors.description =
+  //       "Description must be at least 2 characters long.";
+  //   } else if (description.length > 1000) {
+  //     validationErrors.description =
+  //       "Description must be at most 1000 characters long.";
+  //   }
 
-    if (stakeholders.length === 0) {
-      validationErrors.stakeholders = "This field cannot be empty.";
-    } else {
-      for (let s of stakeholders) {
-        if (s.trim() === "" || s === null) {
-          validationErrors.stakeholders = "This field cannot be empty.";
-        }
-      }
-    }
+  //   if (stakeholders.length === 0) {
+  //     validationErrors.stakeholders = "This field cannot be empty.";
+  //   } else {
+  //     for (let s of stakeholders) {
+  //       if (s.trim() === "" || s === null) {
+  //         validationErrors.stakeholders = "This field cannot be empty.";
+  //       }
+  //     }
+  //   }
 
-    if (language.trim() !== "" && language !== null && language.length > 64) {
-      validationErrors.language =
-        "Language must be at most 64 characters long.";
-    }
+  //   if (language.trim() !== "" && language !== null && language.length > 64) {
+  //     validationErrors.language =
+  //       "Language must be at most 64 characters long.";
+  //   }
 
-    if (!isNaN(nrPages)) {
-      validationErrors.nrPages = "Please enter a valid number of pages.";
-    }
+  //   if (!isNaN(nrPages)) {
+  //     validationErrors.nrPages = "Please enter a valid number of pages.";
+  //   }
 
-    if (
-      geolocation.trim() !== "" &&
-      geolocation !== null &&
-      //&& !geolocation.match(/^(\+|-)?(90(\.0+)?|[0-8]?\d(\.\d+)?),\s*(\+|-)?(180(\.0+)?|1[0-7]\d(\.\d+)?|0?\d{1,2}(\.\d+)?)$/)
-      geolocation !== "Whole municipality"
-    ) {
-      validationErrors.geolocation = "Please enter a valid geolocation. (ex. ";
-    } else if (
-      geolocation === "Whole municipality" &&
-      geolocation.length > 64
-    ) {
-      validationErrors.geolocation =
-        "Geolocation must be at most 64 characters long.";
-    }
+  //   if (
+  //     geolocation &&
+  //     (isNaN(geolocation.latitude) || isNaN(geolocation.longitude))
+  //   ) {
+  //     validationErrors.geolocation =
+  //       "Please enter valid numeric values for latitude and longitude.";
+  //   } else if (
+  //     geolocation === "Whole municipality" &&
+  //     geolocation.length > 64
+  //   ) {
+  //     validationErrors.geolocation =
+  //       "Geolocation must be at most 64 characters long.";
+  //   }
 
-    return validationErrors;
-  };
+  //   return validationErrors;
+  // };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const validationErrors = validateForm();
+    /*const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
-    }
+    }*/
 
-    if (props.document.id === null) {
+    if (props.document.id === undefined) {
       props.handleAdd(
         new Document(
-          null,
-          title,
-          stakeholders,
-          scale,
-          issuanceDate,
-          type,
-          language,
-          nrPages,
-          geolocation,
-          description
+          null, // id
+          title, // title
+          stakeholders, // stakeholders
+          scale, // scale
+          issuanceDate, // issuance_date
+          type, // type
+          0, // nr_connections (default 0)
+          language, // language
+          nrPages, // nr_pages
+          geolocation, // geolocation
+          description // description
         )
       );
     } else {
@@ -153,7 +161,10 @@ function DocumentModal(props) {
           nrConnections,
           language,
           nrPages,
-          geolocation,
+          {
+            latitude: parseFloat(geolocation.latitude),
+            longitude: parseFloat(geolocation.longitude),
+          },
           description
         )
       );
@@ -168,7 +179,7 @@ function DocumentModal(props) {
   const handleLinkToClick = () => {
     props.onHide();
     props.onLinkToClick();
-  }
+  };
 
   return (
     <Modal
@@ -236,13 +247,21 @@ function DocumentModal(props) {
           </Button>
         ) : (
           <div className="d-flex align-items-center">
-          <Button variant="primary" onClick={handleLinkToClick} className="me-2">
-            Link to
-          </Button>
-          <Button variant="primary" onClick={handleModifyClick} className="me-2">
-            Modify
-          </Button>
-        </div>
+            <Button
+              variant="primary"
+              onClick={handleLinkToClick}
+              className="me-2"
+            >
+              Link to
+            </Button>
+            <Button
+              variant="primary"
+              onClick={handleModifyClick}
+              className="me-2"
+            >
+              Modify
+            </Button>
+          </div>
         )}
       </Modal.Footer>
     </Modal>
@@ -255,6 +274,7 @@ DocumentModal.propTypes = {
   document: PropTypes.object.isRequired,
   handleSave: PropTypes.func.isRequired,
   handleAdd: PropTypes.func.isRequired,
+  onLinkToClick: PropTypes.func.isRequired,
 };
 
 function ModalBodyComponent(props) {
@@ -283,22 +303,54 @@ function ModalBodyComponent(props) {
         <div className="divider"></div>
         <div className="info-item">
           <label>Connections:</label>
-          <span>{props.nrConnections}</span>
+          <span>
+            {props.nrConnections === 0 ? (
+              <OverlayTrigger
+                placement="top"
+                overlay={
+                  <Tooltip>
+                    This document has no links yet. Remember to add them.
+                  </Tooltip>
+                }
+              >
+                <i className="bi bi-exclamation-triangle"></i>
+              </OverlayTrigger>
+            ) : (
+              props.nrConnections
+            )}
+          </span>
         </div>
         <div className="divider"></div>
         <div className="info-item">
           <label>Language:</label>
-          <span>{props.language}</span>
+          <span>{props.language > 0 ? (`${props.language}`) : "-"}</span>
         </div>
         <div className="divider"></div>
         <div className="info-item">
           <label>Pages:</label>
-          <span>{props.nrPages}</span>
+          <span>{props.nrPages > 0 ? (`${props.nrPages}`) : "-"}</span>
         </div>
         <div className="divider"></div>
         <div className="info-item">
           <label>Location:</label>
-          <span>{props.geolocation}</span>
+          <span>
+            {props.geolocation.latitude && props.geolocation.longitude ? (
+              `${props.geolocation.latitude}, ${props.geolocation.longitude}`
+            ) : props.geolocation.municipality ? `${props.geolocation.municipality}` :
+            (
+              <OverlayTrigger
+                placement="top"
+                overlay={
+                  <Tooltip>
+                    This document hasn&apos;t been geolocated yet. Remember to
+                    add it.
+                  </Tooltip>
+                }
+              >
+                <i className="bi bi-exclamation-triangle"></i>
+              </OverlayTrigger>
+            )}
+          </span>
         </div>
       </div>
       <div className="divider-vertical"></div>
@@ -316,10 +368,10 @@ ModalBodyComponent.propTypes = {
   scale: PropTypes.string,
   issuanceDate: PropTypes.string,
   type: PropTypes.string,
-  nrConnections: PropTypes.string,
+  nrConnections: PropTypes.number,
   language: PropTypes.string,
-  nrPages: PropTypes.string,
-  geolocation: PropTypes.string,
+  nrPages: PropTypes.number,
+  geolocation: PropTypes.object,
   description: PropTypes.string,
 };
 
@@ -345,6 +397,7 @@ function DocumentFormComponent(props) {
 
   return (
     <Form style={{ width: "100%" }} className="mx-auto">
+      {/* TITLE */}
       <Form.Group className="mb-3" controlId="formDocumentTitle">
         <Form.Label>Title *</Form.Label>
         <Form.Control
@@ -362,7 +415,9 @@ function DocumentFormComponent(props) {
           </Form.Control.Feedback>
         )}
       </Form.Group>
+      <div className="divider"></div>
 
+      {/* STAKEHOLDERS */}
       <Form.Group className="mb-3" controlId="formDocumentStakeholders">
         <Form.Label>Stakeholders *</Form.Label>
         {props.stakeholders.map((stakeholder, index) => (
@@ -392,7 +447,9 @@ function DocumentFormComponent(props) {
           Add Stakeholder
         </Button>
       </Form.Group>
+      <div className="divider"></div>
 
+      {/* SCALE */}
       <Form.Group className="mb-3" controlId="formDocumentScale">
         <Form.Label>Scale *</Form.Label>
         <Form.Control
@@ -408,7 +465,9 @@ function DocumentFormComponent(props) {
           </Form.Control.Feedback>
         )}
       </Form.Group>
+      <div className="divider"></div>
 
+      {/* ISSUANCE DATE */}
       <Form.Group className="mb-3" controlId="formDocumentIssuanceDate">
         <Form.Label>Issuance Date *</Form.Label>
         <Form.Control
@@ -424,7 +483,9 @@ function DocumentFormComponent(props) {
           </Form.Control.Feedback>
         )}
       </Form.Group>
+      <div className="divider"></div>
 
+      {/* TYPE */}
       <Form.Group className="mb-3" controlId="formDocumentType">
         <Form.Label>Type *</Form.Label>
         <Form.Control
@@ -447,14 +508,9 @@ function DocumentFormComponent(props) {
           </Form.Control.Feedback>
         )}
       </Form.Group>
-      {/*<Form.Group className="mb-3" controlId="formDocumentNrConnections">
-        <Form.Label>Connections</Form.Label>
-        <Form.Control
-          type="text"
-          value={props.nrConnections}
-          onChange={(e) => props.setNrConnections(e.target.value)}
-        />
-      </Form.Group>*/}
+      <div className="divider"></div>
+
+      {/* LANGUAGE */}
       <Form.Group className="mb-3" controlId="formDocumentLanguage">
         <Form.Label>Language</Form.Label>
         <Form.Control
@@ -463,22 +519,43 @@ function DocumentFormComponent(props) {
           onChange={(e) => props.setLanguage(e.target.value)}
         />
       </Form.Group>
+      <div className="divider"></div>
 
+      {/* NR CONNECTIONS */}
       <Form.Group className="mb-3" controlId="formDocumentNrPages">
         <Form.Label>Pages</Form.Label>
         <Form.Control
-          type="text"
+          type="number"
           value={props.nrPages}
           onChange={(e) => props.setNrPages(e.target.value)}
         />
       </Form.Group>
+      <div className="divider"></div>
 
-      <Form.Group className="mb-3" controlId="formDocumentGeolocation">
-        <Form.Label>Location</Form.Label>
+      <Form.Group className="mb-3" controlId="formDocumentGeolocationLatitude">
+        <Form.Label>Latitude</Form.Label>
         <Form.Control
-          type="text"
-          value={props.geolocation}
-          onChange={(e) => props.setGeolocation(e.target.value)}
+          type="number"
+          value={props.geolocation.latitude}
+          onChange={(e) =>
+            props.setGeolocation({
+              ...props.geolocation,
+              latitude: e.target.value,
+            })
+          }
+        />
+      </Form.Group>
+      <Form.Group className="mb-3" controlId="formDocumentGeolocationLongitude">
+        <Form.Label>Longitude</Form.Label>
+        <Form.Control
+          type="number"
+          value={props.geolocation.longitude}
+          onChange={(e) =>
+            props.setGeolocation({
+              ...props.geolocation,
+              longitude: e.target.value,
+            })
+          }
         />
       </Form.Group>
       <Form.Group className="mb-3" controlId="formDocumentWholeMunicipality">
@@ -487,23 +564,28 @@ function DocumentFormComponent(props) {
           label="Whole municipality"
           onChange={(e) => {
             if (e.target.checked) {
-              props.setGeolocation("");
+              props.setGeolocation({
+                latitude: null,
+                longitude: null,
+                municipality: ""
+              });
             }
-            document.getElementById("formDocumentGeolocation").disabled =
+            document.getElementById("formDocumentGeolocationLatitude").disabled =
+              e.target.checked;
+            document.getElementById("formDocumentGeolocationLongitude").disabled =
               e.target.checked;
           }}
+          className="mt-2"
         />
-        <Form.Text>
-          <i className="bi bi-info-circle me-2"></i>
-          Enter geolocation in the format <em>latitude, longitude</em> or check
-          the box to select the entire municipality area.
-        </Form.Text>
       </Form.Group>
       {props.errors.geolocation && (
         <Form.Control.Feedback type="invalid">
           {props.errors.geolocation}
         </Form.Control.Feedback>
       )}
+      <div className="divider"></div>
+
+      {/* DESCRIPTION */}
       <Form.Group className="mb-3" controlId="formDocumentDescription">
         <Form.Label>Description</Form.Label>
         <Form.Control
@@ -530,10 +612,14 @@ DocumentFormComponent.propTypes = {
   scale: PropTypes.string.isRequired,
   issuanceDate: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
-  nrConnections: PropTypes.string.isRequired,
+  nrConnections: PropTypes.number.isRequired,
   language: PropTypes.string.isRequired,
-  nrPages: PropTypes.string.isRequired,
-  geolocation: PropTypes.string.isRequired,
+  nrPages: PropTypes.number.isRequired,
+  geolocation: PropTypes.shape({
+    latitude: PropTypes.number,
+    longitude: PropTypes.number,
+    municipality: PropTypes.string
+  }),
   description: PropTypes.string.isRequired,
   setTitle: PropTypes.func.isRequired,
   setStakeholders: PropTypes.func.isRequired,

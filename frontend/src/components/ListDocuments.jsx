@@ -1,10 +1,11 @@
 // ListDocuments.js
 import { useEffect, useState } from "react";
 import { Container, Row, Col, Card } from "react-bootstrap";
+// import Document from "../model/Document";
 
 import "../App.css";
 import DocumentModal from "./DocumentModal";
-import API from "../MockAPI";
+import API from "../API";
 import { Button } from "react-bootstrap";
 import LinkModal from "./LinkModal";
 
@@ -15,9 +16,10 @@ function ListDocuments() {
   const [selectedDocument, setSelectedDocument] = useState(null);
   const [linking, setLinking] = useState(false);
   const [selectedLinkDocuments, setSelectedLinkDocuments] = useState([]);
+  const [selectedDocumentToLink, setSelectedDocumentToLink] = useState(null);
 
   useEffect(() => {
-    API.getAvailableDocuments()
+    API.getAllDocumentSnippets()
       .then((response) => {
         setDocuments(response);
       })
@@ -26,11 +28,15 @@ function ListDocuments() {
       });
   }, []);
 
-  const handleSelection = (document) => {
-    setSelectedDocument(document);
+  const handleSelection = async (document) => {
+    const newDoc = await API.getDocumentById(document.id);
+    console.log("HANDLE SELECTION: ", newDoc);
+    setSelectedDocument(newDoc);
     if(linking) {
       setShowLinkModal(true);
+      setSelectedDocument(newDoc);
     } else{
+      setSelectedDocument(newDoc);
       setShow(true);
     }
   };
@@ -41,13 +47,14 @@ function ListDocuments() {
   };
 
   const handleLinkToClick = () => {
+    setSelectedDocumentToLink(selectedDocument);
     setLinking(true);
   };
 
   const handleAdd = (document) => {
     API.addDocument(document)
     .then(() => {
-      API.getAvailableDocuments()
+      API.getAllDocumentSnippets()
       .then((response) => {
         setDocuments(response);
       })
@@ -68,11 +75,35 @@ function ListDocuments() {
   };
 
   const handleLinkConfirm = (linkedDocument) => {
-    setSelectedDocuments((prevDocuments) => [
+    setSelectedLinkDocuments((prevDocuments) => [
       ...prevDocuments,
       linkedDocument,
     ]);
     setShowLinkModal(false);
+  };
+
+  const isLinkedDocument = (document) => {
+    return (
+      linking &&
+      (selectedLinkDocuments.some((doc) => doc.document.id === document.id) ||
+        selectedDocumentToLink?.id === document.id)
+    );
+  };
+
+  const handleCompleteLink = async () => {
+    try {
+      await Promise.all(
+        selectedLinkDocuments.map(async (linkedDocument) => {
+          await API.createLink(selectedDocumentToLink, linkedDocument);
+        })
+      );
+      alert("All the selected links have been confirmed!");
+      setLinking(false);
+      setSelectedLinkDocuments([]); 
+    } catch (error) {
+      console.error("Error linking documents:", error);
+      alert("There was an error linking the documents. Please try again.");
+    }
   };
 
   return (
@@ -101,10 +132,9 @@ function ListDocuments() {
             variant="primary"
             style={{ width: "90px"}}
             onClick={() => {
-              console.log(selectedLinkDocuments);
+
+              handleCompleteLink();
               //setSelectedDocument({ isEditable: true });
-              alert("All the selected links have been confirmed!")
-              setLinking(false);
             }}>
              Link ({selectedLinkDocuments.length})
             </Button>
@@ -130,10 +160,17 @@ function ListDocuments() {
          <Row xs={1} sm={2} md={3} lg={4} className="g-4 mx-auto" style={{ width: "100%" }}>
         {documents.map((document) => (
           <Col key={document.id}>
-            <Card
-              className="document-card h-100"
-              onClick={() => handleSelection(document)}
-            >
+             <Card
+                className="document-card h-100"
+                style={{
+                  backgroundColor: isLinkedDocument(document) ? "#b1b0aa" : "",
+                }}
+                onClick={() => {
+                  if (!isLinkedDocument(document)) {
+                    handleSelection(document); // Chiamato solo se la card è cliccabile
+                  }
+                }}
+              >
               <Card.Body>
                 <Card.Title className="document-card-title">
                   {document.title}
@@ -155,18 +192,6 @@ function ListDocuments() {
       </Row>
 
         {selectedDocument && (
-          <>
-          <LinkModal
-              showModal={showLinkModal}
-              handleClose={() => {
-                setSelectedDocument(null);
-                setShowLinkModal(false);
-              }}
-              setSelectedLinkDocuments={setSelectedLinkDocuments}
-              selectedLinkDocuments={selectedLinkDocuments}
-              document={selectedDocument}
-              onLinkConfirm={handleLinkConfirm}
-            />
           <DocumentModal
             onLinkToClick={handleLinkToClick}
             show={show}
@@ -179,9 +204,20 @@ function ListDocuments() {
             handleDelete={handleDelete}
             handleAdd={handleAdd}
           />
-          
-          </>
         )}
+          {selectedDocumentToLink && showLinkModal &&(
+            <LinkModal
+              showModal={showLinkModal}
+              handleClose={() => {
+                setSelectedDocument(null);
+                setShowLinkModal(false);
+              }}
+              setSelectedLinkDocuments={setSelectedLinkDocuments}
+              selectedLinkDocuments={selectedLinkDocuments}
+              document={selectedDocument}
+              onLinkConfirm={handleLinkConfirm}
+            />  
+          )}
       </div>
     </Container>
   );
