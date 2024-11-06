@@ -40,8 +40,6 @@ const getDocumentById = async (documentId) => {
   const document = await fetch(`${SERVER_URL}/documents/${documentId}`)
     .then(handleInvalidResponse)
     .then((response) => response.json())
-    .then(mapAPIDocumentsToDocuments);
-  console.log(document);
   return document;
 };
 
@@ -136,7 +134,19 @@ function mapAPIStakeholdersToStakeholders(apiStakeholders) {
 
 async function mapAPIDocumentsToDocuments(apiDocuments) {
   return apiDocuments.map(
-    (apiDocument) =>
+    (apiDocument) =>{
+      console.log(apiDocument.id);
+      console.log(apiDocument.title);
+      console.log(apiDocument.stakeholders);
+      console.log(apiDocument.scale);
+      console.log(apiDocument.issuance_date);
+      console.log(apiDocument.type);
+      console.log(apiDocument.nr_connections);
+      console.log(apiDocument.language);
+      console.log(apiDocument.nr_pages);
+      console.log(apiDocument.geolocation);
+      console.log(apiDocument.description);
+      console.log("fine");
       new Document(
         apiDocument.id,
         apiDocument.title,
@@ -150,6 +160,7 @@ async function mapAPIDocumentsToDocuments(apiDocuments) {
         apiDocument.geolocation,
         apiDocument.description
       )
+    }
   );
 }
 

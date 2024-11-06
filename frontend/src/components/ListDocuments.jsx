@@ -27,8 +27,9 @@ function ListDocuments() {
       });
   }, []);
 
-  const handleSelection = (document) => {
-    const newDoc = API.getDocumentById(document.id)
+  const handleSelection = async (document) => {
+    console.log(document.id);
+    const newDoc = await API.getDocumentById(document.id);
     setSelectedDocument(newDoc);
     if(linking) {
       setShowLinkModal(true);
