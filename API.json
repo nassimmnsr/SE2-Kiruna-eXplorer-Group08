@@ -132,7 +132,7 @@
                                         "Update"
                                     ]
                                 },
-                                "uri": {
+                                "id": {
                                     "type": "integer",
                                     "format": "id",
                                     "description": "The id of the document linked"

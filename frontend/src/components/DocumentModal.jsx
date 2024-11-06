@@ -1,7 +1,14 @@
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
-import { Button, Modal, Form } from "react-bootstrap";
-import {Document, DocumentSnippet} from "../model/Document.mjs";
+import {
+  Button,
+  Modal,
+  Form,
+  Overlay,
+  OverlayTrigger,
+  Tooltip,
+} from "react-bootstrap";
+import { Document, DocumentSnippet } from "../model/Document.mjs";
 import dayjs from "dayjs";
 
 function DocumentModal(props) {
@@ -12,10 +19,13 @@ function DocumentModal(props) {
   const [scale, setScale] = useState("");
   const [issuanceDate, setIssuanceDate] = useState("");
   const [type, setType] = useState("");
-  const [nrConnections, setNrConnections] = useState("");
+  const [nrConnections, setNrConnections] = useState(0);
   const [language, setLanguage] = useState("");
-  const [nrPages, setNrPages] = useState("");
-  const [geolocation, setGeolocation] = useState({ latitude: 0.0 , longitude: 0.0});
+  const [nrPages, setNrPages] = useState(0);
+  const [geolocation, setGeolocation] = useState({
+    latitude: 0.0,
+    longitude: 0.0,
+  });
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState({});
 
@@ -28,10 +38,12 @@ function DocumentModal(props) {
       setScale(props.document.scale || "");
       setIssuanceDate(props.document.issuance_date || "");
       setType(props.document.type || "");
-      setNrConnections(props.document.nr_connections || "");
+      setNrConnections(props.document.nr_connections || 0);
       setLanguage(props.document.language || "");
       setNrPages(props.document.nr_pages || 0);
-      setGeolocation(props.document.geolocation || { latitude: 0.0 , longitude: 0.0});
+      setGeolocation(
+        props.document.geolocation || { latitude: 0.0, longitude: 0.0 }
+      );
       setDescription(props.document.description || "");
     }
     setErrors({});
@@ -107,9 +119,9 @@ function DocumentModal(props) {
       geolocation &&
       (isNaN(geolocation.latitude) || isNaN(geolocation.longitude))
     ) {
-      validationErrors.geolocation = "Please enter valid numeric values for latitude and longitude.";
-    }
-     else if (
+      validationErrors.geolocation =
+        "Please enter valid numeric values for latitude and longitude.";
+    } else if (
       geolocation === "Whole municipality" &&
       geolocation.length > 64
     ) {
@@ -131,36 +143,36 @@ function DocumentModal(props) {
       return;
     }*/
 
-      if (props.document.id === undefined) {
-       console.log(
-          null,              // id
-          title,             // title
-          stakeholders,      // stakeholders
-          scale,             // scale
-          issuanceDate,      // issuance_date
-          type,              // type
-          0,                 // nr_connections (default 0)
-          language,          // language
-          nrPages,           // nr_pages
-          geolocation,       // geolocation
-          description        // description
-        );
-        props.handleAdd(
-          new Document(
-            null,              // id
-            title,             // title
-            stakeholders,      // stakeholders
-            scale,             // scale
-            issuanceDate,      // issuance_date
-            type,              // type
-            0,                 // nr_connections (default 0)
-            language,          // language
-            nrPages,           // nr_pages
-            geolocation,       // geolocation
-            description        // description
-          )
-        );
-      } else {
+    if (props.document.id === undefined) {
+      console.log(
+        null, // id
+        title, // title
+        stakeholders, // stakeholders
+        scale, // scale
+        issuanceDate, // issuance_date
+        type, // type
+        0, // nr_connections (default 0)
+        language, // language
+        nrPages, // nr_pages
+        geolocation, // geolocation
+        description // description
+      );
+      props.handleAdd(
+        new Document(
+          null, // id
+          title, // title
+          stakeholders, // stakeholders
+          scale, // scale
+          issuanceDate, // issuance_date
+          type, // type
+          0, // nr_connections (default 0)
+          language, // language
+          nrPages, // nr_pages
+          geolocation, // geolocation
+          description // description
+        )
+      );
+    } else {
       props.handleSave(
         new Document(
           props.document.id,
@@ -190,7 +202,7 @@ function DocumentModal(props) {
   const handleLinkToClick = () => {
     props.onHide();
     props.onLinkToClick();
-  }
+  };
 
   return (
     <Modal
@@ -258,13 +270,21 @@ function DocumentModal(props) {
           </Button>
         ) : (
           <div className="d-flex align-items-center">
-          <Button variant="primary" onClick={handleLinkToClick} className="me-2">
-            Link to
-          </Button>
-          <Button variant="primary" onClick={handleModifyClick} className="me-2">
-            Modify
-          </Button>
-        </div>
+            <Button
+              variant="primary"
+              onClick={handleLinkToClick}
+              className="me-2"
+            >
+              Link to
+            </Button>
+            <Button
+              variant="primary"
+              onClick={handleModifyClick}
+              className="me-2"
+            >
+              Modify
+            </Button>
+          </div>
         )}
       </Modal.Footer>
     </Modal>
@@ -277,6 +297,7 @@ DocumentModal.propTypes = {
   document: PropTypes.object.isRequired,
   handleSave: PropTypes.func.isRequired,
   handleAdd: PropTypes.func.isRequired,
+  onLinkToClick: PropTypes.func.isRequired,
 };
 
 function ModalBodyComponent(props) {
@@ -305,7 +326,22 @@ function ModalBodyComponent(props) {
         <div className="divider"></div>
         <div className="info-item">
           <label>Connections:</label>
-          <span>{props.nrConnections}</span>
+          <span>
+            {props.nrConnections === 0 ? (
+              <OverlayTrigger
+                placement="top"
+                overlay={
+                  <Tooltip>
+                    This document has no links yet. Remember to add them.
+                  </Tooltip>
+                }
+              >
+                <i className="bi bi-exclamation-triangle"></i>
+              </OverlayTrigger>
+            ) : (
+              props.nrConnections
+            )}
+          </span>
         </div>
         <div className="divider"></div>
         <div className="info-item">
@@ -320,8 +356,23 @@ function ModalBodyComponent(props) {
         <div className="divider"></div>
         <div className="info-item">
           <label>Location:</label>
-          <span>{props.geolocation ? `${props.geolocation.latitude}, ${props.geolocation.longitude}` : "N/A"}</span>
-
+          <span>
+            {props.geolocation.latitude && props.geolocation.longitude ? (
+              `${props.geolocation.latitude}, ${props.geolocation.longitude}`
+            ) : (
+              <OverlayTrigger
+                placement="top"
+                overlay={
+                  <Tooltip>
+                    This document hasn&apos;t been geolocated yet. Remember to
+                    add it.
+                  </Tooltip>
+                }
+              >
+                <i className="bi bi-exclamation-triangle"></i>
+              </OverlayTrigger>
+            )}
+          </span>
         </div>
       </div>
       <div className="divider-vertical"></div>
@@ -339,9 +390,9 @@ ModalBodyComponent.propTypes = {
   scale: PropTypes.string,
   issuanceDate: PropTypes.string,
   type: PropTypes.string,
-  nrConnections: PropTypes.string,
+  nrConnections: PropTypes.number,
   language: PropTypes.string,
-  nrPages: PropTypes.string,
+  nrPages: PropTypes.number,
   geolocation: PropTypes.object,
   description: PropTypes.string,
 };
@@ -571,7 +622,7 @@ DocumentFormComponent.propTypes = {
   scale: PropTypes.string.isRequired,
   issuanceDate: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
-  nrConnections: PropTypes.string.isRequired,
+  nrConnections: PropTypes.number.isRequired,
   language: PropTypes.string.isRequired,
   nrPages: PropTypes.number.isRequired,
   geolocation: PropTypes.shape({
