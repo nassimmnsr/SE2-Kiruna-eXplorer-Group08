@@ -4,7 +4,7 @@ public record DocumentBriefResponseDTO(
     Long id,
     String title,
     String scale,
-    String issuance_date,
+    String issuanceDate,
     String type
 ) {
 }

@@ -60,7 +60,7 @@ public class Document {
      * Converts the Document object to a DocumentResponseDTO object.
      * @return DocumentResponseDTO object
      */
-    public DocumentResponseDTO toDocumentResponseDTO() {
+    public DocumentResponseDTO toResponseDTO() {
         return new DocumentResponseDTO(
             this.id.intValue(),
             this.title,
@@ -81,7 +81,7 @@ public class Document {
      * Converts the Document object to a DocumentBriefResponseDTO object.
      * @return DocumentBriefResponseDTO object
      */
-    public DocumentBriefResponseDTO toDocumentBriefResponseDTO() {
+    public DocumentBriefResponseDTO toBriefResponseDTO() {
         return new DocumentBriefResponseDTO(
             this.id,
             this.title,
@@ -91,22 +91,17 @@ public class Document {
         );
     }
 
-    /***
-     * Update the document with the new data
-     * @param updatedDocument DocumentRequestDTO
-     */
-    public void updateDocument(DocumentRequestDTO updatedDocument) {
-        this.title = updatedDocument.title();
-        this.description = updatedDocument.description();
-        this.stakeholders = String.join("/", updatedDocument.stakeholders());
-        this.type = updatedDocument.type();
-        this.scale = updatedDocument.scale();
-        this.issuanceDate = LocalDate.parse(updatedDocument.issuance_date());
-        this.language = updatedDocument.language();
-        this.pages = updatedDocument.nr_pages();
+    public void updateFromDTO(DocumentRequestDTO dto) {
+        this.title = dto.title();
+        this.description = dto.description();
+        this.stakeholders = String.join("/", dto.stakeholders());
+        this.type = dto.type();
+        this.scale = dto.scale();
+        this.issuanceDate = dto.parseIssuanceDate(dto.issuanceDate());
+        this.datePrecision = dto.determineDatePrecision(dto.issuanceDate());
+        this.language = dto.language();
+        this.pages = dto.nrPages();
         this.updatedAt = LocalDateTime.now();
-        this.geoReference = updatedDocument.geolocation().toGeoReference(this);
-        // TODO update the links
     }
 
     /***
