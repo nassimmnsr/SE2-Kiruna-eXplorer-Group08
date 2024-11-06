@@ -26,8 +26,7 @@ public class DocumentController {
      */
     @GetMapping
     public ResponseEntity<List<DocumentBriefResponseDTO>> getAllDocuments() {
-        List<DocumentBriefResponseDTO> documents = documentService.getAllDocuments();
-        return ResponseEntity.ok(documents);
+        return ResponseEntity.ok(documentService.getAllDocuments());
     }
 
     /***
@@ -37,8 +36,7 @@ public class DocumentController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<DocumentResponseDTO> getDocumentById(@PathVariable Long id) {
-        DocumentResponseDTO document = documentService.getDocumentById(id);
-        return ResponseEntity.ok(document);
+        return ResponseEntity.ok(documentService.getDocumentById(id));
     }
 
     /***
