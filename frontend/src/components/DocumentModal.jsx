@@ -19,6 +19,10 @@ function DocumentModal(props) {
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState({});
 
+  useEffect(() => {
+    console.log("Document Modal: ", props.document);
+  }, []);
+
   // Update the state when the document prop changes
   useEffect(() => {
     if (props.document) {

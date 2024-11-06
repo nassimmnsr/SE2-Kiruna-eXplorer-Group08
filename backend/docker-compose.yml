@@ -2,6 +2,7 @@ services:
   db:
     container_name: postgres
     image: postgis/postgis:17-3.5
+    platform: linux/amd64
     environment:
       POSTGRES_USER: ${PG_USER}
       POSTGRES_PASSWORD: ${PG_PASSWORD}

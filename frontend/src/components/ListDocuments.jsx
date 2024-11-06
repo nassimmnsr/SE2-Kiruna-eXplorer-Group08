@@ -15,6 +15,7 @@ function ListDocuments() {
   const [selectedDocument, setSelectedDocument] = useState(null);
   const [linking, setLinking] = useState(false);
   const [selectedLinkDocuments, setSelectedLinkDocuments] = useState([]);
+  const [selectedDocumentToLink, setSelectedDocumentToLink] = useState(null);
 
   useEffect(() => {
     API.getAvailableDocuments()
@@ -27,10 +28,11 @@ function ListDocuments() {
   }, []);
 
   const handleSelection = (document) => {
-    setSelectedDocument(document);
     if(linking) {
       setShowLinkModal(true);
+      setSelectedDocument(document);
     } else{
+      setSelectedDocument(document);
       setShow(true);
     }
   };
@@ -41,6 +43,7 @@ function ListDocuments() {
   };
 
   const handleLinkToClick = () => {
+    setSelectedDocumentToLink(selectedDocument);
     setLinking(true);
   };
 
@@ -68,11 +71,20 @@ function ListDocuments() {
   };
 
   const handleLinkConfirm = (linkedDocument) => {
-    setSelectedDocuments((prevDocuments) => [
+    setSelectedLinkDocuments((prevDocuments) => [
       ...prevDocuments,
       linkedDocument,
     ]);
     setShowLinkModal(false);
+  };
+
+  const isLinkedDocument = (document) => {
+    console.log("Selected Link Documents: ", selectedLinkDocuments);
+    return (
+      linking &&
+      (selectedLinkDocuments.some((doc) => doc.document.id === document.id) ||
+        selectedDocumentToLink?.id === document.id)
+    );
   };
 
   return (
@@ -101,7 +113,6 @@ function ListDocuments() {
             variant="primary"
             style={{ width: "90px"}}
             onClick={() => {
-              console.log(selectedLinkDocuments);
               //setSelectedDocument({ isEditable: true });
               alert("All the selected links have been confirmed!")
               setLinking(false);
@@ -130,10 +141,17 @@ function ListDocuments() {
          <Row xs={1} sm={2} md={3} lg={4} className="g-4 mx-auto" style={{ width: "100%" }}>
         {documents.map((document) => (
           <Col key={document.id}>
-            <Card
-              className="document-card h-100"
-              onClick={() => handleSelection(document)}
-            >
+             <Card
+                className="document-card h-100"
+                style={{
+                  backgroundColor: isLinkedDocument(document) ? "#b1b0aa" : "",
+                }}
+                onClick={() => {
+                  if (!isLinkedDocument(document)) {
+                    handleSelection(document); // Chiamato solo se la card è cliccabile
+                  }
+                }}
+              >
               <Card.Body>
                 <Card.Title className="document-card-title">
                   {document.title}
@@ -155,18 +173,6 @@ function ListDocuments() {
       </Row>
 
         {selectedDocument && (
-          <>
-          <LinkModal
-              showModal={showLinkModal}
-              handleClose={() => {
-                setSelectedDocument(null);
-                setShowLinkModal(false);
-              }}
-              setSelectedLinkDocuments={setSelectedLinkDocuments}
-              selectedLinkDocuments={selectedLinkDocuments}
-              document={selectedDocument}
-              onLinkConfirm={handleLinkConfirm}
-            />
           <DocumentModal
             onLinkToClick={handleLinkToClick}
             show={show}
@@ -179,9 +185,20 @@ function ListDocuments() {
             handleDelete={handleDelete}
             handleAdd={handleAdd}
           />
-          
-          </>
         )}
+          {selectedDocumentToLink && showLinkModal &&(
+            <LinkModal
+              showModal={showLinkModal}
+              handleClose={() => {
+                setSelectedDocument(null);
+                setShowLinkModal(false);
+              }}
+              setSelectedLinkDocuments={setSelectedLinkDocuments}
+              selectedLinkDocuments={selectedLinkDocuments}
+              document={selectedDocument}
+              onLinkConfirm={handleLinkConfirm}
+            />  
+          )}
       </div>
     </Container>
   );

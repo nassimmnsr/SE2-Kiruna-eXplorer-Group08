@@ -5,6 +5,10 @@ const LinkModal = ({ showModal, handleClose, document, setSelectedLinkDocuments,
   const [selectedLink, setSelectedLink] = useState('');
   const [errors, setErrors] = useState({});
 
+  useEffect(() => {
+    console.log("Link Modal: ", document);
+  }, []);
+
   const handleChange = (e) => {
     setSelectedLink(e.target.value);
     if (e.target.value === '') {
@@ -15,8 +19,6 @@ const LinkModal = ({ showModal, handleClose, document, setSelectedLinkDocuments,
   };
 
   const handleConfirm = () => {
-    console.log(selectedLink);
-    console.log(document);
     if (selectedLink) {
       setSelectedLinkDocuments((prevDocuments) => [
         ...prevDocuments,
