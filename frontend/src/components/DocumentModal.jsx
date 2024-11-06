@@ -25,6 +25,7 @@ function DocumentModal(props) {
   const [geolocation, setGeolocation] = useState({
     latitude: 0.0,
     longitude: 0.0,
+    municipality: ""
   });
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState({});
@@ -42,16 +43,12 @@ function DocumentModal(props) {
       setLanguage(props.document.language || "");
       setNrPages(props.document.nr_pages || 0);
       setGeolocation(
-        props.document.geolocation || { latitude: 0.0, longitude: 0.0 }
+        props.document.geolocation || { latitude: 0.0, longitude: 0.0 , municipality: ""}
       );
       setDescription(props.document.description || "");
     }
     setErrors({});
   }, [props.document]);
-
-  useEffect(() => {
-    console.log(geolocation);
-  }, [geolocation]);
 
   const validateForm = () => {
     const validationErrors = {};
@@ -135,7 +132,6 @@ function DocumentModal(props) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    console.log("Submitting form...");
 
     /*const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
@@ -144,19 +140,6 @@ function DocumentModal(props) {
     }*/
 
     if (props.document.id === undefined) {
-      console.log(
-        null, // id
-        title, // title
-        stakeholders, // stakeholders
-        scale, // scale
-        issuanceDate, // issuance_date
-        type, // type
-        0, // nr_connections (default 0)
-        language, // language
-        nrPages, // nr_pages
-        geolocation, // geolocation
-        description // description
-      );
       props.handleAdd(
         new Document(
           null, // id
@@ -346,12 +329,12 @@ function ModalBodyComponent(props) {
         <div className="divider"></div>
         <div className="info-item">
           <label>Language:</label>
-          <span>{props.language}</span>
+          <span>{props.language > 0 ? (`${props.language}`) : "-"}</span>
         </div>
         <div className="divider"></div>
         <div className="info-item">
           <label>Pages:</label>
-          <span>{props.nrPages}</span>
+          <span>{props.nrPages > 0 ? (`${props.nrPages}`) : "-"}</span>
         </div>
         <div className="divider"></div>
         <div className="info-item">
@@ -359,7 +342,8 @@ function ModalBodyComponent(props) {
           <span>
             {props.geolocation.latitude && props.geolocation.longitude ? (
               `${props.geolocation.latitude}, ${props.geolocation.longitude}`
-            ) : (
+            ) : props.geolocation.municipality ? `${props.geolocation.municipality}` :
+            (
               <OverlayTrigger
                 placement="top"
                 overlay={
@@ -547,7 +531,7 @@ function DocumentFormComponent(props) {
         />
       </Form.Group>
 
-      <Form.Group className="mb-3" controlId="formDocumentGeolocation">
+      <Form.Group className="mb-3" controlId="formDocumentGeolocationLatitude">
         <Form.Label>Latitude</Form.Label>
         <Form.Control
           type="number"
@@ -560,7 +544,7 @@ function DocumentFormComponent(props) {
           }
         />
       </Form.Group>
-      <Form.Group className="mb-3" controlId="formDocumentGeolocation">
+      <Form.Group className="mb-3" controlId="formDocumentGeolocationLongitude">
         <Form.Label>Longitude</Form.Label>
         <Form.Control
           type="number"
@@ -579,9 +563,15 @@ function DocumentFormComponent(props) {
           label="Whole municipality"
           onChange={(e) => {
             if (e.target.checked) {
-              props.setGeolocation("");
+              props.setGeolocation({
+                latitude: null,
+                longitude: null,
+                municipality: ""
+              });
             }
-            document.getElementById("formDocumentGeolocation").disabled =
+            document.getElementById("formDocumentGeolocationLatitude").disabled =
+              e.target.checked;
+            document.getElementById("formDocumentGeolocationLongitude").disabled =
               e.target.checked;
           }}
         />
@@ -628,6 +618,7 @@ DocumentFormComponent.propTypes = {
   geolocation: PropTypes.shape({
     latitude: PropTypes.number,
     longitude: PropTypes.number,
+    municipality: PropTypes.string
   }),
   description: PropTypes.string.isRequired,
   setTitle: PropTypes.func.isRequired,

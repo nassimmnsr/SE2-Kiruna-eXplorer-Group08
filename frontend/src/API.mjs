@@ -8,7 +8,7 @@ const SERVER_URL = "http://localhost:8080";
  * ************************** */
 
 const createLink = async (document, linkedDocument) => {
-  console.log("CREA LINK");
+ 
 
   const requestBody = {
     idDocument1: document.id,
@@ -16,8 +16,8 @@ const createLink = async (document, linkedDocument) => {
     type: linkedDocument.linkType.toUpperCase(),
   }
 
-  console.log("REQUEST BODY: ", requestBody);
-  requestBody.type = "DIRECT_CONSEQUENCE";
+  ("REQUEST BODY: ", requestBody);
+  requestBody.type = linkedDocument.linkType.toUpperCase().replace(/ /g, "_");
 
   try{
     const response = await fetch(`${SERVER_URL}/api/v1/documents/links`, {
@@ -29,7 +29,6 @@ const createLink = async (document, linkedDocument) => {
     });
     if (response.ok) {
       const responseData = await response.json();
-      console.log("Link creato con successo:", responseData);
     } else {
       console.error("Errore nella creazione del link:", response.statusText);
     }
@@ -44,7 +43,6 @@ const createLink = async (document, linkedDocument) => {
 
 // Retrieve all documents snippets
 const getAllDocumentSnippets = async (filter) => {
-  console.log(`${SERVER_URL}/documents` + (filter ? `?filter=${filter}` : ""))
   const documents = await fetch(
     `${SERVER_URL}/documents` + (filter ? `?filter=${filter}` : "")
   )
@@ -56,10 +54,6 @@ const getAllDocumentSnippets = async (filter) => {
 
 // Create a new document
 const addDocument = async (document) => {
-  console.log(" sono nelle API");
-  console.log(document.id);
-  console.log(document.title);
-  console.log(JSON.stringify(document))
   return await fetch(`${SERVER_URL}/documents`, {
     method: "POST",
     headers: {
@@ -72,7 +66,6 @@ const addDocument = async (document) => {
 
 // Retrieve a document by id
 const getDocumentById = async (documentId) => {
-  console.log("sono in getDocumentById: ", documentId);
   const document = await fetch(`${SERVER_URL}/documents/${documentId}`)
     .then(handleInvalidResponse)
     .then((response) => response.json())
@@ -171,18 +164,6 @@ function mapAPIStakeholdersToStakeholders(apiStakeholders) {
 async function mapAPIDocumentsToDocuments(apiDocuments) {
   return apiDocuments.map(
     (apiDocument) =>{
-      console.log(apiDocument.id);
-      console.log(apiDocument.title);
-      console.log(apiDocument.stakeholders);
-      console.log(apiDocument.scale);
-      console.log(apiDocument.issuance_date);
-      console.log(apiDocument.type);
-      console.log(apiDocument.nr_connections);
-      console.log(apiDocument.language);
-      console.log(apiDocument.nr_pages);
-      console.log(apiDocument.geolocation);
-      console.log(apiDocument.description);
-      console.log("fine");
       new Document(
         apiDocument.id,
         apiDocument.title,
