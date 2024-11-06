@@ -32,10 +32,10 @@ function ListDocuments() {
     const newDoc = await API.getDocumentById(document.id);
     console.log("HANDLE SELECTION: ", newDoc);
     setSelectedDocument(newDoc);
-    if(linking) {
+    if (linking) {
       setShowLinkModal(true);
       setSelectedDocument(newDoc);
-    } else{
+    } else {
       setSelectedDocument(newDoc);
       setShow(true);
     }
@@ -53,18 +53,18 @@ function ListDocuments() {
 
   const handleAdd = (document) => {
     API.addDocument(document)
-    .then(() => {
-      API.getAllDocumentSnippets()
-      .then((response) => {
-        setDocuments(response);
+      .then(() => {
+        API.getAllDocumentSnippets()
+          .then((response) => {
+            setDocuments(response);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
       })
       .catch((error) => {
         console.error(error);
       });
-    })
-    .catch((error) => {
-      console.error(error);
-    });
     setShow(false);
 
   }
@@ -99,7 +99,7 @@ function ListDocuments() {
       );
       alert("All the selected links have been confirmed!");
       setLinking(false);
-      setSelectedLinkDocuments([]); 
+      setSelectedLinkDocuments([]);
     } catch (error) {
       console.error("Error linking documents:", error);
       alert("There was an error linking the documents. Please try again.");
@@ -116,8 +116,8 @@ function ListDocuments() {
         )}
       </Row>
       <Row className="d-flex justify-content-between align-items-center mb-3">
-      <Col xs="auto">
-      {linking ? (
+        <Col xs="auto">
+          {linking ? (
             <p>Choose the document you want to link</p>
           ) : (
             <>
@@ -125,29 +125,29 @@ function ListDocuments() {
               <p>Click on a document to see more details.</p>
             </>
           )}
-      </Col>
+        </Col>
         <Col xs="auto">
           {linking ? (
-            <Button 
-            variant="primary"
-            style={{ width: "90px"}}
-            onClick={() => {
+            <Button
+              variant="primary"
+              style={{ width: "90px" }}
+              onClick={() => {
 
-              handleCompleteLink();
-              //setSelectedDocument({ isEditable: true });
-            }}>
-             Link ({selectedLinkDocuments.length})
+                handleCompleteLink();
+                //setSelectedDocument({ isEditable: true });
+              }}>
+              Link ({selectedLinkDocuments.length})
             </Button>
           ) : (
-            <Button 
-          variant="primary"
-          style={{ width: "150px"}}
-          onClick={() => {
-            setSelectedDocument({ isEditable: true }); 
-            setShow(true);
-          }}>
-          Add new card
-          </Button>
+            <Button
+              variant="primary"
+              style={{ width: "150px" }}
+              onClick={() => {
+                setSelectedDocument({ isEditable: true });
+                setShow(true);
+              }}>
+              Add new card
+            </Button>
           )}
         </Col>
       </Row>
@@ -157,10 +157,10 @@ function ListDocuments() {
           paddingBottom: "5rem"
         }}
       >
-         <Row xs={1} sm={2} md={3} lg={4} className="g-4 mx-auto" style={{ width: "100%" }}>
-        {documents.map((document) => (
-          <Col key={document.id}>
-             <Card
+        <Row xs={1} sm={2} md={3} lg={4} className="g-4 mx-auto" style={{ width: "100%" }}>
+          {documents.map((document) => (
+            <Col key={document.id}>
+              <Card
                 className="document-card h-100"
                 style={{
                   backgroundColor: isLinkedDocument(document) ? "#b1b0aa" : "",
@@ -171,25 +171,25 @@ function ListDocuments() {
                   }
                 }}
               >
-              <Card.Body>
-                <Card.Title className="document-card-title">
-                  {document.title}
-                </Card.Title>
-                <div className="divider" />
-                <Card.Text className="document-card-text">
-                  <strong>Scale:</strong> {document.scale}
-                </Card.Text>
-                <Card.Text className="document-card-text">
-                  <strong>Issuance Date:</strong> {document.issuance_date}
-                </Card.Text>
-                <Card.Text className="document-card-text">
-                  <strong>Type:</strong> {document.type}
-                </Card.Text>
-              </Card.Body>
-            </Card>
-          </Col>
-        ))}
-      </Row>
+                <Card.Body>
+                  <Card.Title className="document-card-title">
+                    {document.title}
+                  </Card.Title>
+                  <div className="divider" />
+                  <Card.Text className="document-card-text">
+                    <strong>Scale:</strong> {document.scale}
+                  </Card.Text>
+                  <Card.Text className="document-card-text">
+                    <strong>Issuance Date:</strong> {document.issuanceDate}
+                  </Card.Text>
+                  <Card.Text className="document-card-text">
+                    <strong>Type:</strong> {document.type}
+                  </Card.Text>
+                </Card.Body>
+              </Card>
+            </Col>
+          ))}
+        </Row>
 
         {selectedDocument && (
           <DocumentModal
@@ -205,19 +205,19 @@ function ListDocuments() {
             handleAdd={handleAdd}
           />
         )}
-          {selectedDocumentToLink && showLinkModal &&(
-            <LinkModal
-              showModal={showLinkModal}
-              handleClose={() => {
-                setSelectedDocument(null);
-                setShowLinkModal(false);
-              }}
-              setSelectedLinkDocuments={setSelectedLinkDocuments}
-              selectedLinkDocuments={selectedLinkDocuments}
-              document={selectedDocument}
-              onLinkConfirm={handleLinkConfirm}
-            />  
-          )}
+        {selectedDocumentToLink && showLinkModal && (
+          <LinkModal
+            showModal={showLinkModal}
+            handleClose={() => {
+              setSelectedDocument(null);
+              setShowLinkModal(false);
+            }}
+            setSelectedLinkDocuments={setSelectedLinkDocuments}
+            selectedLinkDocuments={selectedLinkDocuments}
+            document={selectedDocument}
+            onLinkConfirm={handleLinkConfirm}
+          />
+        )}
       </div>
     </Container>
   );

@@ -23,7 +23,7 @@ function DocumentModal(props) {
   });
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState({});
-  
+
   // Update the state when the document prop changes
   useEffect(() => {
     if (props.document) {
@@ -31,19 +31,19 @@ function DocumentModal(props) {
       setTitle(props.document.title || "");
       setStakeholders(props.document.stakeholders || []);
       setScale(props.document.scale || "");
-      setIssuanceDate(props.document.issuance_date || "");
+      setIssuanceDate(props.document.issuanceDate || "");
       setType(props.document.type || "");
-      setNrConnections(props.document.nr_connections || 0);
+      setNrConnections(props.document.nrConnections || 0);
       setLanguage(props.document.language || "");
-      setNrPages(props.document.nr_pages || 0);
+      setNrPages(props.document.nrPages || 0);
       setGeolocation(
-        props.document.geolocation || { latitude: 0.0, longitude: 0.0 , municipality: ""}
+        props.document.geolocation || { latitude: 0.0, longitude: 0.0, municipality: "" }
       );
       setDescription(props.document.description || "");
     }
     setErrors({});
   }, [props.document]);
-  
+
 
   // const validateForm = () => {
   //   const validationErrors = {};
@@ -140,11 +140,11 @@ function DocumentModal(props) {
           title, // title
           stakeholders, // stakeholders
           scale, // scale
-          issuanceDate, // issuance_date
+          issuanceDate, // issuanceDate
           type, // type
-          0, // nr_connections (default 0)
+          0, // nrConnections (default 0)
           language, // language
-          nrPages, // nr_pages
+          nrPages, // nrPages
           geolocation, // geolocation
           description // description
         )
@@ -188,7 +188,7 @@ function DocumentModal(props) {
       centered
       className="document-modal"
       size="lg"
-      // fullscreen={isEditable}
+    // fullscreen={isEditable}
     >
       <Modal.Header closeButton className="modal-header">
         <Modal.Title>
@@ -337,19 +337,19 @@ function ModalBodyComponent(props) {
             {props.geolocation.latitude && props.geolocation.longitude ? (
               `${props.geolocation.latitude}, ${props.geolocation.longitude}`
             ) : props.geolocation.municipality ? `${props.geolocation.municipality}` :
-            (
-              <OverlayTrigger
-                placement="top"
-                overlay={
-                  <Tooltip>
-                    This document hasn&apos;t been geolocated yet. Remember to
-                    add it.
-                  </Tooltip>
-                }
-              >
-                <i className="bi bi-exclamation-triangle"></i>
-              </OverlayTrigger>
-            )}
+              (
+                <OverlayTrigger
+                  placement="top"
+                  overlay={
+                    <Tooltip>
+                      This document hasn&apos;t been geolocated yet. Remember to
+                      add it.
+                    </Tooltip>
+                  }
+                >
+                  <i className="bi bi-exclamation-triangle"></i>
+                </OverlayTrigger>
+              )}
           </span>
         </div>
       </div>

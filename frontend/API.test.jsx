@@ -21,14 +21,14 @@ describe('KirunaExplorer API Tests', () => {
         const newDocument = {
             id: null,
             title: "Sample Document",
-            stakeholders:["abc"],
+            stakeholders: ["abc"],
             scale: "1:100",
-            issuance_date: "2024-01-01",
+            issuanceDate: "2024-01-01",
             type: "Technical document",
-            nr_connections: 0,
+            nrConnections: 0,
             language: null,
-            nr_pages: 42,
-            geolocation: { latitude: 0 , longitude: 0},
+            nrPages: 42,
+            geolocation: { latitude: 0, longitude: 0 },
             description: "Sample description"
         };
         const response = await request(baseURL).post('/documents').send(newDocument);
@@ -40,7 +40,7 @@ describe('KirunaExplorer API Tests', () => {
         const incompleteDocument = {
             id: 3,
             scale: "1:100",
-            issuance_date: "2024-01-01",
+            issuanceDate: "2024-01-01",
             type: "Technical document"
         };
         const response = await request(baseURL).post('/documents').send(incompleteDocument);
@@ -67,7 +67,7 @@ describe('KirunaExplorer API Tests', () => {
             id: 2,
             title: "Updated Document",
             scale: "1:200",
-            issuance_date: "2024-01-02",
+            issuanceDate: "2024-01-02",
             type: "Design document",
             geolocation: { latitude: "61.1234", longitude: "16.1234" }
         };
@@ -81,7 +81,7 @@ describe('KirunaExplorer API Tests', () => {
             id: 2,
             title: "Updated Document",
             scale: "invalid_scale",
-            issuance_date: "2024-01-02",
+            issuanceDate: "2024-01-02",
             type: "Design document",
             geolocation: { latitude: "61.1234", longitude: "16.1234" }
         };

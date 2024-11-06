@@ -6,6 +6,7 @@ import com.kirunaexplorer.app.dto.response.DocumentResponseDTO;
 import com.kirunaexplorer.app.exception.ResourceNotFoundException;
 import com.kirunaexplorer.app.model.Document;
 import com.kirunaexplorer.app.model.GeoReference;
+import com.kirunaexplorer.app.repository.DocumentLinkRepository;
 import com.kirunaexplorer.app.repository.DocumentRepository;
 import com.kirunaexplorer.app.repository.GeoReferenceRepository;
 import org.springframework.stereotype.Service;
@@ -17,10 +18,12 @@ import java.util.List;
 public class DocumentService {
     private final DocumentRepository documentRepository;
     private final GeoReferenceRepository geoReferenceRepository;
+    private final DocumentLinkRepository documentLinkRepository;
 
-    public DocumentService(DocumentRepository documentRepository, GeoReferenceRepository geoReferenceRepository) {
+    public DocumentService(DocumentRepository documentRepository, GeoReferenceRepository geoReferenceRepository, DocumentLinkRepository documentLinkRepository) {
         this.geoReferenceRepository = geoReferenceRepository;
         this.documentRepository = documentRepository;
+        this.documentLinkRepository = documentLinkRepository;
     }
 
     /***
@@ -39,10 +42,10 @@ public class DocumentService {
      * @return DocumentResponseDTO
      */
     public DocumentResponseDTO getDocumentById(Long id) {
+
         return documentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Document not found with ID " + id))
-                .toResponseDTO();
-
+                .toResponseDTO(documentLinkRepository.countByDocumentId(id));
     }
 
     /***

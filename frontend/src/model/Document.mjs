@@ -6,34 +6,34 @@ export class Document {
     title,
     stakeholders,
     scale,
-    issuance_date,
+    issuanceDate,
     type,
-    nr_connections = 0,
+    nrConnections = 0,
     language = undefined,
-    nr_pages = 0,
-    geolocation = { latitude: 0 , longitude: 0, municipality: "" },
+    nrPages = 0,
+    geolocation = { latitude: 0, longitude: 0, municipality: "" },
     description
   ) {
     this.id = id;
     this.title = title;
     this.stakeholders = stakeholders;
     this.scale = scale;
-    this.issuance_date = issuance_date ? dayjs(issuance_date).format("YYYY-MM-DD") : "-";
+    this.issuanceDate = issuanceDate ? dayjs(issuanceDate).format("YYYY-MM-DD") : "-";
     this.type = type;
-    this.nr_connections = nr_connections;
+    this.nrConnections = nrConnections;
     this.language = language;
-    this.nr_pages = nr_pages;
+    this.nrPages = nrPages;
     this.geolocation = geolocation;
     this.description = description;
   }
 }
 
 export class DocumentSnippet {
-  constructor(id, title, scale, issuance_date, type) {
+  constructor(id, title, scale, issuanceDate, type) {
     this.id = id;
     this.title = title;
     this.scale = scale;
-    this.issuance_date = issuance_date ? dayjs(issuance_date).format("MM/DD/YYYY") : "-";
+    this.issuanceDate = issuanceDate ? dayjs(issuanceDate).format("MM/DD/YYYY") : "-";
     this.type = type;
   }
 }

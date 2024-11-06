@@ -63,7 +63,7 @@ public class Document {
      * Converts the Document object to a DocumentResponseDTO object.
      * @return DocumentResponseDTO object
      */
-    public DocumentResponseDTO toResponseDTO() {
+    public DocumentResponseDTO toResponseDTO(Integer nrConnections) {
         return new DocumentResponseDTO(
             this.id.intValue(),
             this.title,
@@ -71,7 +71,7 @@ public class Document {
             this.scale,
             parseDate(this.issuanceDate, this.datePrecision),
             this.type,
-            this.documentLinks.size(),
+            nrConnections,//this.documentLinks.size(),
             this.language,
             this.pages,
             this.geoReference.toGeolocationDTO(),
