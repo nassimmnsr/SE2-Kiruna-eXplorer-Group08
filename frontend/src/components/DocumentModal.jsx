@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import { Button, Modal, Form } from "react-bootstrap";
-import Document from "../model/Document.mjs";
+import {Document, DocumentSnippet} from "../model/Document.mjs";
 import dayjs from "dayjs";
 
 function DocumentModal(props) {
@@ -15,7 +15,7 @@ function DocumentModal(props) {
   const [nrConnections, setNrConnections] = useState("");
   const [language, setLanguage] = useState("");
   const [nrPages, setNrPages] = useState("");
-  const [geolocation, setGeolocation] = useState("");
+  const [geolocation, setGeolocation] = useState({ latitude: 0.0 , longitude: 0.0});
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState({});
 
@@ -34,12 +34,16 @@ function DocumentModal(props) {
       setType(props.document.type || "");
       setNrConnections(props.document.nr_connections || "");
       setLanguage(props.document.language || "");
-      setNrPages(props.document.nr_pages || "");
-      setGeolocation(props.document.geolocation || "");
+      setNrPages(props.document.nr_pages || 0);
+      setGeolocation(props.document.geolocation || { latitude: 0.0 , longitude: 0.0});
       setDescription(props.document.description || "");
     }
     setErrors({});
   }, [props.document]);
+
+  useEffect(() => {
+    console.log(geolocation);
+  }, [geolocation]);
 
   const validateForm = () => {
     const validationErrors = {};
@@ -104,13 +108,12 @@ function DocumentModal(props) {
     }
 
     if (
-      geolocation.trim() !== "" &&
-      geolocation !== null &&
-      //&& !geolocation.match(/^(\+|-)?(90(\.0+)?|[0-8]?\d(\.\d+)?),\s*(\+|-)?(180(\.0+)?|1[0-7]\d(\.\d+)?|0?\d{1,2}(\.\d+)?)$/)
-      geolocation !== "Whole municipality"
+      geolocation &&
+      (isNaN(geolocation.latitude) || isNaN(geolocation.longitude))
     ) {
-      validationErrors.geolocation = "Please enter a valid geolocation. (ex. ";
-    } else if (
+      validationErrors.geolocation = "Please enter valid numeric values for latitude and longitude.";
+    }
+     else if (
       geolocation === "Whole municipality" &&
       geolocation.length > 64
     ) {
@@ -124,28 +127,44 @@ function DocumentModal(props) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const validationErrors = validateForm();
+    console.log("Submitting form...");
+
+    /*const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
-    }
+    }*/
 
-    if (props.document.id === null) {
-      props.handleAdd(
-        new Document(
-          null,
-          title,
-          stakeholders,
-          scale,
-          issuanceDate,
-          type,
-          language,
-          nrPages,
-          geolocation,
-          description
-        )
-      );
-    } else {
+      if (props.document.id === undefined) {
+       console.log(
+          null,              // id
+          title,             // title
+          stakeholders,      // stakeholders
+          scale,             // scale
+          issuanceDate,      // issuance_date
+          type,              // type
+          0,                 // nr_connections (default 0)
+          language,          // language
+          nrPages,           // nr_pages
+          geolocation,       // geolocation
+          description        // description
+        );
+        props.handleAdd(
+          new Document(
+            null,              // id
+            title,             // title
+            stakeholders,      // stakeholders
+            scale,             // scale
+            issuanceDate,      // issuance_date
+            type,              // type
+            0,                 // nr_connections (default 0)
+            language,          // language
+            nrPages,           // nr_pages
+            geolocation,       // geolocation
+            description        // description
+          )
+        );
+      } else {
       props.handleSave(
         new Document(
           props.document.id,
@@ -157,7 +176,10 @@ function DocumentModal(props) {
           nrConnections,
           language,
           nrPages,
-          geolocation,
+          {
+            latitude: parseFloat(geolocation.latitude),
+            longitude: parseFloat(geolocation.longitude),
+          },
           description
         )
       );
@@ -302,7 +324,8 @@ function ModalBodyComponent(props) {
         <div className="divider"></div>
         <div className="info-item">
           <label>Location:</label>
-          <span>{props.geolocation}</span>
+          <span>{props.geolocation ? `${props.geolocation.latitude}, ${props.geolocation.longitude}` : "N/A"}</span>
+
         </div>
       </div>
       <div className="divider-vertical"></div>
@@ -323,7 +346,7 @@ ModalBodyComponent.propTypes = {
   nrConnections: PropTypes.string,
   language: PropTypes.string,
   nrPages: PropTypes.string,
-  geolocation: PropTypes.string,
+  geolocation: PropTypes.object,
   description: PropTypes.string,
 };
 
@@ -471,18 +494,36 @@ function DocumentFormComponent(props) {
       <Form.Group className="mb-3" controlId="formDocumentNrPages">
         <Form.Label>Pages</Form.Label>
         <Form.Control
-          type="text"
+          type="number"
           value={props.nrPages}
           onChange={(e) => props.setNrPages(e.target.value)}
         />
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="formDocumentGeolocation">
-        <Form.Label>Location</Form.Label>
+        <Form.Label>Latitude</Form.Label>
         <Form.Control
-          type="text"
-          value={props.geolocation}
-          onChange={(e) => props.setGeolocation(e.target.value)}
+          type="number"
+          value={props.geolocation.latitude}
+          onChange={(e) =>
+            props.setGeolocation({
+              ...props.geolocation,
+              latitude: e.target.value,
+            })
+          }
+        />
+      </Form.Group>
+      <Form.Group className="mb-3" controlId="formDocumentGeolocation">
+        <Form.Label>Longitude</Form.Label>
+        <Form.Control
+          type="number"
+          value={props.geolocation.longitude}
+          onChange={(e) =>
+            props.setGeolocation({
+              ...props.geolocation,
+              longitude: e.target.value,
+            })
+          }
         />
       </Form.Group>
       <Form.Group className="mb-3" controlId="formDocumentWholeMunicipality">
@@ -536,8 +577,11 @@ DocumentFormComponent.propTypes = {
   type: PropTypes.string.isRequired,
   nrConnections: PropTypes.string.isRequired,
   language: PropTypes.string.isRequired,
-  nrPages: PropTypes.string.isRequired,
-  geolocation: PropTypes.string.isRequired,
+  nrPages: PropTypes.number.isRequired,
+  geolocation: PropTypes.shape({
+    latitude: PropTypes.number,
+    longitude: PropTypes.number,
+  }),
   description: PropTypes.string.isRequired,
   setTitle: PropTypes.func.isRequired,
   setStakeholders: PropTypes.func.isRequired,

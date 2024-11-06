@@ -1,7 +1,7 @@
 import {Document, DocumentSnippet} from "./model/Document.mjs";
 import Stakeholder from "./model/Stakeholder.mjs";
 
-const SERVER_URL = "http://localhost:8080/api";
+const SERVER_URL = "http://localhost:8080";
 
 /* ************************** *
  *       Documents APIs       *
@@ -9,6 +9,7 @@ const SERVER_URL = "http://localhost:8080/api";
 
 // Retrieve all documents snippets
 const getAllDocumentSnippets = async (filter) => {
+  console.log(`${SERVER_URL}/documents` + (filter ? `?filter=${filter}` : ""))
   const documents = await fetch(
     `${SERVER_URL}/documents` + (filter ? `?filter=${filter}` : "")
   )
@@ -20,6 +21,10 @@ const getAllDocumentSnippets = async (filter) => {
 
 // Create a new document
 const addDocument = async (document) => {
+  console.log(" sono nelle API");
+  console.log(document.id);
+  console.log(document.title);
+  console.log(JSON.stringify(document))
   return await fetch(`${SERVER_URL}/documents`, {
     method: "POST",
     headers: {
@@ -27,6 +32,7 @@ const addDocument = async (document) => {
     },
     body: JSON.stringify(document),
   }).then(handleInvalidResponse);
+
 };
 
 // Retrieve a document by id
@@ -34,7 +40,6 @@ const getDocumentById = async (documentId) => {
   const document = await fetch(`${SERVER_URL}/documents/${documentId}`)
     .then(handleInvalidResponse)
     .then((response) => response.json())
-    .then(mapAPIDocumentsToDocuments);
   return document;
 };
 
@@ -129,7 +134,19 @@ function mapAPIStakeholdersToStakeholders(apiStakeholders) {
 
 async function mapAPIDocumentsToDocuments(apiDocuments) {
   return apiDocuments.map(
-    (apiDocument) =>
+    (apiDocument) =>{
+      console.log(apiDocument.id);
+      console.log(apiDocument.title);
+      console.log(apiDocument.stakeholders);
+      console.log(apiDocument.scale);
+      console.log(apiDocument.issuance_date);
+      console.log(apiDocument.type);
+      console.log(apiDocument.nr_connections);
+      console.log(apiDocument.language);
+      console.log(apiDocument.nr_pages);
+      console.log(apiDocument.geolocation);
+      console.log(apiDocument.description);
+      console.log("fine");
       new Document(
         apiDocument.id,
         apiDocument.title,
@@ -143,11 +160,12 @@ async function mapAPIDocumentsToDocuments(apiDocuments) {
         apiDocument.geolocation,
         apiDocument.description
       )
+    }
   );
 }
 
 async function mapAPISnippetsToSnippet(apiSnippets) {
-  return new  apiSnippets.map(
+  return apiSnippets.map(
     (apiSnippet) =>
       new DocumentSnippet(
         apiSnippet.id,

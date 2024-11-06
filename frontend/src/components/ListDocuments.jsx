@@ -1,10 +1,11 @@
 // ListDocuments.js
 import { useEffect, useState } from "react";
 import { Container, Row, Col, Card } from "react-bootstrap";
+import Document from "../model/Document";
 
 import "../App.css";
 import DocumentModal from "./DocumentModal";
-import API from "../MockAPI";
+import API from "../API";
 import { Button } from "react-bootstrap";
 import LinkModal from "./LinkModal";
 
@@ -18,7 +19,7 @@ function ListDocuments() {
   const [selectedDocumentToLink, setSelectedDocumentToLink] = useState(null);
 
   useEffect(() => {
-    API.getAvailableDocuments()
+    API.getAllDocumentSnippets()
       .then((response) => {
         setDocuments(response);
       })
@@ -27,7 +28,10 @@ function ListDocuments() {
       });
   }, []);
 
-  const handleSelection = (document) => {
+  const handleSelection = async (document) => {
+    console.log(document.id);
+    const newDoc = await API.getDocumentById(document.id);
+    setSelectedDocument(newDoc);
     if(linking) {
       setShowLinkModal(true);
       setSelectedDocument(document);
@@ -50,7 +54,7 @@ function ListDocuments() {
   const handleAdd = (document) => {
     API.addDocument(document)
     .then(() => {
-      API.getAvailableDocuments()
+      API.getAllDocumentSnippets()
       .then((response) => {
         setDocuments(response);
       })

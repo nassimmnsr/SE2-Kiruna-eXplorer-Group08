@@ -1,6 +1,5 @@
 import dayjs from "dayjs";
 
-/* document class */
 export class Document {
   constructor(
     id,
@@ -11,16 +10,15 @@ export class Document {
     type,
     nr_connections = 0,
     language = undefined,
-    nr_pages = "-",
-    geolocation,
-    description = undefined
+    nr_pages = 0,
+    geolocation = { latitude: 0 , longitude: 0},
+    description
   ) {
     this.id = id;
     this.title = title;
     this.stakeholders = stakeholders;
     this.scale = scale;
-    this.issuance_date = issuance_date;
-    this.issuance_date ? dayjs(issuance_date).format("MM/DD/YYYY") : "-";
+    this.issuance_date = issuance_date ? dayjs(issuance_date).format("YYYY-MM-DD") : "-";
     this.type = type;
     this.nr_connections = nr_connections;
     this.language = language;
@@ -30,12 +28,14 @@ export class Document {
   }
 }
 
-export default class DocumentSnippet {
+export class DocumentSnippet {
   constructor(id, title, scale, issuance_date, type) {
     this.id = id;
     this.title = title;
     this.scale = scale;
-    this.issuance_date ? dayjs(issuance_date).format("MM/DD/YYYY") : "-";
+    this.issuance_date = issuance_date ? dayjs(issuance_date).format("MM/DD/YYYY") : "-";
     this.type = type;
   }
 }
+
+export default { Document, DocumentSnippet };
