@@ -8,7 +8,7 @@ export default function Footer() {
     return (
         <Navbar style={{ backgroundColor: "#2f354b" }} fixed="bottom">
             <Container fluid className="px-3">
-                <Navbar.Text className="text-white"> © {currentYear} Kiruna Explorer - All rights reserved</Navbar.Text>
+                <Navbar.Text className="text-white"> {currentYear} - Kiruna Explorer licensed under CC BY SA.</Navbar.Text>
             </Container>
         </Navbar>
     );

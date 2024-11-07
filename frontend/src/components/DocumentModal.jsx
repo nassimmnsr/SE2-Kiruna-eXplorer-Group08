@@ -17,9 +17,9 @@ function DocumentModal(props) {
   const [language, setLanguage] = useState("");
   const [nrPages, setNrPages] = useState(0);
   const [geolocation, setGeolocation] = useState({
-    latitude: 0.0,
-    longitude: 0.0,
-    municipality: ""
+    latitude: null,
+    longitude: null,
+    municipality: "",
   });
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState({});
@@ -37,13 +37,16 @@ function DocumentModal(props) {
       setLanguage(props.document.language || "");
       setNrPages(props.document.nrPages || 0);
       setGeolocation(
-        props.document.geolocation || { latitude: 0.0, longitude: 0.0, municipality: "" }
+        props.document.geolocation || {
+          latitude: "",
+          longitude: "",
+          municipality: "",
+        }
       );
       setDescription(props.document.description || "");
     }
     setErrors({});
   }, [props.document]);
-
 
   // const validateForm = () => {
   //   const validationErrors = {};
@@ -172,9 +175,9 @@ function DocumentModal(props) {
     props.onHide();
   };
 
-  const handleModifyClick = () => {
-    setIsEditable(true);
-  };
+  // const handleModifyClick = () => {
+  //   setIsEditable(true);
+  // };
 
   const handleLinkToClick = () => {
     props.onHide();
@@ -188,7 +191,7 @@ function DocumentModal(props) {
       centered
       className="document-modal"
       size="lg"
-    // fullscreen={isEditable}
+      // fullscreen={isEditable}
     >
       <Modal.Header closeButton className="modal-header">
         <Modal.Title>
@@ -254,13 +257,13 @@ function DocumentModal(props) {
             >
               Link to
             </Button>
-            <Button
+            {/* <Button
               variant="primary"
               onClick={handleModifyClick}
               className="me-2"
             >
               Modify
-            </Button>
+            </Button> */}
           </div>
         )}
       </Modal.Footer>
@@ -323,12 +326,12 @@ function ModalBodyComponent(props) {
         <div className="divider"></div>
         <div className="info-item">
           <label>Language:</label>
-          <span>{props.language > 0 ? (`${props.language}`) : "-"}</span>
+          <span>{props.language ? `${props.language}` : "-"}</span>
         </div>
         <div className="divider"></div>
         <div className="info-item">
           <label>Pages:</label>
-          <span>{props.nrPages > 0 ? (`${props.nrPages}`) : "-"}</span>
+          <span>{props.nrPages > 0 ? `${props.nrPages}` : "-"}</span>
         </div>
         <div className="divider"></div>
         <div className="info-item">
@@ -336,20 +339,21 @@ function ModalBodyComponent(props) {
           <span>
             {props.geolocation.latitude && props.geolocation.longitude ? (
               `${props.geolocation.latitude}, ${props.geolocation.longitude}`
-            ) : props.geolocation.municipality ? `${props.geolocation.municipality}` :
-              (
-                <OverlayTrigger
-                  placement="top"
-                  overlay={
-                    <Tooltip>
-                      This document hasn&apos;t been geolocated yet. Remember to
-                      add it.
-                    </Tooltip>
-                  }
-                >
-                  <i className="bi bi-exclamation-triangle"></i>
-                </OverlayTrigger>
-              )}
+            ) : props.geolocation.municipality ? (
+              `${props.geolocation.municipality}`
+            ) : (
+              <OverlayTrigger
+                placement="top"
+                overlay={
+                  <Tooltip>
+                    This document hasn&apos;t been geolocated yet. Remember to
+                    add it.
+                  </Tooltip>
+                }
+              >
+                <i className="bi bi-exclamation-triangle"></i>
+              </OverlayTrigger>
+            )}
           </span>
         </div>
       </div>
@@ -527,7 +531,7 @@ function DocumentFormComponent(props) {
         <Form.Control
           type="number"
           value={props.nrPages}
-          onChange={(e) => props.setNrPages(e.target.value)}
+          onChange={(e) => props.setNrPages(Number(e.target.value))}
         />
       </Form.Group>
       <div className="divider"></div>
@@ -541,6 +545,7 @@ function DocumentFormComponent(props) {
             props.setGeolocation({
               ...props.geolocation,
               latitude: e.target.value,
+              municipality: null,
             })
           }
         />
@@ -554,6 +559,7 @@ function DocumentFormComponent(props) {
             props.setGeolocation({
               ...props.geolocation,
               longitude: e.target.value,
+              municipality: null,
             })
           }
         />
@@ -567,13 +573,15 @@ function DocumentFormComponent(props) {
               props.setGeolocation({
                 latitude: null,
                 longitude: null,
-                municipality: ""
+                municipality: "",
               });
             }
-            document.getElementById("formDocumentGeolocationLatitude").disabled =
-              e.target.checked;
-            document.getElementById("formDocumentGeolocationLongitude").disabled =
-              e.target.checked;
+            document.getElementById(
+              "formDocumentGeolocationLatitude"
+            ).disabled = e.target.checked;
+            document.getElementById(
+              "formDocumentGeolocationLongitude"
+            ).disabled = e.target.checked;
           }}
           className="mt-2"
         />
@@ -616,9 +624,9 @@ DocumentFormComponent.propTypes = {
   language: PropTypes.string.isRequired,
   nrPages: PropTypes.number.isRequired,
   geolocation: PropTypes.shape({
-    latitude: PropTypes.number,
-    longitude: PropTypes.number,
-    municipality: PropTypes.string
+    latitude: PropTypes.string,
+    longitude: PropTypes.string,
+    municipality: PropTypes.string,
   }),
   description: PropTypes.string.isRequired,
   setTitle: PropTypes.func.isRequired,

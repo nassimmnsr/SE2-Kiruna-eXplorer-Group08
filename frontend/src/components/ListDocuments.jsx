@@ -66,8 +66,7 @@ function ListDocuments() {
         console.error(error);
       });
     setShow(false);
-
-  }
+  };
 
   const handleDelete = (documentId) => {
     API.deleteDocument(documentId);
@@ -108,20 +107,17 @@ function ListDocuments() {
 
   return (
     <Container fluid className="d-flex flex-column vh-100 p-3">
-      <Row>
-        {linking ? (
-          <h1>Link a document</h1>
-        ) : (
-          <h1>Documents</h1>
-        )}
-      </Row>
+      <Row>{linking ? <h1>Link a document</h1> : <h1>Documents</h1>}</Row>
       <Row className="d-flex justify-content-between align-items-center mb-3">
         <Col xs="auto">
           {linking ? (
             <p>Choose the document you want to link</p>
           ) : (
             <>
-              <p>Here you can find all the documents about Kiruna&apos;s relocation process.</p>
+              <p>
+                Here you can find all the documents about Kiruna&apos;s
+                relocation process.
+              </p>
               <p>Click on a document to see more details.</p>
             </>
           )}
@@ -132,10 +128,10 @@ function ListDocuments() {
               variant="primary"
               style={{ width: "90px" }}
               onClick={() => {
-
                 handleCompleteLink();
                 //setSelectedDocument({ isEditable: true });
-              }}>
+              }}
+            >
               Link ({selectedLinkDocuments.length})
             </Button>
           ) : (
@@ -145,7 +141,8 @@ function ListDocuments() {
               onClick={() => {
                 setSelectedDocument({ isEditable: true });
                 setShow(true);
-              }}>
+              }}
+            >
               Add new card
             </Button>
           )}
@@ -154,10 +151,17 @@ function ListDocuments() {
       <div
         className="mx-auto"
         style={{
-          paddingBottom: "5rem"
+          paddingBottom: "5rem",
         }}
       >
-        <Row xs={1} sm={2} md={3} lg={4} className="g-4 mx-auto" style={{ width: "100%" }}>
+        <Row
+          xs={1}
+          sm={2}
+          md={3}
+          lg={4}
+          className="g-4 mx-auto"
+          style={{ width: "100%" }}
+        >
           {documents.map((document) => (
             <Col key={document.id}>
               <Card
