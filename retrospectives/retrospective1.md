@@ -71,21 +71,25 @@ RETROSPECTIVE Team 08
     -  Lack of communication between team memebers
     -  
 - What lessons did you learn (both positive and negative) in this sprint?
-    - 
+    - API documentation and validation (from both frontend and backend teams) is a key aspect
+    - We should know in the first two days where we are headed
 
 - Which improvement goals set in the previous retrospective were you able to achieve?
-    - Not applicable
-
-- Which ones you were not able to achieve? Why?
-    - Not applicable
-
-- Improvement goals for the next sprint and how to achieve them (technical tasks, team coordination, etc.)
-    - Plan tests in advance and write them
     - Write a SSOT (Single Source Of Truth) containing all the necessary information to follow by the team (i.e.
       exchanged payloads between Backend and Frontend, APIs, ...)
     - Detailing the tasks in YouTrack so that everybody knows what they are about (e.g. add tags that help clarify
       what has to be done, ...)
     - Comment the code you are writing!
 
+- Which ones you were not able to achieve? Why?
+    - Plan tests in advance and write them (We should develop more tests)
+
+- Improvement goals for the next sprint and how to achieve them (technical tasks, team coordination, etc.)
+    - Meetings to define clearly how the story should be developed
+    - Working on tasks sequentially starting from the first and not starting other stories until the DoD of the first.
+    - Send daily messages about devewloping situation
+    - We should make more code reviews (associtaing it to the task)
+
 - One thing you are proud of as a Team!!
-    - Communication and working environment
+    - Single components development skills
+    
