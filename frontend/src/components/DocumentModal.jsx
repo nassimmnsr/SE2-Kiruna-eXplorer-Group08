@@ -5,6 +5,7 @@ import { Document } from "../model/Document.mjs";
 // import dayjs from "dayjs";
 import "../App.css";
 
+
 function DocumentModal(props) {
   const [isEditable, setIsEditable] = useState(false);
 
@@ -48,93 +49,114 @@ function DocumentModal(props) {
     setErrors({});
   }, [props.document]);
 
-  // const validateForm = () => {
-  //   const validationErrors = {};
-
-  //   if (title.trim() === "" || title === null) {
-  //     validationErrors.title = "This field cannot be empty.";
-  //   } else if (title.length < 2) {
-  //     validationErrors.title = "Title must be at least 2 characters long.";
-  //   } else if (title.length > 64) {
-  //     validationErrors.title = "Title must be at most 64 characters long.";
-  //   }
-
-  //   if (scale.trim() === "" || scale === null) {
-  //     validationErrors.scale = "This field cannot be empty.";
-  //   } else if (
-  //     scale !== "text" &&
-  //     scale !== "blueprint/material effects" &&
-  //     !scale.match("^1:[1-9][0-9]*$")
-  //   ) {
-  //     validationErrors.scale =
-  //       "Please enter a valid scale. (ex. text, blueprint/material effects, 1:100)";
-  //   }
-
-  //   if (issuanceDate.trim() === "" || issuanceDate === null) {
-  //     validationErrors.issuanceDate = "This field cannot be empty.";
-  //   } else if (!dayjs(issuanceDate, "YYYY-MM-DD").isValid()) {
-  //     validationErrors.issuanceDate =
-  //       "Please enter a valid date. (ex. 01/01/2021)";
-  //   }
-
-  //   if (type.trim() === "" || type === null) {
-  //     validationErrors.type = "This field cannot be empty.";
-  //   }
-
-  //   if (description.trim() === "" || description === null) {
-  //     validationErrors.description = "This field cannot be empty.";
-  //   } else if (description.length < 2) {
-  //     validationErrors.description =
-  //       "Description must be at least 2 characters long.";
-  //   } else if (description.length > 1000) {
-  //     validationErrors.description =
-  //       "Description must be at most 1000 characters long.";
-  //   }
-
-  //   if (stakeholders.length === 0) {
-  //     validationErrors.stakeholders = "This field cannot be empty.";
-  //   } else {
-  //     for (let s of stakeholders) {
-  //       if (s.trim() === "" || s === null) {
-  //         validationErrors.stakeholders = "This field cannot be empty.";
-  //       }
-  //     }
-  //   }
-
-  //   if (language.trim() !== "" && language !== null && language.length > 64) {
-  //     validationErrors.language =
-  //       "Language must be at most 64 characters long.";
-  //   }
-
-  //   if (!isNaN(nrPages)) {
-  //     validationErrors.nrPages = "Please enter a valid number of pages.";
-  //   }
-
-  //   if (
-  //     geolocation &&
-  //     (isNaN(geolocation.latitude) || isNaN(geolocation.longitude))
-  //   ) {
-  //     validationErrors.geolocation =
-  //       "Please enter valid numeric values for latitude and longitude.";
-  //   } else if (
-  //     geolocation === "Whole municipality" &&
-  //     geolocation.length > 64
-  //   ) {
-  //     validationErrors.geolocation =
-  //       "Geolocation must be at most 64 characters long.";
-  //   }
-
-  //   return validationErrors;
-  // };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    /*const validationErrors = validateForm();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
+    // Reset errors
+    const newErrors = {};
+
+    // Title validation
+    if (typeof title !== "string" || !title.trim()) {
+      newErrors.title = "Title is required and must be a non-empty string.";
+    } else if (title.length < 2) {
+      newErrors.title = "Title must be at least 2 characters.";
+    } else if (title.length > 64) {
+      newErrors.title = "Title must be less than 64 characters.";
+    }
+
+    // Stakeholders validation
+    if (
+      !Array.isArray(stakeholders) ||
+      stakeholders.length === 0 ||
+      stakeholders.some((s) => typeof s !== "string" || !s.trim())
+    ) {
+      newErrors.stakeholders =
+        "At least one stakeholder is required, and all must be non-empty strings.";
+    }
+
+    // Scale validation
+    const scalePatterns = [
+      "text",
+      "blueprint/material effects",
+      /^1:[1-9][0-9]*$/,
+    ];
+    if (
+      typeof scale !== "string" ||
+      !scale.trim() ||
+      !scalePatterns.some((pattern) =>
+        typeof pattern === "string" ? pattern === scale : pattern.test(scale)
+      )
+    ) {
+      newErrors.scale =
+        "Scale is required and must match one of the defined patterns.";
+    }
+
+    // Issuance date validation
+    if (
+      typeof issuanceDate !== "string" ||
+      !issuanceDate.match(/^\d{4}-\d{2}-\d{2}$/)
+    ) {
+      newErrors.issuanceDate =
+        "Issuance date is required and must be in the format YYYY-MM-DD.";
+    }
+
+    // Type validation
+    const validTypes = [
+      "Design document",
+      "Material effect",
+      "Technical document",
+      "Prescriptive document",
+      "Informative document",
+    ];
+    if (!validTypes.includes(type)) {
+      newErrors.type =
+        "Type is required and must be one of the predefined values.";
+    }
+
+    if (language && (language.length < 2 || language.length > 64)) {
+      newErrors.language = "Language must be between 2 and 64 characters.";
+    }
+
+    // Number of pages validation
+    if (nrPages && typeof nrPages !== "number") {
+      newErrors.nrPages = "Number of pages must be an integer";
+    }
+
+    // Geolocation validation
+    if (typeof geolocation === "object" && geolocation !== null) {
+      if (
+        (geolocation.latitude !== null &&
+          !/^(?:\+|-)?(?:90(?:\.0+)?|[0-8]?\d(?:\.\d+)?)$/.test(
+            geolocation.latitude
+          )) ||
+        (geolocation.longitude !== null &&
+          !/^(?:\+|-)?(?:180(?:\.0+)?|1[0-7]\d(?:\.\d+)?|0?\d{1,2}(?:\.\d+)?)$/.test(
+            geolocation.longitude
+          ))
+      ) {
+        newErrors.geolocation =
+          "Latitude and longitude must be valid numbers as per the defined patterns.";
+      }
+    } else if (
+      typeof geolocation === "string" &&
+      (geolocation !== "Whole municipality" ||
+        geolocation.length < 2 ||
+        geolocation.length > 64)
+    ) {
+      newErrors.geolocation =
+        "Geolocation must be 'Whole municipality' or a valid coordinate.";
+    }
+
+    // Description validation
+    if (description && description.length > 1000) {
+      newErrors.description = "Description must not exceed 1000 characters.";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
-    }*/
+    }
 
     if (props.document.id === undefined) {
       props.handleAdd(
@@ -191,7 +213,6 @@ function DocumentModal(props) {
       centered
       className="document-modal"
       size="lg"
-      // fullscreen={isEditable}
     >
       <Modal.Header closeButton className="modal-header">
         <Modal.Title>
@@ -409,8 +430,6 @@ function DocumentFormComponent(props) {
           value={props.title}
           onChange={(e) => props.setTitle(e.target.value)}
           isInvalid={!!props.errors.title}
-          minLength={2}
-          maxLength={64}
           required
         />
         {props.errors.title && (
@@ -447,9 +466,11 @@ function DocumentFormComponent(props) {
             {props.errors.stakeholders}
           </Form.Control.Feedback>
         )}
-        <Button variant="primary" onClick={handleAddStakeholder}>
-          Add Stakeholder
-        </Button>
+        <div>
+          <Button variant="primary" onClick={handleAddStakeholder}>
+            Add Stakeholder
+          </Button>
+        </div>
       </Form.Group>
       <div className="divider"></div>
 
@@ -548,6 +569,7 @@ function DocumentFormComponent(props) {
               municipality: null,
             })
           }
+          
         />
       </Form.Group>
       <Form.Group className="mb-3" controlId="formDocumentGeolocationLongitude">
