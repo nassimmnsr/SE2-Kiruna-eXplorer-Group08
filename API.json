@@ -34,7 +34,8 @@
                         "items": {
                             "type": "string",
                             "description": "The name of the stakeholder"
-                        }
+                        },
+                        "minLength": 1
                     },
                     "scale": {
                         "description": "The scale of the document",
@@ -144,7 +145,7 @@
                 "required": [
                     "id",
                     "title",
-                    "stakeholder",
+                    "stakeholders",
                     "scale",
                     "issuanceDate",
                     "type",
