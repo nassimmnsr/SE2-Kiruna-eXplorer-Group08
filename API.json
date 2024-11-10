@@ -148,8 +148,7 @@
                     "stakeholders",
                     "scale",
                     "issuanceDate",
-                    "type",
-                    "geolocation"
+                    "type"
                 ]
             },
             "documents": {
