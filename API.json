@@ -70,7 +70,8 @@
                     },
                     "nrConnections": {
                         "type": "integer",
-                        "description": "The number of connections of the document"
+                        "description": "The number of connections of the document",
+                        "minimum": 0
                     },
                     "language": {
                         "type": "string",
@@ -81,7 +82,7 @@
                     "nrPages": {
                         "type": "integer",
                         "description": "The number of pages of the document",
-                        "minimum": 1
+                        "minimum": 0
                     },
                     "geolocation": {
                         "description": "The coordinates of the document",
