@@ -21,6 +21,7 @@ function ListDocuments() {
   useEffect(() => {
     API.getAllDocumentSnippets()
       .then((response) => {
+        console.log(response);
         setDocuments(response);
       })
       .catch((error) => {

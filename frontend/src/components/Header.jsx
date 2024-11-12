@@ -13,6 +13,7 @@ function Header() {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link className='align-middle'href="/documents" >Documents</Nav.Link>
+            <Nav.Link className='align-middle'href="/map" >Map</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>
