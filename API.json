@@ -70,7 +70,8 @@
                     },
                     "nrConnections": {
                         "type": "integer",
-                        "description": "The number of connections of the document"
+                        "description": "The number of connections of the document",
+                        "minimum": 0
                     },
                     "language": {
                         "type": "string",
@@ -81,7 +82,7 @@
                     "nrPages": {
                         "type": "integer",
                         "description": "The number of pages of the document",
-                        "minimum": 1
+                        "minimum": 0
                     },
                     "geolocation": {
                         "description": "The coordinates of the document",
@@ -91,14 +92,16 @@
                                 "description": "Coordinates in point notation",
                                 "properties": {
                                     "latitude": {
-                                        "type": "string",
+                                        "type": "number",
                                         "description": "The latitude of the document",
-                                        "pattern": "^(\\+|-)?(90(\\.0+)?|[0-8]?\\d(\\.\\d+)?)$"
+                                        "minimum": 67.82295,
+                                        "maximum": 67.88398
                                     },
                                     "longitude": {
-                                        "type": "string",
+                                        "type": "number",
                                         "description": "The longitude of the document",
-                                        "pattern": "^(\\+|-)?(180(\\.0+)?|1[0-7]\\d(\\.\\d+)?|0?\\d{1,2}(\\.\\d+)?)$"
+                                        "minimum": 20.14402,
+                                        "maximum": 20.36870
                                     }
                                 }
                             },
@@ -201,6 +204,36 @@
                                 "Technical document",
                                 "Prescriptive document",
                                 "Informative document"
+                            ]
+                        },
+                        "geolocation": {
+                            "description": "The coordinates of the document",
+                            "oneOf": [
+                                {
+                                    "type": "object",
+                                    "description": "Coordinates in point notation",
+                                    "properties": {
+                                        "latitude": {
+                                            "type": "number",
+                                            "description": "The latitude of the document",
+                                            "minimum": 67.82295,
+                                            "maximum": 67.88398
+                                        },
+                                        "longitude": {
+                                            "type": "number",
+                                            "description": "The longitude of the document",
+                                            "minimum": 20.14402,
+                                            "maximum": 20.36870
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "string",
+                                    "description": "The area of the document",
+                                    "pattern": "Whole municipality",
+                                    "minLength": 2,
+                                    "maxLength": 64
+                                }
                             ]
                         }
                     },

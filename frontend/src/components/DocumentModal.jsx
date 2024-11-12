@@ -5,7 +5,6 @@ import { Document } from "../model/Document.mjs";
 // import dayjs from "dayjs";
 import "../App.css";
 
-
 function DocumentModal(props) {
   const [isEditable, setIsEditable] = useState(false);
 
@@ -20,7 +19,7 @@ function DocumentModal(props) {
   const [geolocation, setGeolocation] = useState({
     latitude: null,
     longitude: null,
-    municipality: "",
+    municipality: "Whole municipality",
   });
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState({});
@@ -39,16 +38,15 @@ function DocumentModal(props) {
       setNrPages(props.document.nrPages || 0);
       setGeolocation(
         props.document.geolocation || {
-          latitude: "",
-          longitude: "",
-          municipality: "",
+          latitude: null,
+          longitude: null,
+          municipality: "Whole municipality",
         }
       );
       setDescription(props.document.description || "");
     }
     setErrors({});
   }, [props.document]);
-
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -126,17 +124,17 @@ function DocumentModal(props) {
     // Geolocation validation
     if (typeof geolocation === "object" && geolocation !== null) {
       if (
-        (geolocation.latitude !== null &&
-          !/^(?:\+|-)?(?:90(?:\.0+)?|[0-8]?\d(?:\.\d+)?)$/.test(
-            geolocation.latitude
-          )) ||
-        (geolocation.longitude !== null &&
-          !/^(?:\+|-)?(?:180(?:\.0+)?|1[0-7]\d(?:\.\d+)?|0?\d{1,2}(?:\.\d+)?)$/.test(
-            geolocation.longitude
-          ))
+        geolocation.latitude !== null &&
+        (geolocation.latitude > 67.88398 || geolocation.latitude < 67.82295)
       ) {
         newErrors.geolocation =
-          "Latitude and longitude must be valid numbers as per the defined patterns.";
+          "Latitude must be in the range between 67.82295 and 67.88398.";
+      } else if (
+        geolocation.longitude !== null &&
+        (geolocation.longitude > 20.3687 || geolocation.longitude < 20.14402)
+      ) {
+        newErrors.geolocation =
+          "Longitude must be in the range between 20.14402 and 20.36870.";
       }
     } else if (
       typeof geolocation === "string" &&
@@ -396,7 +394,11 @@ ModalBodyComponent.propTypes = {
   nrConnections: PropTypes.number,
   language: PropTypes.string,
   nrPages: PropTypes.number,
-  geolocation: PropTypes.object,
+  geolocation: PropTypes.shape({
+    latitude: PropTypes.number,
+    longitude: PropTypes.number,
+    municipality: PropTypes.string,
+  }),
   description: PropTypes.string,
 };
 
@@ -439,7 +441,6 @@ function DocumentFormComponent(props) {
         )}
       </Form.Group>
       <div className="divider"></div>
-
       {/* STAKEHOLDERS */}
       <Form.Group className="mb-3" controlId="formDocumentStakeholders">
         <Form.Label>Stakeholders *</Form.Label>
@@ -473,7 +474,6 @@ function DocumentFormComponent(props) {
         </div>
       </Form.Group>
       <div className="divider"></div>
-
       {/* SCALE */}
       <Form.Group className="mb-3" controlId="formDocumentScale">
         <Form.Label>Scale *</Form.Label>
@@ -491,7 +491,6 @@ function DocumentFormComponent(props) {
         )}
       </Form.Group>
       <div className="divider"></div>
-
       {/* ISSUANCE DATE */}
       <Form.Group className="mb-3" controlId="formDocumentIssuanceDate">
         <Form.Label>Issuance Date *</Form.Label>
@@ -509,7 +508,6 @@ function DocumentFormComponent(props) {
         )}
       </Form.Group>
       <div className="divider"></div>
-
       {/* TYPE */}
       <Form.Group className="mb-3" controlId="formDocumentType">
         <Form.Label>Type *</Form.Label>
@@ -534,7 +532,6 @@ function DocumentFormComponent(props) {
         )}
       </Form.Group>
       <div className="divider"></div>
-
       {/* LANGUAGE */}
       <Form.Group className="mb-3" controlId="formDocumentLanguage">
         <Form.Label>Language</Form.Label>
@@ -545,22 +542,25 @@ function DocumentFormComponent(props) {
         />
       </Form.Group>
       <div className="divider"></div>
-
-      {/* NR CONNECTIONS */}
+      {/* PAGES */}
       <Form.Group className="mb-3" controlId="formDocumentNrPages">
         <Form.Label>Pages</Form.Label>
         <Form.Control
           type="number"
           value={props.nrPages}
+          min={0}
           onChange={(e) => props.setNrPages(Number(e.target.value))}
         />
       </Form.Group>
       <div className="divider"></div>
-
-      <Form.Group className="mb-3" controlId="formDocumentGeolocationLatitude">
+      {/* GEOLOCATION */}
+      <Form.Group className="mb-3">
         <Form.Label>Latitude</Form.Label>
         <Form.Control
           type="number"
+          min={67.82295}
+          max={67.88398}
+          step={0.00001}
           value={props.geolocation.latitude}
           onChange={(e) =>
             props.setGeolocation({
@@ -569,13 +569,55 @@ function DocumentFormComponent(props) {
               municipality: null,
             })
           }
-          
+          id="formDocumentGeolocationLatitude"
+          disabled={props.geolocation.municipality === "Whole municipality"}
         />
-      </Form.Group>
-      <Form.Group className="mb-3" controlId="formDocumentGeolocationLongitude">
+        {props.errors.geolocation && (
+          <Form.Control.Feedback type="invalid">
+            {props.errors.geolocation}
+          </Form.Control.Feedback>
+        )}
+        <Form.Range
+          min={67.82295}
+          max={67.88398}
+          step={0.00001}
+          value={props.geolocation.latitude}
+          onChange={(e) =>
+            props.setGeolocation({
+              ...props.geolocation,
+              latitude: e.target.value,
+              municipality: null,
+            })
+          }
+          disabled={props.geolocation.municipality === "Whole municipality"}
+        />
+
         <Form.Label>Longitude</Form.Label>
         <Form.Control
           type="number"
+          value={props.geolocation.longitude}
+          min={20.14402}
+          max={20.3687}
+          step={0.00001}
+          onChange={(e) =>
+            props.setGeolocation({
+              ...props.geolocation,
+              longitude: e.target.value,
+              municipality: null,
+            })
+          }
+          id="formDocumentGeolocationLongitude"
+          disabled={props.geolocation.municipality === "Whole municipality"}
+        />
+        {props.errors.geolocation && (
+          <Form.Control.Feedback type="invalid">
+            {props.errors.geolocation}
+          </Form.Control.Feedback>
+        )}
+        <Form.Range
+          min={20.14402}
+          max={20.3687}
+          step={0.00001}
           value={props.geolocation.longitude}
           onChange={(e) =>
             props.setGeolocation({
@@ -584,18 +626,24 @@ function DocumentFormComponent(props) {
               municipality: null,
             })
           }
+          disabled={props.geolocation.municipality === "Whole municipality"}
         />
-      </Form.Group>
-      <Form.Group className="mb-3" controlId="formDocumentWholeMunicipality">
+
         <Form.Check
           type="checkbox"
           label="Whole municipality"
+          checked={props.geolocation.municipality === "Whole municipality"}
           onChange={(e) => {
             if (e.target.checked) {
               props.setGeolocation({
                 latitude: null,
                 longitude: null,
-                municipality: "",
+                municipality: "Whole municipality",
+              });
+            } else {
+              props.setGeolocation({
+                ...props.geolocation,
+                municipality: null,
               });
             }
             document.getElementById(
@@ -604,6 +652,13 @@ function DocumentFormComponent(props) {
             document.getElementById(
               "formDocumentGeolocationLongitude"
             ).disabled = e.target.checked;
+            if (e.target.checked) {
+              props.setGeolocation({
+                latitude: "",
+                longitude: "",
+                municipality: "Whole municipality",
+              });
+            }
           }}
           className="mt-2"
         />
@@ -614,7 +669,6 @@ function DocumentFormComponent(props) {
         </Form.Control.Feedback>
       )}
       <div className="divider"></div>
-
       {/* DESCRIPTION */}
       <Form.Group className="mb-3" controlId="formDocumentDescription">
         <Form.Label>Description</Form.Label>
@@ -646,8 +700,8 @@ DocumentFormComponent.propTypes = {
   language: PropTypes.string.isRequired,
   nrPages: PropTypes.number.isRequired,
   geolocation: PropTypes.shape({
-    latitude: PropTypes.string,
-    longitude: PropTypes.string,
+    latitude: PropTypes.number,
+    longitude: PropTypes.number,
     municipality: PropTypes.string,
   }),
   description: PropTypes.string.isRequired,
