@@ -17,8 +17,8 @@ function DocumentModal(props) {
   const [language, setLanguage] = useState("");
   const [nrPages, setNrPages] = useState(0);
   const [geolocation, setGeolocation] = useState({
-    latitude: undefined,
-    longitude: undefined,
+    latitude: null,
+    longitude: null,
     municipality: "Whole municipality",
   });
   const [description, setDescription] = useState("");
@@ -38,8 +38,8 @@ function DocumentModal(props) {
       setNrPages(props.document.nrPages || 0);
       setGeolocation(
         props.document.geolocation || {
-          latitude: undefined,
-          longitude: undefined,
+          latitude: null,
+          longitude: null,
           municipality: "Whole municipality",
         }
       );

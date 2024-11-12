@@ -205,6 +205,36 @@
                                 "Prescriptive document",
                                 "Informative document"
                             ]
+                        },
+                        "geolocation": {
+                            "description": "The coordinates of the document",
+                            "oneOf": [
+                                {
+                                    "type": "object",
+                                    "description": "Coordinates in point notation",
+                                    "properties": {
+                                        "latitude": {
+                                            "type": "number",
+                                            "description": "The latitude of the document",
+                                            "minimum": 67.82295,
+                                            "maximum": 67.88398
+                                        },
+                                        "longitude": {
+                                            "type": "number",
+                                            "description": "The longitude of the document",
+                                            "minimum": 20.14402,
+                                            "maximum": 20.36870
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "string",
+                                    "description": "The area of the document",
+                                    "pattern": "Whole municipality",
+                                    "minLength": 2,
+                                    "maxLength": 64
+                                }
+                            ]
                         }
                     },
                     "required": [
