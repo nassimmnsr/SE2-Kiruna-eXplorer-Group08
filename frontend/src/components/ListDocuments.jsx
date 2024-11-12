@@ -21,7 +21,6 @@ function ListDocuments() {
   useEffect(() => {
     API.getAllDocumentSnippets()
       .then((response) => {
-        console.log(response);
         setDocuments(response);
       })
       .catch((error) => {
@@ -107,7 +106,7 @@ function ListDocuments() {
   };
 
   return (
-    <Container fluid className="d-flex flex-column vh-100 p-3">
+    <Container fluid className="scrollable-list-documents">
       <Row>{linking ? <h1>Link a document</h1> : <h1>Documents</h1>}</Row>
       <Row className="d-flex justify-content-between align-items-center mb-3">
         <Col xs="auto">

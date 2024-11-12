@@ -4,7 +4,7 @@ import "../App.css";
 export default function SplashPage() {
   return (
     <div className="splash-background">
-      <Container className="min-vh-100 d-flex flex-column justify-content-center">
+      <Container className="d-flex flex-column justify-content-center">
         <Row className="text-center mb-4">
           <Col>
             <h1 className="splash-title">Kiruna eXplorer</h1>
