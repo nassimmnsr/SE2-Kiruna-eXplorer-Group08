@@ -122,28 +122,33 @@ function DocumentModal(props) {
     }
 
     // Geolocation validation
-    if (typeof geolocation === "object" && geolocation !== null) {
+    if (typeof geolocation === "object" && geolocation) {
       if (
-        geolocation.latitude !== null &&
-        (geolocation.latitude > 67.88398 || geolocation.latitude < 67.82295)
+        (geolocation.latitude &&
+          (geolocation.latitude > 67.88398 ||
+            geolocation.latitude < 67.82295)) ||
+        (geolocation.longitude && !geolocation.latitude)
       ) {
-        newErrors.geolocation =
+        newErrors.latitude =
           "Latitude must be in the range between 67.82295 and 67.88398.";
-      } else if (
-        geolocation.longitude !== null &&
-        (geolocation.longitude > 20.3687 || geolocation.longitude < 20.14402)
+      }
+      if (
+        (geolocation.longitude &&
+          (geolocation.longitude > 20.3687 ||
+            geolocation.longitude < 20.14402)) ||
+        (geolocation.latitude && !geolocation.longitude)
       ) {
-        newErrors.geolocation =
+        newErrors.longitude =
           "Longitude must be in the range between 20.14402 and 20.36870.";
       }
-    } else if (
-      typeof geolocation === "string" &&
-      (geolocation !== "Whole municipality" ||
-        geolocation.length < 2 ||
-        geolocation.length > 64)
-    ) {
-      newErrors.geolocation =
-        "Geolocation must be 'Whole municipality' or a valid coordinate.";
+      if (
+        geolocation.latitude &&
+        geolocation.longitude &&
+        geolocation.municipality !== "Whole municipality"
+      ) {
+        newErrors.municipality =
+          "Geolocation must be 'Whole municipality' or a valid coordinate.";
+      }
     }
 
     // Description validation
@@ -185,8 +190,8 @@ function DocumentModal(props) {
           language,
           nrPages,
           {
-            latitude: parseFloat(geolocation.latitude),
-            longitude: parseFloat(geolocation.longitude),
+            latitude: geolocation.latitude,
+            longitude: geolocation.longitude,
           },
           description
         )
@@ -562,6 +567,7 @@ function DocumentFormComponent(props) {
           max={67.88398}
           step={0.00001}
           value={props.geolocation.latitude}
+          isInvalid={!!props.errors.latitude}
           onChange={(e) =>
             props.setGeolocation({
               ...props.geolocation,
@@ -572,9 +578,9 @@ function DocumentFormComponent(props) {
           id="formDocumentGeolocationLatitude"
           disabled={props.geolocation.municipality === "Whole municipality"}
         />
-        {props.errors.geolocation && (
+        {props.errors.latitude && (
           <Form.Control.Feedback type="invalid">
-            {props.errors.geolocation}
+            {props.errors.latitude}
           </Form.Control.Feedback>
         )}
         <Form.Range
@@ -582,6 +588,7 @@ function DocumentFormComponent(props) {
           max={67.88398}
           step={0.00001}
           value={props.geolocation.latitude}
+          isInvalid={!!props.errors.latitude}
           onChange={(e) =>
             props.setGeolocation({
               ...props.geolocation,
@@ -599,6 +606,7 @@ function DocumentFormComponent(props) {
           min={20.14402}
           max={20.3687}
           step={0.00001}
+          isInvalid={!!props.errors.longitude}
           onChange={(e) =>
             props.setGeolocation({
               ...props.geolocation,
@@ -609,9 +617,9 @@ function DocumentFormComponent(props) {
           id="formDocumentGeolocationLongitude"
           disabled={props.geolocation.municipality === "Whole municipality"}
         />
-        {props.errors.geolocation && (
+        {props.errors.longitude && (
           <Form.Control.Feedback type="invalid">
-            {props.errors.geolocation}
+            {props.errors.longitude}
           </Form.Control.Feedback>
         )}
         <Form.Range
@@ -619,6 +627,7 @@ function DocumentFormComponent(props) {
           max={20.3687}
           step={0.00001}
           value={props.geolocation.longitude}
+          isInvalid={!!props.errors.longitude}
           onChange={(e) =>
             props.setGeolocation({
               ...props.geolocation,
@@ -663,9 +672,9 @@ function DocumentFormComponent(props) {
           className="mt-2"
         />
       </Form.Group>
-      {props.errors.geolocation && (
+      {props.errors.municipality && (
         <Form.Control.Feedback type="invalid">
-          {props.errors.geolocation}
+          {props.errors.municipality}
         </Form.Control.Feedback>
       )}
       <div className="divider"></div>
