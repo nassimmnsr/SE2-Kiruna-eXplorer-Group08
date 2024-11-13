@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 import API from '../API';
+import 'leaflet/dist/leaflet.css';
 
 const MapKiruna = () => {
   const [documents, setDocuments] = useState([]);
@@ -10,14 +11,13 @@ const MapKiruna = () => {
 
   useEffect(() => {
     API.getAllDocumentSnippets()
-      .then((response) => {
-        console.log(response);
-        setDocuments(response);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+      .then((response) => setDocuments(response))
+      .catch((error) => console.error(error));
   }, []);
+
+  const iconMapping = {
+    "Prescriptive document": new L.Icon({ iconUrl: '/path/to/prescriptive-icon.png', iconSize: [25, 41], iconAnchor: [12, 41] }),
+  };
 
   return (
     <div style={{ height: '90vh', width: '100%' }}>
@@ -27,23 +27,21 @@ const MapKiruna = () => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
 
-        {/* Aggiungi i marker per ogni documento */}
         {documents.map((doc, index) => {
-          const { geolocation, title } = doc;
+          const { geolocation, title, type } = doc;
           const { latitude, longitude, municipality } = geolocation || {};
-          console.log(latitude, longitude, municipality);
 
-          // Determina la posizione: usa Kiruna come fallback se le coordinate sono mancanti
           const position = (latitude && longitude)
             ? [latitude, longitude]
             : municipality === 'Whole municipality'
               ? kirunaPosition
-              : null; 
+              : null;
 
-          // Mostra il marker solo se è presente una posizione valida
+          const icon = iconMapping[type] || iconMapping["Default"];
+
           return (
             position && (
-              <Marker key={index} position={position}>
+              <Marker key={index} position={position} icon={icon}>
                 <Popup>
                   <strong>{title}</strong>
                   <br />
