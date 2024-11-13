@@ -35,7 +35,7 @@ public class DataInitializer implements CommandLineRunner {
                 "Compilation of responses 'So what the people of Kiruna think?'",
                 "This document is a compilation of the responses to the survey 'What is your impression of Kiruna?' From the citizens' responses to this last part of the survey, it is evident that certain buildings, such as the Kiruna Church, the Hjalmar Lundbohmsgärden, and the Town Hall, are considered of significant value to the population. The municipality views the experience of this survey positively, to the extent that over the years it will propose various consultation opportunities.",
                 "Kiruna kommun/Residents",
-                "text",
+                "Informative document",
                 "1:1",
                 LocalDate.of(2007, 1, 1),
                 DatePrecision.YEAR_ONLY,
