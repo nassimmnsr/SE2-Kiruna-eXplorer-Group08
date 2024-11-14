@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import MarkerClusterGroup from 'react-leaflet-markercluster'; // Importa MarkerClusterGroup
+import { MapContainer, TileLayer, Marker } from 'react-leaflet';
+import MarkerClusterGroup from 'react-leaflet-markercluster';
 import 'leaflet/dist/leaflet.css';
-import 'react-leaflet-markercluster/dist/styles.min.css'; // Stili per i cluster
+import 'react-leaflet-markercluster/dist/styles.min.css';
 import API from '../API';
-import prescpritiveDocument from '../public/icons/Prescriptive-document-LKAB.png'
-import designDocument from '../public/icons/Design-document-LKAB.png'
-import actionDocument from '../public/icons/Action-LKAB.png'
-import informativeDocument from '../public/icons/Informative-document-LKAB.png'
-import technicalDocument from '../public/icons/Technical-document-LKAB.png'
+import prescpritiveDocument from '../public/icons/Prescriptive-document-LKAB.png';
+import designDocument from '../public/icons/Design-document-LKAB.png';
+import actionDocument from '../public/icons/Action-LKAB.png';
+import informativeDocument from '../public/icons/Informative-document-LKAB.png';
+import technicalDocument from '../public/icons/Technical-document-LKAB.png';
+import DocumentModal from './DocumentModal';
 
 const iconMapping = {
   "Prescriptive document": new L.Icon({
@@ -35,7 +36,7 @@ const iconMapping = {
     iconAnchor: [20, 37],
     popupAnchor: [1, -25]
   }),
-  "Techincal document": new L.Icon({
+  "Technical document": new L.Icon({
     iconUrl: technicalDocument,
     iconSize: [45, 45],
     iconAnchor: [20, 37],
@@ -54,19 +55,31 @@ const defaultIcon = new L.Icon({
 
 const MapKiruna = () => {
   const [documents, setDocuments] = useState([]);
+  const [selectedDocument, setSelectedDocument] = useState(null);
   const kirunaPosition = [67.8400, 20.2253];
   const zoomLevel = 12;
 
   useEffect(() => {
     API.getAllDocumentSnippets()
       .then((response) => {
-        console.log(response);
+        console.log("Documents fetched:", response);
         setDocuments(response);
       })
       .catch((error) => {
-        console.error(error);
+        console.error("Error fetching documents:", error);
       });
   }, []);
+
+  const handleDocumentClick = (document) => {
+    API.getDocumentById(document.id)
+      .then((response) => {
+        console.log("Document details fetched:", response);
+        setSelectedDocument(response); // Open the modal by setting selectedDocument
+      })
+      .catch((error) => {
+        console.error("Error fetching document details:", error);
+      });
+  };
 
   return (
     <div style={{ height: '90vh', width: '100%' }}>
@@ -91,18 +104,27 @@ const MapKiruna = () => {
 
             return (
               position && (
-                <Marker key={index} position={position} icon={icon}>
-                  <Popup>
-                    <strong>{title}</strong>
-                    <br />
-                    {municipality || "Location not specified"}
-                  </Popup>
-                </Marker>
+                <Marker 
+                  key={index} 
+                  position={position} 
+                  icon={icon} 
+                  eventHandlers={{
+                    click: () => handleDocumentClick(doc),
+                  }}
+                />
               )
             );
           })}
         </MarkerClusterGroup>
       </MapContainer>
+
+      {selectedDocument && (
+        <DocumentModal
+          show={!!selectedDocument}
+          onHide={() => setSelectedDocument(null)}
+          document={selectedDocument}
+        />
+      )}
     </div>
   );
 };

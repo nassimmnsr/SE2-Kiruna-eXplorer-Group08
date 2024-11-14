@@ -294,9 +294,9 @@ DocumentModal.propTypes = {
   show: PropTypes.bool.isRequired,
   onHide: PropTypes.func.isRequired,
   document: PropTypes.object.isRequired,
-  handleSave: PropTypes.func.isRequired,
-  handleAdd: PropTypes.func.isRequired,
-  onLinkToClick: PropTypes.func.isRequired,
+  handleSave: PropTypes.func,
+  handleAdd: PropTypes.func,
+  onLinkToClick: PropTypes.func,
 };
 
 function ModalBodyComponent(props) {
