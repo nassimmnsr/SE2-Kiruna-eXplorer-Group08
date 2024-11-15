@@ -8,6 +8,7 @@ import 'leaflet-editable';
 import { Button } from 'react-bootstrap';
 import API from '../API';
 import DocumentModal from './DocumentModal';
+import ListDocuments from './ListDocuments'; // Import the ListDocuments component
 import prescpritiveDocument from '../public/icons/Prescriptive-document-LKAB.png';
 import designDocument from '../public/icons/Design-document-LKAB.png';
 import actionDocument from '../public/icons/Action-LKAB.png';
@@ -60,14 +61,13 @@ const EditableMap = ({ setMapReady, layers }) => {
   const map = useMap();
 
   useEffect(() => {
-    // Initialize leaflet-editable
     map.editTools = new L.Editable(map);
     setMapReady(map);
 
     map.on('editable:created', (e) => {
       if (e.layer instanceof L.Marker || e.layer instanceof L.Polygon || e.layer instanceof L.Polyline) {
-        layers.current.push(e.layer); // Keep track of all layers
-        map.addLayer(e.layer); // Add to the map
+        layers.current.push(e.layer);
+        map.addLayer(e.layer);
         console.log('Layer added:', e.layer.toGeoJSON());
       }
     });
@@ -81,10 +81,10 @@ const EditableMap = ({ setMapReady, layers }) => {
 const MapKiruna = () => {
   const [documents, setDocuments] = useState([]);
   const [selectedDocument, setSelectedDocument] = useState(null);
-  const [mapReady, setMapReady] = useState(null); // Map instance reference
-  const layersRef = useRef([]); // Keep track of drawn layers
-  const kirunaPosition = [67.8400, 20.2253];
-  const zoomLevel = 10;
+  const [mapReady, setMapReady] = useState(null);
+  let layersRef = useRef([]);
+  let kirunaPosition = [67.8400, 20.2253];
+  let zoomLevel = 12;
 
   // Fetch document snippets from API
   useEffect(() => {
@@ -109,12 +109,6 @@ const MapKiruna = () => {
         case 'polygon':
           mapReady.editTools.startPolygon();
           break;
-        case 'rectangle':
-          mapReady.editTools.startRectangle();
-          break;
-        case 'circle':
-          mapReady.editTools.startCircle();
-          break;
         default:
           console.error('Unknown drawing mode');
       }
@@ -127,7 +121,7 @@ const MapKiruna = () => {
   const handleClear = () => {
     if (layersRef.current.length > 0) {
       layersRef.current.forEach((layer) => mapReady.removeLayer(layer));
-      layersRef.current = []; // Clear the layers reference
+      layersRef.current = [];
       console.log('All layers cleared');
     } else {
       console.log('No layers to clear');
@@ -135,12 +129,16 @@ const MapKiruna = () => {
   };
 
   const handleDocumentClick = (document) => {
+
     API.getDocumentById(document.id)
       .then((response) => {
         setSelectedDocument(response);
+        if(response.geolocation && response.geolocation.latitude && response.geolocation.longitude) {
+          mapReady.setView([response.geolocation.latitude, response.geolocation.longitude], 15);
+        }
       })
       .catch((error) => {
-        console.error("Error fetching document details:", error);
+        console.error("Error fetching document:", error);
       });
   };
 
@@ -311,74 +309,77 @@ const MapKiruna = () => {
   ];
 
   return (
-    <div style={{ height: '90vh', width: '100%' }}>
-      <div style={{ marginBottom: '10px', textAlign: 'center' }}>
-        <Button onClick={() => handleStartDrawing('marker')} disabled={!mapReady}>
-          Add Marker
-        </Button>
-        <Button onClick={() => handleStartDrawing('polyline')} disabled={!mapReady}>
-          Draw Polyline
-        </Button>
-        <Button onClick={() => handleStartDrawing('polygon')} disabled={!mapReady}>
-          Draw Polygon
-        </Button>
-        <Button onClick={() => handleStartDrawing('rectangle')} disabled={!mapReady}>
-          Draw Rectangle
-        </Button>
-        <Button onClick={() => handleStartDrawing('circle')} disabled={!mapReady}>
-          Draw Circle
-        </Button>
-        <Button onClick={handleClear} disabled={!mapReady}>
-          Clear All
-        </Button>
+    <div style={{ display: 'flex', height: '100vh' }}>
+      
+      <div style={{ flex: 2, position: 'relative' }}>
+        <div style={{ marginBottom: '10px', textAlign: 'center' }}>
+          <Button onClick={() => handleStartDrawing('marker')} disabled={!mapReady}>
+            Add Marker
+          </Button>
+          <Button onClick={() => handleStartDrawing('polyline')} disabled={!mapReady}>
+            Draw Polyline
+          </Button>
+          <Button onClick={() => handleStartDrawing('polygon')} disabled={!mapReady}>
+            Draw Polygon
+          </Button>
+          <Button onClick={handleClear} disabled={!mapReady}>
+            Clear All
+          </Button>
+        </div>
+
+        <MapContainer
+          center={kirunaPosition}
+          zoom={zoomLevel}
+          scrollWheelZoom={false}
+          style={{ height: 'calc(100% - 50px)', width: '100%' }}
+        >
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution="&copy; OpenStreetMap contributors"
+          />
+
+          <EditableMap setMapReady={setMapReady} layers={layersRef} />
+
+          <Polygon
+            positions={kirunaBorderCoordinates}
+            color="purple"
+            weight={3}
+            fillOpacity={0.1}
+          />
+
+          <MarkerClusterGroup>
+            {documents.map((doc, index) => {
+              const { geolocation } = doc;
+              const { latitude, longitude, municipality } = geolocation || {};
+
+              const position = latitude && longitude ? [latitude, longitude] : kirunaPosition;
+              const icon = iconMapping[doc.type] || defaultIcon;
+
+              return (
+                <Marker
+                  key={index}
+                  position={position}
+                  icon={icon}
+                  eventHandlers={{
+                    click: () => handleDocumentClick(doc),
+                  }}
+                />
+              );
+            })}
+          </MarkerClusterGroup>
+        </MapContainer>
       </div>
 
-      <MapContainer
-        center={kirunaPosition}
-        zoom={zoomLevel}
-        scrollWheelZoom={false}
-        style={{ height: '100%', width: '100%' }}
-      >
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution="&copy; OpenStreetMap contributors"
-        />
-
-        <EditableMap setMapReady={setMapReady} layers={layersRef} />
-
-        <Polygon
-          positions={kirunaBorderCoordinates}
-          color="purple"
-          weight={3}
-          fillOpacity={0.1}
-        />
-
-        <MarkerClusterGroup>
-          {documents.map((doc, index) => {
-            const { geolocation } = doc;
-            const { latitude, longitude, municipality } = geolocation || {};
-
-            const position = latitude && longitude ? [latitude, longitude] : kirunaPosition;
-            const icon = iconMapping[doc.type] || defaultIcon;
-
-            return (
-              <Marker
-                key={index}
-                position={position}
-                icon={icon}
-                eventHandlers={{
-                  click: () => handleDocumentClick(doc),
-                }}
-              />
-            );
-          })}
-        </MarkerClusterGroup>
-      </MapContainer>
+      <div style={{ flex: 1, borderLeft: '1px solid #ccc', overflowY: 'auto', paddingTop: '8px' }}>
+      <ListDocuments thinCardLayout={true}/>
+      </div>
+      
 
       {selectedDocument && (
         <DocumentModal
           show={!!selectedDocument}
-          onHide={() => setSelectedDocument(null)}
+          onHide={() => setSelectedDocument(null)
+          }
           document={selectedDocument}
         />
       )}

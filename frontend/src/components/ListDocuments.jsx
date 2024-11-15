@@ -1,15 +1,12 @@
-// ListDocuments.js
 import { useEffect, useState } from "react";
 import { Container, Row, Col, Card } from "react-bootstrap";
-// import Document from "../model/Document";
-
 import "../App.css";
 import DocumentModal from "./DocumentModal";
 import API from "../API";
 import { Button } from "react-bootstrap";
 import LinkModal from "./LinkModal";
 
-function ListDocuments() {
+function ListDocuments({ thinCardLayout = false}) {
   const [documents, setDocuments] = useState([]);
   const [show, setShow] = useState(false);
   const [showLinkModal, setShowLinkModal] = useState(false);
@@ -21,7 +18,6 @@ function ListDocuments() {
   useEffect(() => {
     API.getAllDocumentSnippets()
       .then((response) => {
-        console.log(response);
         setDocuments(response);
       })
       .catch((error) => {
@@ -127,10 +123,7 @@ function ListDocuments() {
             <Button
               variant="primary"
               style={{ width: "90px" }}
-              onClick={() => {
-                handleCompleteLink();
-                //setSelectedDocument({ isEditable: true });
-              }}
+              onClick={handleCompleteLink}
             >
               Link ({selectedLinkDocuments.length})
             </Button>
@@ -155,23 +148,26 @@ function ListDocuments() {
         }}
       >
         <Row
-          xs={1}
-          sm={2}
-          md={3}
-          lg={4}
-          className="g-4 mx-auto"
+          xs={thinCardLayout ? 1 : 1}
+          sm={thinCardLayout ? 1 : 2}
+          md={thinCardLayout ? 1 : 3}
+          lg={thinCardLayout ? 1 : 4}
+          className="g-2 mx-auto"
           style={{ width: "100%" }}
         >
           {documents.map((document) => (
             <Col key={document.id}>
               <Card
-                className="document-card h-100"
+                className={`document-card ${
+                  thinCardLayout ? "document-card-thin" : "h-100"
+                }`}
                 style={{
                   backgroundColor: isLinkedDocument(document) ? "#b1b0aa" : "",
+                  cursor: "pointer",
                 }}
                 onClick={() => {
                   if (!isLinkedDocument(document)) {
-                    handleSelection(document); // Chiamato solo se la card è cliccabile
+                    handleSelection(document);
                   }
                 }}
               >
@@ -179,16 +175,20 @@ function ListDocuments() {
                   <Card.Title className="document-card-title">
                     {document.title}
                   </Card.Title>
-                  <div className="divider" />
-                  <Card.Text className="document-card-text">
-                    <strong>Scale:</strong> {document.scale}
-                  </Card.Text>
-                  <Card.Text className="document-card-text">
-                    <strong>Issuance Date:</strong> {document.issuanceDate}
-                  </Card.Text>
-                  <Card.Text className="document-card-text">
-                    <strong>Type:</strong> {document.type}
-                  </Card.Text>
+                  {!thinCardLayout && <div className="divider" />}
+                  {!thinCardLayout && (
+                    <>
+                      <Card.Text className="document-card-text">
+                        <strong>Scale:</strong> {document.scale}
+                      </Card.Text>
+                      <Card.Text className="document-card-text">
+                        <strong>Issuance Date:</strong> {document.issuanceDate}
+                      </Card.Text>
+                      <Card.Text className="document-card-text">
+                        <strong>Type:</strong> {document.type}
+                      </Card.Text>
+                    </>
+                  )}
                 </Card.Body>
               </Card>
             </Col>
