@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster'; // Importa MarkerClusterGroup
 import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 import 'react-leaflet-markercluster/dist/styles.min.css'; // Stili per i cluster
 import API from '../API';
 import prescpritiveDocument from '../public/icons/Prescriptive-document-LKAB.png'
@@ -74,6 +75,7 @@ const MapKiruna = () => {
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          detectRetina={true}
         />
         
         <MarkerClusterGroup>
