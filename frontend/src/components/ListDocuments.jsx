@@ -33,8 +33,20 @@ function ListDocuments() {
     const newDoc = await API.getDocumentById(document.id);
     setSelectedDocument(newDoc);
     if (linking) {
-      setShowLinkModal(true);
-      setSelectedDocument(newDoc);
+      if(selectedDocumentToLink && document.id === selectedDocumentToLink?.id) {
+        return;
+      }
+      const alreadySelected = selectedLinkDocuments.some(
+        (doc) => doc.document.id === document.id
+      );
+      if(alreadySelected) {
+        setSelectedLinkDocuments((prevDocuments) =>
+          prevDocuments.filter((doc) => doc.document.id !== document.id)
+        );
+      } else {
+        setShowLinkModal(true);
+        setSelectedDocument(newDoc);
+      }
     } else {
       setSelectedDocument(newDoc);
       setShow(true);
@@ -105,6 +117,11 @@ function ListDocuments() {
     }
   };
 
+  const handleExitLinkMode = () => {
+    setLinking(false);
+    setSelectedLinkDocuments([]);
+  }
+
   return (
     <Container fluid className="scrollable-list-documents">
       <Row>{linking ? <h1>Link a document</h1> : <h1>Documents</h1>}</Row>
@@ -124,9 +141,10 @@ function ListDocuments() {
         </Col>
         <Col xs="auto">
           {linking ? (
+            <>
             <Button
               variant="primary"
-              style={{ width: "90px" }}
+              style={{ width: "90px", marginRight: "10px" }}
               onClick={() => {
                 handleCompleteLink();
                 //setSelectedDocument({ isEditable: true });
@@ -134,6 +152,16 @@ function ListDocuments() {
             >
               Link ({selectedLinkDocuments.length})
             </Button>
+            <Button
+              variant="secondary"
+              style={{ width: "90px" }}
+              onClick={() => {
+                handleExitLinkMode();
+              }}
+            >
+              Exit
+            </Button>
+            </>
           ) : (
             <Button
               variant="primary"
@@ -170,9 +198,7 @@ function ListDocuments() {
                   backgroundColor: isLinkedDocument(document) ? "#b1b0aa" : "",
                 }}
                 onClick={() => {
-                  if (!isLinkedDocument(document)) {
-                    handleSelection(document); // Chiamato solo se la card è cliccabile
-                  }
+                  handleSelection(document); 
                 }}
               >
                 <Card.Body>
