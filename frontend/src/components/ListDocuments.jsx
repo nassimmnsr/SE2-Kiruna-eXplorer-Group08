@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import { Container, Row, Col, Card } from "react-bootstrap";
+import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import "../App.css";
 import DocumentModal from "./DocumentModal";
 import API from "../API";
-import { Button } from "react-bootstrap";
 import LinkModal from "./LinkModal";
 
-function ListDocuments({ thinCardLayout = false}) {
+function ListDocuments({ thinCardLayout = false }) {
   const [documents, setDocuments] = useState([]);
   const [show, setShow] = useState(false);
   const [showLinkModal, setShowLinkModal] = useState(false);
@@ -15,30 +14,45 @@ function ListDocuments({ thinCardLayout = false}) {
   const [selectedLinkDocuments, setSelectedLinkDocuments] = useState([]);
   const [selectedDocumentToLink, setSelectedDocumentToLink] = useState(null);
 
+  // Fetch all document snippets
   useEffect(() => {
     API.getAllDocumentSnippets()
-      .then((response) => {
-        setDocuments(response);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+      .then(setDocuments)
+      .catch((error) => console.error("Error fetching documents:", error));
   }, []);
 
   const handleSelection = async (document) => {
-    const newDoc = await API.getDocumentById(document.id);
-    setSelectedDocument(newDoc);
-    if (linking) {
-      setShowLinkModal(true);
-      setSelectedDocument(newDoc);
-    } else {
-      setSelectedDocument(newDoc);
-      setShow(true);
+    try {
+      const fetchedDocument = await API.getDocumentById(document.id);
+      setSelectedDocument(fetchedDocument);
+
+      if (linking) {
+        setShowLinkModal(true);
+      } else {
+        setShow(true);
+      }
+    } catch (error) {
+      console.error("Error fetching document details:", error);
     }
   };
 
   const handleSave = (document) => {
-    API.updateDocument(document.id, document);
+    API.updateDocument(document.id, document)
+      .then(() => setShow(false))
+      .catch((error) => console.error("Error saving document:", error));
+  };
+
+  const handleAdd = (document) => {
+    API.addDocument(document)
+      .then(() => API.getAllDocumentSnippets().then(setDocuments))
+      .catch((error) => console.error("Error adding document:", error));
+    setShow(false);
+  };
+
+  const handleDelete = (documentId) => {
+    API.deleteDocument(documentId)
+      .then(() => API.getAllDocumentSnippets().then(setDocuments))
+      .catch((error) => console.error("Error deleting document:", error));
     setShow(false);
   };
 
@@ -47,34 +61,25 @@ function ListDocuments({ thinCardLayout = false}) {
     setLinking(true);
   };
 
-  const handleAdd = (document) => {
-    API.addDocument(document)
-      .then(() => {
-        API.getAllDocumentSnippets()
-          .then((response) => {
-            setDocuments(response);
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-    setShow(false);
-  };
-
-  const handleDelete = (documentId) => {
-    API.deleteDocument(documentId);
-    setShow(false);
-  };
-
   const handleLinkConfirm = (linkedDocument) => {
-    setSelectedLinkDocuments((prevDocuments) => [
-      ...prevDocuments,
-      linkedDocument,
-    ]);
+    setSelectedLinkDocuments((prev) => [...prev, linkedDocument]);
     setShowLinkModal(false);
+  };
+
+  const handleCompleteLink = async () => {
+    try {
+      await Promise.all(
+        selectedLinkDocuments.map((linkedDoc) =>
+          API.createLink(selectedDocumentToLink, linkedDoc)
+        )
+      );
+      alert("Links created successfully!");
+      setLinking(false);
+      setSelectedLinkDocuments([]);
+    } catch (error) {
+      console.error("Error linking documents:", error);
+      alert("Failed to create links. Please try again.");
+    }
   };
 
   const isLinkedDocument = (document) => {
@@ -85,25 +90,11 @@ function ListDocuments({ thinCardLayout = false}) {
     );
   };
 
-  const handleCompleteLink = async () => {
-    try {
-      await Promise.all(
-        selectedLinkDocuments.map(async (linkedDocument) => {
-          await API.createLink(selectedDocumentToLink, linkedDocument);
-        })
-      );
-      alert("All the selected links have been confirmed!");
-      setLinking(false);
-      setSelectedLinkDocuments([]);
-    } catch (error) {
-      console.error("Error linking documents:", error);
-      alert("There was an error linking the documents. Please try again.");
-    }
-  };
-
   return (
     <Container fluid className="scrollable-list-documents">
-      <Row>{linking ? <h1>Link a document</h1> : <h1>Documents</h1>}</Row>
+      <Row>
+        <h1>{linking ? "Link a Document" : "Documents"}</h1>
+      </Row>
       <Row className="d-flex justify-content-between align-items-center mb-3">
         <Col xs="auto">
           {linking ? (
@@ -111,8 +102,8 @@ function ListDocuments({ thinCardLayout = false}) {
           ) : (
             <>
               <p>
-                Here you can find all the documents about Kiruna&apos;s
-                relocation process.
+                Here you can find all the documents about Kiruna's relocation
+                process.
               </p>
               <p>Click on a document to see more details.</p>
             </>
@@ -122,107 +113,95 @@ function ListDocuments({ thinCardLayout = false}) {
           {linking ? (
             <Button
               variant="primary"
-              style={{ width: "90px" }}
               onClick={handleCompleteLink}
+              style={{ width: "90px" }}
             >
               Link ({selectedLinkDocuments.length})
             </Button>
           ) : (
             <Button
               variant="primary"
-              style={{ width: "150px" }}
               onClick={() => {
                 setSelectedDocument({ isEditable: true });
                 setShow(true);
               }}
+              style={{ width: "150px" }}
             >
-              Add new card
+              Add New Document
             </Button>
           )}
         </Col>
       </Row>
-      <div
-        className="mx-auto"
-        style={{
-          paddingBottom: "5rem",
-        }}
+      <Row
+        xs={thinCardLayout ? 1 : 1}
+        sm={thinCardLayout ? 1 : 2}
+        md={thinCardLayout ? 1 : 3}
+        lg={thinCardLayout ? 1 : 4}
+        className="g-2 mx-auto"
+        style={{ width: "100%" }}
       >
-        <Row
-          xs={thinCardLayout ? 1 : 1}
-          sm={thinCardLayout ? 1 : 2}
-          md={thinCardLayout ? 1 : 3}
-          lg={thinCardLayout ? 1 : 4}
-          className="g-2 mx-auto"
-          style={{ width: "100%" }}
-        >
-          {documents.map((document) => (
-            <Col key={document.id}>
-              <Card
-                className={`document-card ${
-                  thinCardLayout ? "document-card-thin" : "h-100"
-                }`}
-                style={{
-                  backgroundColor: isLinkedDocument(document) ? "#b1b0aa" : "",
-                  cursor: "pointer",
-                }}
-                onClick={() => {
-                  if (!isLinkedDocument(document)) {
-                    handleSelection(document);
-                  }
-                }}
-              >
-                <Card.Body>
-                  <Card.Title className="document-card-title">
-                    {document.title}
-                  </Card.Title>
-                  {!thinCardLayout && <div className="divider" />}
-                  {!thinCardLayout && (
-                    <>
-                      <Card.Text className="document-card-text">
-                        <strong>Scale:</strong> {document.scale}
-                      </Card.Text>
-                      <Card.Text className="document-card-text">
-                        <strong>Issuance Date:</strong> {document.issuanceDate}
-                      </Card.Text>
-                      <Card.Text className="document-card-text">
-                        <strong>Type:</strong> {document.type}
-                      </Card.Text>
-                    </>
-                  )}
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-
-        {selectedDocument && (
-          <DocumentModal
-            onLinkToClick={handleLinkToClick}
-            show={show}
-            onHide={() => {
-              setSelectedDocument(null);
-              setShow(false);
-            }}
-            document={selectedDocument}
-            handleSave={handleSave}
-            handleDelete={handleDelete}
-            handleAdd={handleAdd}
-          />
-        )}
-        {selectedDocumentToLink && showLinkModal && (
-          <LinkModal
-            showModal={showLinkModal}
-            handleClose={() => {
-              setSelectedDocument(null);
-              setShowLinkModal(false);
-            }}
-            setSelectedLinkDocuments={setSelectedLinkDocuments}
-            selectedLinkDocuments={selectedLinkDocuments}
-            document={selectedDocument}
-            onLinkConfirm={handleLinkConfirm}
-          />
-        )}
-      </div>
+        {documents.map((document) => (
+          <Col key={document.id}>
+            <Card
+              className={`document-card ${
+                thinCardLayout ? "document-card-thin" : "h-100"
+              }`}
+              style={{
+                backgroundColor: isLinkedDocument(document) ? "#b1b0aa" : "",
+                cursor: "pointer",
+              }}
+              onClick={() => !isLinkedDocument(document) && handleSelection(document)}
+            >
+              <Card.Body>
+                <Card.Title className="document-card-title">
+                  {document.title}
+                </Card.Title>
+                {!thinCardLayout && (
+                  <>
+                    <div className="divider" />
+                    <Card.Text>
+                      <strong>Scale:</strong> {document.scale}
+                    </Card.Text>
+                    <Card.Text>
+                      <strong>Issuance Date:</strong> {document.issuanceDate}
+                    </Card.Text>
+                    <Card.Text>
+                      <strong>Type:</strong> {document.type}
+                    </Card.Text>
+                  </>
+                )}
+              </Card.Body>
+            </Card>
+          </Col>
+        ))}
+      </Row>
+      {selectedDocument && (
+        <DocumentModal
+          onLinkToClick={handleLinkToClick}
+          show={show}
+          onHide={() => {
+            setSelectedDocument(null);
+            setShow(false);
+          }}
+          document={selectedDocument}
+          handleSave={handleSave}
+          handleDelete={handleDelete}
+          handleAdd={handleAdd}
+        />
+      )}
+      {selectedDocumentToLink && showLinkModal && (
+        <LinkModal
+          showModal={showLinkModal}
+          handleClose={() => {
+            setSelectedDocument(null);
+            setShowLinkModal(false);
+          }}
+          setSelectedLinkDocuments={setSelectedLinkDocuments}
+          selectedLinkDocuments={selectedLinkDocuments}
+          document={selectedDocument}
+          onLinkConfirm={handleLinkConfirm}
+        />
+      )}
     </Container>
   );
 }

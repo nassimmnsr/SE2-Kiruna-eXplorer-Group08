@@ -190,14 +190,30 @@ const kirunaBorderCoordinates = [
     [67.8774793377591, 20.170706869100258]
 ];
 
-import { point, polygon } from "@turf/helpers";
-import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
+const isPointInPolygon = (point) => {
+  const kirunaBorderCoordinatesLngLat = kirunaBorderCoordinates.map(([lat, lng]) => [lng, lat]);
+  const polygon = [
+    ...kirunaBorderCoordinatesLngLat,
+    kirunaBorderCoordinatesLngLat[0], // Close the loop
+  ];
+  const [x, y] = [point.lng, point.lat]; // Ensure [lng, lat]
+  let inside = false;
 
-const isPointInsidePolygon = (latlng, polygonCoordinates) => {
-  const turfPoint = point([latlng.lng, latlng.lat]); // Turf uses [longitude, latitude]
-  const turfPolygon = polygon([polygonCoordinates]); // Polygon coordinates must be nested
-  return booleanPointInPolygon(turfPoint, turfPolygon);
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+    const [xi, yi] = polygon[i];
+    const [xj, yj] = polygon[j];
+
+    const intersect =
+      yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
+    if (intersect) inside = !inside;
+  }
+
+  return inside;
 };
+
+
+
+
 
 function DocumentModal(props) {
   const [isEditable, setIsEditable] = useState(false);
@@ -309,24 +325,32 @@ function DocumentModal(props) {
       newErrors.nrPages = "Number of pages must be an integer";
     }
 
-    const point = L.latLng(geolocation.latitude, geolocation.longitude);
-    if (!isPointInsidePolygon(point, kirunaBorderCoordinates)) {
-      newErrors.geolocation = "Geolocation must be within the Kiruna boundary.";
+    // Geolocation validation
+  if (geolocation.latitude && geolocation.longitude) {
+    const point = { lat: geolocation.latitude, lng: geolocation.longitude };
+    const valid = isPointInPolygon(point);
+    if (!valid) {
+      newErrors.latitude = "Geolocation must be within the Kiruna boundary.";
+      newErrors.longitude = "Geolocation must be within the Kiruna boundary.";
     }
+  }
+  
+    console.log("Validation Errors:", newErrors);
 
+    /*
     // Geolocation validation
     if (typeof geolocation === "object" && geolocation !== null) {
       if (
         geolocation.latitude !== null &&
         (geolocation.latitude > 67.88398 || geolocation.latitude < 67.82295)
       ) {
-        newErrors.geolocation =
+        newErrors.latitude =
           "Latitude must be in the range between 67.82295 and 67.88398.";
       } else if (
         geolocation.longitude !== null &&
         (geolocation.longitude > 20.3687 || geolocation.longitude < 20.14402)
       ) {
-        newErrors.geolocation =
+        newErrors.longitude =
           "Longitude must be in the range between 20.14402 and 20.36870.";
       }
     } else if (
@@ -338,10 +362,11 @@ function DocumentModal(props) {
       newErrors.geolocation =
         "Geolocation must be 'Whole municipality' or a valid coordinate.";
     }
-
+  */
     if (description && description.length > 1000) {
       newErrors.description = "Description must not exceed 1000 characters.";
     }
+    console.log("Validation Errors:", newErrors);
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -784,70 +809,76 @@ function DocumentFormComponent(props) {
       </Form.Group>
       <div className="divider"></div>
       <Form.Group className="mb-3">
-        <Form.Label>Latitude</Form.Label>
-        <Form.Control
-          type="number"
-          min={67.82295}
-          max={67.88398}
-          step={0.00001}
-          value={geolocation.latitude || ""}
-          onChange={handleLatitudeChange}
-          id="formDocumentGeolocationLatitude"
-          disabled={geolocation.municipality === "Whole municipality"}
-        />
-        <Form.Label>Longitude</Form.Label>
-        <Form.Control
-          type="number"
-          min={20.14402}
-          max={20.3687}
-          step={0.00001}
-          value={geolocation.longitude || ""}
-          onChange={handleLongitudeChange}
-          id="formDocumentGeolocationLongitude"
-          disabled={geolocation.municipality === "Whole municipality"}
-        />
-        <Form.Check
-          type="checkbox"
-          label="Whole municipality"
-          checked={geolocation.municipality === "Whole municipality"}
-          onChange={(e) => {
-            if (e.target.checked) {
-              setGeolocation({
-                latitude: null,
-                longitude: null,
-                municipality: "Whole municipality",
-              });
-              setMarkerPosition(defaultPosition);
-            } else {
-              setGeolocation({
-                ...geolocation,
-                municipality: null,
-              });
-            }
-          }}
-          className="mt-2"
-        />
-        {props.errors.geolocation && (
-          <Form.Control.Feedback type="invalid">
-            {props.errors.geolocation}
-          </Form.Control.Feedback>
-        )}
-        <div style={{ height: "300px", marginBottom: "15px" }}>
-        <MapContainer
-          center={markerPosition}
-          zoom={13}
-          style={{ height: "100%", width: "100%" }}
-        >
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-          <Marker position={markerPosition} />
-          <Polygon positions={kirunaBorderCoordinates} />
-          <MapClickHandler />
-        </MapContainer>
-      </div>
-        <Form.Text className="text-muted">
-          Click on the map to set the location. Latitude and Longitude fields will update automatically.
-        </Form.Text>
-      </Form.Group>
+  <Form.Label>Latitude</Form.Label>
+  <Form.Control
+    type="number"
+    min={67.82295}
+    max={67.88398}
+    step={0.00001}
+    value={geolocation.latitude || ""}
+    onChange={handleLatitudeChange}
+    id="formDocumentGeolocationLatitude"
+    isInvalid={!!props.errors.latitude} // Ensures feedback visibility
+    disabled={geolocation.municipality === "Whole municipality"}
+  />
+  <Form.Control.Feedback type="invalid">
+    {props.errors.latitude}
+  </Form.Control.Feedback>
+
+  <Form.Label>Longitude</Form.Label>
+  <Form.Control
+    type="number"
+    min={20.14402}
+    max={20.3687}
+    step={0.00001}
+    value={geolocation.longitude || ""}
+    onChange={handleLongitudeChange}
+    id="formDocumentGeolocationLongitude"
+    isInvalid={!!props.errors.longitude} // Ensures feedback visibility
+    disabled={geolocation.municipality === "Whole municipality"}
+  />
+  <Form.Control.Feedback type="invalid">
+    {props.errors.longitude}
+  </Form.Control.Feedback>
+
+  <Form.Check
+    type="checkbox"
+    label="Whole municipality"
+    checked={geolocation.municipality === "Whole municipality"}
+    onChange={(e) => {
+      if (e.target.checked) {
+        setGeolocation({
+          latitude: null,
+          longitude: null,
+          municipality: "Whole municipality",
+        });
+        setMarkerPosition(defaultPosition);
+      } else {
+        setGeolocation({
+          ...geolocation,
+          municipality: null,
+        });
+      }
+    }}
+    className="mt-2"
+  />
+  <div style={{ height: "300px", marginBottom: "15px" }}>
+    <MapContainer
+      center={markerPosition}
+      zoom={13}
+      style={{ height: "100%", width: "100%" }}
+    >
+      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+      <Marker position={markerPosition} />
+      <Polygon positions={kirunaBorderCoordinates} />
+      <MapClickHandler />
+    </MapContainer>
+  </div>
+  <Form.Text className="text-muted">
+    Click on the map to set the location. Latitude and Longitude fields will update automatically.
+  </Form.Text>
+</Form.Group>
+
       <div className="divider"></div>
       {/* DESCRIPTION */}
       <Form.Group className="mb-3" controlId="formDocumentDescription">
