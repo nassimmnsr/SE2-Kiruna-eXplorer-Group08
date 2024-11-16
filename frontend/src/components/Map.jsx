@@ -36,7 +36,7 @@ const iconMapping = {
     iconAnchor: [20, 37],
     popupAnchor: [1, -25]
   }),
-  "Techincal document": new L.Icon({
+  "Technical document": new L.Icon({
     iconUrl: technicalDocument,
     iconSize: [45, 45],
     iconAnchor: [20, 37],

@@ -165,13 +165,13 @@ function ListDocuments() {
           ) : (
             <Button
               variant="primary"
-              style={{ width: "150px" }}
+              style={{ width: "170px" }}
               onClick={() => {
                 setSelectedDocument({ isEditable: true });
                 setShow(true);
               }}
             >
-              Add new card
+              Add new document
             </Button>
           )}
         </Col>
