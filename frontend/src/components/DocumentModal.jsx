@@ -2,8 +2,11 @@ import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import { Button, Modal, Form, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { Document } from "../model/Document.mjs";
-// import dayjs from "dayjs";
+import dayjs from "dayjs";
 import "../App.css";
+
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
 
 function DocumentModal(props) {
   const [isEditable, setIsEditable] = useState(false);
@@ -93,10 +96,10 @@ function DocumentModal(props) {
     // Issuance date validation
     if (
       typeof issuanceDate !== "string" ||
-      !issuanceDate.match(/^\d{4}-\d{2}-\d{2}$/)
+      !dayjs(issuanceDate, ["DD/MM/YYYY", "MM/YYYY", "YYYY"], true).isValid()
     ) {
       newErrors.issuanceDate =
-        "Issuance date is required and must be in the format YYYY-MM-DD.";
+        "Issuance date is required and must be in the format DD/MM/YYYY, MM/YYYY or YYYY.";
     }
 
     // Type validation
@@ -500,12 +503,13 @@ function DocumentFormComponent(props) {
       <Form.Group className="mb-3" controlId="formDocumentIssuanceDate">
         <Form.Label>Issuance Date *</Form.Label>
         <Form.Control
-          type="date"
-          value={props.issuanceDate}
-          onChange={(e) => props.setIssuanceDate(e.target.value)}
-          isInvalid={!!props.errors.issuanceDate}
-          required
-        />
+              type="text"
+              value={props.issuanceDate}
+              onChange={(e) => props.setIssuanceDate(e.target.value)}
+              isInvalid={!!props.errors.issuanceDate}
+              required
+              placeholder="DD/MM/YYYY, MM/YYYY, or YYYY"
+            />
         {props.errors.issuanceDate && (
           <Form.Control.Feedback type="invalid">
             {props.errors.issuanceDate}
