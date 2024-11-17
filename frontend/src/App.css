@@ -184,3 +184,45 @@ button:hover {
   background-color: black;
   color: #333;
 }
+
+.slider {
+  position: fixed;
+  right: -320px;
+  top: 20px;
+  width: 300px;
+  height: calc(100% - 40px);
+  background: white;
+  box-shadow: -2px 0 5px rgba(0,0,0,0.5);
+  transition: right 0.5s ease, opacity 1s ease;
+  border-radius: 8px;
+  padding: 20px;
+  opacity: 0;
+}
+
+.slider.open {
+  right: 20px;
+  opacity: 1;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.snippet-item {
+  padding: 10px;
+  border-bottom: 1px solid #e7ebda;
+}
+
+.snippet-title {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.snippet-type,
+.snippet-scale,
+.snippet-issuance-date {
+  font-size: 0.9rem;
+  color: #555;
+}

@@ -2,12 +2,14 @@ import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import { Button, Modal, Form, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { Document } from "../model/Document.mjs";
+import ListDocumentLinks from "./ListDocumentLinks.jsx";
 // import dayjs from "dayjs";
 import "../App.css";
 
 
 function DocumentModal(props) {
   const [isEditable, setIsEditable] = useState(false);
+  const [isSliderOpen, setSliderOpen] = useState(false);
 
   const [title, setTitle] = useState("");
   const [stakeholders, setStakeholders] = useState([]);
@@ -206,6 +208,14 @@ function DocumentModal(props) {
     props.onLinkToClick();
   };
 
+  const handleLinksClick = () => {
+    setSliderOpen(!isSliderOpen);
+  };
+
+  const handleCloseSlider = () => {
+    setSliderOpen(false);
+  };
+
   return (
     <Modal
       show={props.show}
@@ -273,6 +283,13 @@ function DocumentModal(props) {
           <div className="d-flex align-items-center">
             <Button
               variant="primary"
+              onClick={handleLinksClick}
+              className="me-2"
+            >
+              Links
+            </Button>
+            <Button
+              variant="primary"
               onClick={handleLinkToClick}
               className="me-2"
             >
@@ -288,6 +305,11 @@ function DocumentModal(props) {
           </div>
         )}
       </Modal.Footer>
+      <ListDocumentLinks
+        documentId={props.document.id}
+        isOpen={isSliderOpen}
+        onClose={handleCloseSlider}
+      />
     </Modal>
   );
 }
@@ -299,6 +321,7 @@ DocumentModal.propTypes = {
   handleSave: PropTypes.func.isRequired,
   handleAdd: PropTypes.func.isRequired,
   onLinkToClick: PropTypes.func.isRequired,
+  onLinksClick: PropTypes.func.isRequired,
 };
 
 function ModalBodyComponent(props) {
