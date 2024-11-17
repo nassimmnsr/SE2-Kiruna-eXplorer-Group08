@@ -33,7 +33,9 @@
                         "description": "The stakeholders of the document",
                         "items": {
                             "type": "string",
-                            "description": "The name of the stakeholder"
+                            "description": "The name of the stakeholder",
+                            "minLength": 2,
+                            "maxLength": 64
                         },
                         "minLength": 1
                     },
@@ -54,8 +56,21 @@
                     },
                     "issuanceDate": {
                         "type": "string",
-                        "description": "The issuance date of the document in the format YYYY-MM-DD",
-                        "format": "date"
+                        "description": "The issuance date of the document in the format YYYY-MM-DD, YYYY-MM, or YYYY",
+                        "oneOf": [
+                            {
+                                "type": "string",
+                                "format": "date"
+                            },
+                            {
+                                "type": "string",
+                                "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                            },
+                            {
+                                "type": "string",
+                                "pattern": "^\\d{4}$"
+                            }
+                        ]
                     },
                     "type": {
                         "type": "string",
@@ -123,30 +138,11 @@
                         "type": "array",
                         "description": "The links of the document",
                         "items": {
-                            "type": "object",
-                            "description": "The type of link and the URI to that resource",
-                            "properties": {
-                                "type": {
-                                    "type": "string",
-                                    "description": "The type of the link",
-                                    "enum": [
-                                        "Direct consequence",
-                                        "Collateral consequence",
-                                        "Projection",
-                                        "Update"
-                                    ]
-                                },
-                                "id": {
-                                    "type": "integer",
-                                    "format": "id",
-                                    "description": "The id of the document linked"
-                                }
-                            }
+                            "$ref": "#/components/schemas/link"
                         }
                     }
                 },
                 "required": [
-                    "id",
                     "title",
                     "stakeholders",
                     "scale",
@@ -192,8 +188,21 @@
                         },
                         "issuanceDate": {
                             "type": "string",
-                            "description": "The issuance date of the document in the format YYYY-MM-DD",
-                            "format": "date"
+                            "description": "The issuance date of the document in the format YYYY-MM-DD, YYYY-MM, or YYYY",
+                            "oneOf": [
+                                {
+                                    "type": "string",
+                                    "format": "date"
+                                },
+                                {
+                                    "type": "string",
+                                    "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                                },
+                                {
+                                    "type": "string",
+                                    "pattern": "^\\d{4}$"
+                                }
+                            ]
                         },
                         "type": {
                             "type": "string",
@@ -205,10 +214,39 @@
                                 "Prescriptive document",
                                 "Informative document"
                             ]
+                        },
+                        "geolocation": {
+                            "description": "The coordinates of the document",
+                            "oneOf": [
+                                {
+                                    "type": "object",
+                                    "description": "Coordinates in point notation",
+                                    "properties": {
+                                        "latitude": {
+                                            "type": "number",
+                                            "description": "The latitude of the document",
+                                            "minimum": 67.82295,
+                                            "maximum": 67.88398
+                                        },
+                                        "longitude": {
+                                            "type": "number",
+                                            "description": "The longitude of the document",
+                                            "minimum": 20.14402,
+                                            "maximum": 20.36870
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "string",
+                                    "description": "The area of the document",
+                                    "pattern": "Whole municipality",
+                                    "minLength": 2,
+                                    "maxLength": 64
+                                }
+                            ]
                         }
                     },
                     "required": [
-                        "id",
                         "title",
                         "scale",
                         "issuanceDate",
@@ -216,52 +254,46 @@
                     ]
                 }
             },
-            "stakeholder": {
-                "title": "Stakeholder",
-                "description": "JSON schema for a stakeholder data structure",
+            "link": {
+                "title": "Link",
+                "description": "JSON schema for a link data structure",
                 "type": "object",
                 "additionalProperties": false,
                 "properties": {
-                    "id": {
-                        "type": "integer",
-                        "description": "The unique identifier of the stakeholder"
-                    },
-                    "name": {
+                    "type": {
                         "type": "string",
-                        "description": "The name of the stakeholder",
-                        "minLength": 2,
-                        "maxLength": 64
+                        "description": "The type of the link",
+                        "enum": [
+                            "Direct consequence",
+                            "Collateral consequence",
+                            "Projection",
+                            "Update"
+                        ]
+                    },
+                    "linkId": {
+                        "type": "integer",
+                        "description": "The id link"
+                    },
+                    "documentId": {
+                        "type": "integer",
+                        "description": "The id of the document linked"
                     }
                 },
                 "required": [
-                    "id",
-                    "name"
+                    "type",
+                    "documentId"
                 ]
-            },
-            "stakeholders": {
-                "type": "array",
-                "items": {
-                    "$ref": "#/components/schemas/stakeholder"
-                }
             }
         }
     },
     "paths": {
-        "/documents": {
+        "/api/v1/documents": {
             "get": {
                 "summary": "Get all documents",
                 "tags": [
                     "document"
                 ],
-                "parameters": [
-                    {
-                        "name": "keyword",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query"
-                    }
-                ],
+                "parameters": [],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -353,7 +385,7 @@
                 }
             }
         },
-        "/documents/{id}": {
+        "/api/v1/documents/{id}": {
             "get": {
                 "summary": "Get a document",
                 "tags": [
@@ -416,7 +448,7 @@
                 }
             }
         },
-        "/documents/{id}/links": {
+        "/api/v1/documents/{id}/links": {
             "parameters": [
                 {
                     "name": "id",
@@ -452,7 +484,7 @@
                 }
             },
             "post": {
-                "summary": "Create a new link for a document",
+                "summary": "Create a new link for the {id} document",
                 "tags": [
                     "document"
                 ],
@@ -461,7 +493,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/document"
+                                "$ref": "#/components/schemas/link"
                             }
                         }
                     }
@@ -499,7 +531,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/document"
+                                "$ref": "#/components/schemas/link"
                             }
                         }
                     }
@@ -526,9 +558,11 @@
                         "description": "Internal server error"
                     }
                 }
-            },
+            }
+        },
+        "/api/v1/documents/{id}/links/{linkId}": {
             "delete": {
-                "summary": "Delete a link for a document",
+                "summary": "Delete the {linkId} link for a document",
                 "tags": [
                     "document"
                 ],
@@ -540,170 +574,9 @@
                         },
                         "in": "path",
                         "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No content"
                     },
-                    "404": {
-                        "description": "Not found"
-                    },
-                    "500": {
-                        "description": "Internal server error"
-                    }
-                }
-            }
-        },
-        "/stakeholders": {
-            "get": {
-                "summary": "Get all stakeholders",
-                "tags": [
-                    "stakeholder"
-                ],
-                "parameters": [
                     {
-                        "name": "keyword",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/stakeholders"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error"
-                    }
-                }
-            },
-            "post": {
-                "summary": "Create a new stakeholder",
-                "tags": [
-                    "stakeholder"
-                ],
-                "parameters": [],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/stakeholder"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Created"
-                    },
-                    "400": {
-                        "description": "Bad request",
-                        "content": {
-                            "text/plain": {
-                                "schema": {
-                                    "type": "string",
-                                    "description": "The reason why the request was bad"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error"
-                    }
-                }
-            },
-            "put": {
-                "summary": "Update a stakeholder",
-                "tags": [
-                    "stakeholder"
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/stakeholder"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "204": {
-                        "description": "No content"
-                    },
-                    "400": {
-                        "description": "Bad request",
-                        "content": {
-                            "text/plain": {
-                                "schema": {
-                                    "type": "string",
-                                    "description": "The reason why the request was bad"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Not found"
-                    },
-                    "500": {
-                        "description": "Internal server error"
-                    }
-                }
-            }
-        },
-        "/stakeholders/{id}": {
-            "get": {
-                "summary": "Get a stakeholder",
-                "tags": [
-                    "stakeholder"
-                ],
-                "parameters": [
-                    {
-                        "name": "id",
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/stakeholder"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Not found"
-                    },
-                    "500": {
-                        "description": "Internal server error"
-                    }
-                }
-            },
-            "delete": {
-                "summary": "Delete a stakeholder",
-                "tags": [
-                    "stakeholder"
-                ],
-                "parameters": [
-                    {
-                        "name": "id",
+                        "name": "linkId",
                         "schema": {
                             "type": "integer"
                         },

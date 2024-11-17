@@ -29,12 +29,24 @@ export class Document {
 }
 
 export class DocumentSnippet {
-  constructor(id, title, scale, issuanceDate, type) {
+  constructor(
+    id,
+    title,
+    scale,
+    issuanceDate,
+    type,
+    geolocation = {
+      latitude: null,
+      longitude: null,
+      municipality: "Whole municipality",
+    }
+  ) {
     this.id = id;
     this.title = title;
     this.scale = scale;
     this.issuanceDate = issuanceDate ? issuanceDate : "-";
     this.type = type;
+    this.geolocation = geolocation;
   }
 }
 
