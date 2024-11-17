@@ -18,7 +18,7 @@ export class Document {
     this.title = title;
     this.stakeholders = stakeholders;
     this.scale = scale;
-    this.issuanceDate = issuanceDate ? dayjs(issuanceDate).format(issuanceDate.length === 4 ? 'YYYY' : issuanceDate.length === 7 ? 'MM/YYYY' : 'DD/MM/YYYY') : "-";
+    this.issuanceDate = issuanceDate ? issuanceDate : "-";
     this.type = type;
     this.nrConnections = nrConnections;
     this.language = language;
@@ -33,7 +33,7 @@ export class DocumentSnippet {
     this.id = id;
     this.title = title;
     this.scale = scale;
-    this.issuanceDate = issuanceDate ? dayjs(issuanceDate).format(issuanceDate.length === 4 ? 'YYYY' : issuanceDate.length === 7 ? 'MM/YYYY' : 'DD/MM/YYYY') : "-";
+    this.issuanceDate = issuanceDate ? issuanceDate : "-";
     this.type = type;
   }
 }

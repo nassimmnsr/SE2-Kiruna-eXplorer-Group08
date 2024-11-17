@@ -1,5 +1,6 @@
 // ListDocuments.js
 import { useEffect, useState } from "react";
+import dayjs from "dayjs";
 import { Container, Row, Col, Card } from "react-bootstrap";
 // import Document from "../model/Document";
 
@@ -183,7 +184,7 @@ function ListDocuments() {
                     <strong>Scale:</strong> {document.scale}
                   </Card.Text>
                   <Card.Text className="document-card-text">
-                    <strong>Issuance Date:</strong> {document.issuanceDate}
+                    <strong>Issuance Date:</strong> {dayjs(document.issuanceDate).format(document.issuanceDate.length === 4 ? 'YYYY' : document.issuanceDate.length === 7 ? 'MM/YYYY' : 'DD/MM/YYYY')}
                   </Card.Text>
                   <Card.Text className="document-card-text">
                     <strong>Type:</strong> {document.type}
