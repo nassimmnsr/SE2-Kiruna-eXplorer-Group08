@@ -4,6 +4,7 @@ import com.kirunaexplorer.app.dto.request.DocumentRequestDTO;
 import com.kirunaexplorer.app.dto.response.DocumentBriefResponseDTO;
 import com.kirunaexplorer.app.dto.response.DocumentResponseDTO;
 import com.kirunaexplorer.app.service.DocumentService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -12,7 +13,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/documents")
+@RequestMapping("/api/v1/documents")
 public class DocumentController {
     private final DocumentService documentService;
 
@@ -45,7 +46,7 @@ public class DocumentController {
      * @return ResponseEntity<Void>
      */
     @PostMapping
-    public ResponseEntity<Void> createDocument(@RequestBody DocumentRequestDTO document) {
+    public ResponseEntity<Void> createDocument(@RequestBody @Valid DocumentRequestDTO document) {
         Long documentId = documentService.createDocument(document);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
             .path("/{id}")
