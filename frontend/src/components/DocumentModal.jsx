@@ -50,7 +50,7 @@ function DocumentModal(props) {
         }
       );
       setDescription(props.document.description || "");
-      
+
       // Split issuanceDate into day, month, and year
       if (props.document.issuanceDate) {
         const dateParts = props.document.issuanceDate.split("/");
@@ -72,7 +72,9 @@ function DocumentModal(props) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const combinedIssuanceDate = `${year}${month ? "-" + month.padStart(2, "0") : ""}${day ? "-" + day.padStart(2, "0") : ""}`;
+    const combinedIssuanceDate = `${year}${
+      month ? "-" + month.padStart(2, "0") : ""
+    }${day ? "-" + day.padStart(2, "0") : ""}`;
 
     // Reset errors
     const newErrors = {};
@@ -116,7 +118,11 @@ function DocumentModal(props) {
     // Issuance date validation
     if (
       typeof combinedIssuanceDate !== "string" ||
-      !dayjs(combinedIssuanceDate, ["YYYY-MM-DD", "YYYY-MM", "YYYY"], true).isValid()
+      !dayjs(
+        combinedIssuanceDate,
+        ["YYYY-MM-DD", "YYYY-MM", "YYYY"],
+        true
+      ).isValid()
     ) {
       newErrors.issuanceDate =
         "Issuance date is required and must be in the format DD/MM/YYYY, MM/YYYY or YYYY.";
@@ -349,7 +355,15 @@ function ModalBodyComponent(props) {
         <div className="divider"></div>
         <div className="info-item">
           <label>Issuance Date:</label>
-          <span>{dayjs(props.issuanceDate).format(props.issuanceDate.length === 4 ? 'YYYY' : props.issuanceDate.length === 7 ? 'MM/YYYY' : 'DD/MM/YYYY')}</span>
+          <span>
+            {dayjs(props.issuanceDate).format(
+              props.issuanceDate.length === 4
+                ? "YYYY"
+                : props.issuanceDate.length === 7
+                ? "MM/YYYY"
+                : "DD/MM/YYYY"
+            )}
+          </span>
         </div>
         <div className="divider"></div>
         <div className="info-item">
@@ -459,7 +473,7 @@ function DocumentFormComponent(props) {
     newStakeholders[index] = value;
     props.setStakeholders(newStakeholders);
   };
-  
+
   const handleDayChange = (e) => {
     const value = e.target.value;
     if (value.length <= 2) {
@@ -558,45 +572,45 @@ function DocumentFormComponent(props) {
       <div className="divider"></div>
       {/* ISSUANCE DATE */}
       <Form.Group className="mb-3" controlId="formDocumentIssuanceDate">
-          <Form.Label>Issuance Date *</Form.Label>
-          <div className="d-flex">
-            <Form.Control
-          type="text"
-          value={props.day}
-          onChange={handleDayChange}
-          isInvalid={!!props.errors.issuanceDate}
-          placeholder="DD"
-          className="me-1"
-          ref={dayRef}
-          style={{ width: "70px" }}
-            />
-            <span>/</span>
-            <Form.Control
-          type="text"
-          value={props.month}
-          onChange={handleMonthChange}
-          isInvalid={!!props.errors.issuanceDate}
-          placeholder="MM"
-          className="mx-1"
-          ref={monthRef}
-          style={{ width: "70px" }}
-            />
-            <span>/</span>
-            <Form.Control
-          type="text"
-          value={props.year}
-          onChange={handleYearChange}
-          isInvalid={!!props.errors.issuanceDate}
-          placeholder="YYYY"
-          className="ms-1"
-          ref={yearRef}
-          style={{ width: "100px" }}
-            />
-          </div>
-          <Form.Control.Feedback type="invalid">
-            {props.errors.issuanceDate}
-          </Form.Control.Feedback>
-        </Form.Group>
+        <Form.Label>Issuance Date *</Form.Label>
+        <div className="d-flex">
+          <Form.Control
+            type="text"
+            value={props.day}
+            onChange={handleDayChange}
+            isInvalid={!!props.errors.issuanceDate}
+            placeholder="DD"
+            className="me-1"
+            ref={dayRef}
+            style={{ width: "70px" }}
+          />
+          <span>/</span>
+          <Form.Control
+            type="text"
+            value={props.month}
+            onChange={handleMonthChange}
+            isInvalid={!!props.errors.issuanceDate}
+            placeholder="MM"
+            className="mx-1"
+            ref={monthRef}
+            style={{ width: "70px" }}
+          />
+          <span>/</span>
+          <Form.Control
+            type="text"
+            value={props.year}
+            onChange={handleYearChange}
+            isInvalid={!!props.errors.issuanceDate}
+            placeholder="YYYY"
+            className="ms-1"
+            ref={yearRef}
+            style={{ width: "100px" }}
+          />
+        </div>
+        <Form.Control.Feedback type="invalid">
+          {props.errors.issuanceDate}
+        </Form.Control.Feedback>
+      </Form.Group>
       <div className="divider"></div>
       {/* TYPE */}
       <Form.Group className="mb-3" controlId="formDocumentType">
