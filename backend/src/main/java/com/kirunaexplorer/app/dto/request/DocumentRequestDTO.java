@@ -4,6 +4,7 @@ import com.kirunaexplorer.app.dto.inout.GeoReferenceDTO;
 import com.kirunaexplorer.app.dto.inout.LinksDTO;
 import com.kirunaexplorer.app.model.Document;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
@@ -43,6 +44,7 @@ public record DocumentRequestDTO(
     @Min(0)
     Integer nrPages,
 
+    @Valid
     GeoReferenceDTO geolocation,
 
     @Size(max = 1000)

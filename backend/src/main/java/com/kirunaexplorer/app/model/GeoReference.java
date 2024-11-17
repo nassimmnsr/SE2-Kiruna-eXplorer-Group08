@@ -46,8 +46,8 @@ public class GeoReference {
      */
     public GeoReferenceDTO toGeolocationDTO() {
         return new GeoReferenceDTO(
-            location != null ? String.valueOf(location.getX()) : null,
-            location != null ? String.valueOf(location.getY()) : null,
+            location != null ? location.getX() : null,
+            location != null ? location.getY() : null,
             isEntireMunicipality ? "Entire municipality" : null
         );
     }
