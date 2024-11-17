@@ -30,7 +30,6 @@ function ListDocuments() {
 
   const handleSelection = async (document) => {
     const newDoc = await API.getDocumentById(document.id);
-    console.log("HANDLE SELECTION: ", newDoc);
     setSelectedDocument(newDoc);
     if (linking) {
       setShowLinkModal(true);

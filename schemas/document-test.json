@@ -2,11 +2,11 @@
     "$schema": "document.json",
     "id": 64,
     "title": "Town hall demolition",
-    "stakeholder": "LKAB",
+    "stakeholders": ["LKAB"],
     "scale": "text",
     "issuanceDate": "2019-04-01",
     "type": "Material effect",
-    "nrConnections": 3,
+    "nrConnections":"asd",
     "geolocation": {
         "latitude": "67.8525",
         "longitude": "20.2225"

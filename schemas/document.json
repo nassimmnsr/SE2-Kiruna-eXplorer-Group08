@@ -25,8 +25,11 @@
             "description": "The stakeholders of the document",
             "items": {
                 "type": "string",
-                "description": "The name of the stakeholder"
-            }
+                "description": "The name of the stakeholder",
+                "minLength": 2,
+                "maxLength": 64
+            },
+            "minLength": 1
         },
         "scale": {
             "description": "The scale of the document",
@@ -45,8 +48,21 @@
         },
         "issuanceDate": {
             "type": "string",
-            "description": "The issuance date of the document in the format YYYY-MM-DD",
-            "format": "date"
+            "description": "The issuance date of the document in the format YYYY-MM-DD, YYYY-MM, or YYYY",
+            "oneOf": [
+                {
+                    "type": "string",
+                    "format": "date"
+                },
+                {
+                    "type": "string",
+                    "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                    "type": "string",
+                    "pattern": "^\\d{4}$"
+                }
+            ]
         },
         "type": {
             "type": "string",
@@ -61,7 +77,8 @@
         },
         "nrConnections": {
             "type": "integer",
-            "description": "The number of connections of the document"
+            "description": "The number of connections of the document",
+            "minimum": 0
         },
         "language": {
             "type": "string",
@@ -72,7 +89,7 @@
         "nrPages": {
             "type": "integer",
             "description": "The number of pages of the document",
-            "minimum": 1
+            "minimum": 0
         },
         "geolocation": {
             "description": "The coordinates of the document",
@@ -82,14 +99,16 @@
                     "description": "Coordinates in point notation",
                     "properties": {
                         "latitude": {
-                            "type": "string",
+                            "type": "number",
                             "description": "The latitude of the document",
-                            "pattern": "^(\\+|-)?(90(\\.0+)?|[0-8]?\\d(\\.\\d+)?)$"
+                            "minimum": 67.82295,
+                            "maximum": 67.88398
                         },
                         "longitude": {
-                            "type": "string",
+                            "type": "number",
                             "description": "The longitude of the document",
-                            "pattern": "^(\\+|-)?(180(\\.0+)?|1[0-7]\\d(\\.\\d+)?|0?\\d{1,2}(\\.\\d+)?)$"
+                            "minimum": 20.14402,
+                            "maximum": 20.36870
                         }
                     }
                 },
@@ -111,35 +130,15 @@
             "type": "array",
             "description": "The links of the document",
             "items": {
-                "type": "object",
-                "description": "The type of link and the URI to that resource",
-                "properties": {
-                    "type": {
-                        "type": "string",
-                        "description": "The type of the link",
-                        "enum": [
-                            "Direct consequence",
-                            "Collateral consequence",
-                            "Projection",
-                            "Update"
-                        ]
-                    },
-                    "uri": {
-                        "type": "integer",
-                        "format": "id",
-                        "description": "The id of the document linked"
-                    }
-                }
+                "$ref": "#/components/schemas/link"
             }
         }
     },
     "required": [
-        "id",
         "title",
-        "stakeholder",
+        "stakeholders",
         "scale",
         "issuanceDate",
-        "type",
-        "geolocation"
+        "type"
     ]
 }
