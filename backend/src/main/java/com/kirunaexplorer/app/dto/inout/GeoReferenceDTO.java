@@ -19,19 +19,9 @@ public record GeoReferenceDTO(
     @DecimalMax(value = "20.3687")
     Double longitude,  // Longitude as a Double to match the "number" type
 
-    @Pattern(regexp = "Whole municipality")
     @Size(min = 2, max = 64)
     String municipality  // To match the string type with pattern and length constraints
 ) {
-    public GeoReferenceDTO {
-        if ((latitude == null || longitude == null) && (municipality == null)) {
-            throw new IllegalArgumentException("Either latitude and longitude or municipality must be provided.");
-        }
-        if ((latitude != null && longitude != null) && (municipality != null)) {
-            throw new IllegalArgumentException("Cannot provide both latitude/longitude and municipality at the same time.");
-        }
-    }
-
     /***
      * Converts the GeoReferenceDTO to a GeoReference object.
      * @param document Document reference
