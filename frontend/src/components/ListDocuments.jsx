@@ -1,15 +1,11 @@
-// ListDocuments.js
 import { useEffect, useState } from "react";
-import { Container, Row, Col, Card } from "react-bootstrap";
-// import Document from "../model/Document";
-
+import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import "../App.css";
 import DocumentModal from "./DocumentModal";
 import API from "../API";
-import { Button } from "react-bootstrap";
 import LinkModal from "./LinkModal";
 
-function ListDocuments() {
+function ListDocuments({ thinCardLayout = false }) {
   const [documents, setDocuments] = useState([]);
   const [show, setShow] = useState(false);
   const [showLinkModal, setShowLinkModal] = useState(false);
@@ -18,15 +14,11 @@ function ListDocuments() {
   const [selectedLinkDocuments, setSelectedLinkDocuments] = useState([]);
   const [selectedDocumentToLink, setSelectedDocumentToLink] = useState(null);
 
+  // Fetch all document snippets
   useEffect(() => {
     API.getAllDocumentSnippets()
-      .then((response) => {
-        console.log(response);
-        setDocuments(response);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+      .then(setDocuments)
+      .catch((error) => console.error("Error fetching documents:", error));
   }, []);
 
   const handleSelection = async (document) => {
@@ -54,7 +46,22 @@ function ListDocuments() {
   };
 
   const handleSave = (document) => {
-    API.updateDocument(document.id, document);
+    API.updateDocument(document.id, document)
+      .then(() => setShow(false))
+      .catch((error) => console.error("Error saving document:", error));
+  };
+
+  const handleAdd = (document) => {
+    API.addDocument(document)
+      .then(() => API.getAllDocumentSnippets().then(setDocuments))
+      .catch((error) => console.error("Error adding document:", error));
+    setShow(false);
+  };
+
+  const handleDelete = (documentId) => {
+    API.deleteDocument(documentId)
+      .then(() => API.getAllDocumentSnippets().then(setDocuments))
+      .catch((error) => console.error("Error deleting document:", error));
     setShow(false);
   };
 
@@ -63,34 +70,25 @@ function ListDocuments() {
     setLinking(true);
   };
 
-  const handleAdd = (document) => {
-    API.addDocument(document)
-      .then(() => {
-        API.getAllDocumentSnippets()
-          .then((response) => {
-            setDocuments(response);
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-    setShow(false);
-  };
-
-  const handleDelete = (documentId) => {
-    API.deleteDocument(documentId);
-    setShow(false);
-  };
-
   const handleLinkConfirm = (linkedDocument) => {
-    setSelectedLinkDocuments((prevDocuments) => [
-      ...prevDocuments,
-      linkedDocument,
-    ]);
+    setSelectedLinkDocuments((prev) => [...prev, linkedDocument]);
     setShowLinkModal(false);
+  };
+
+  const handleCompleteLink = async () => {
+    try {
+      await Promise.all(
+        selectedLinkDocuments.map((linkedDoc) =>
+          API.createLink(selectedDocumentToLink, linkedDoc)
+        )
+      );
+      alert("Links created successfully!");
+      setLinking(false);
+      setSelectedLinkDocuments([]);
+    } catch (error) {
+      console.error("Error linking documents:", error);
+      alert("Failed to create links. Please try again.");
+    }
   };
 
   const isLinkedDocument = (document) => {
@@ -101,22 +99,6 @@ function ListDocuments() {
     );
   };
 
-  const handleCompleteLink = async () => {
-    try {
-      await Promise.all(
-        selectedLinkDocuments.map(async (linkedDocument) => {
-          await API.createLink(selectedDocumentToLink, linkedDocument);
-        })
-      );
-      alert("All the selected links have been confirmed!");
-      setLinking(false);
-      setSelectedLinkDocuments([]);
-    } catch (error) {
-      console.error("Error linking documents:", error);
-      alert("There was an error linking the documents. Please try again.");
-    }
-  };
-
   const handleExitLinkMode = () => {
     setLinking(false);
     setSelectedLinkDocuments([]);
@@ -124,7 +106,9 @@ function ListDocuments() {
 
   return (
     <Container fluid className="scrollable-list-documents">
-      <Row>{linking ? <h1>Link a document</h1> : <h1>Documents</h1>}</Row>
+      <Row>
+        <h1>{linking ? "Link a Document" : "Documents"}</h1>
+      </Row>
       <Row className="d-flex justify-content-between align-items-center mb-3">
         <Col xs="auto">
           {linking ? (
@@ -132,8 +116,8 @@ function ListDocuments() {
           ) : (
             <>
               <p>
-                Here you can find all the documents about Kiruna&apos;s
-                relocation process.
+                Here you can find all the documents about Kiruna's relocation
+                process.
               </p>
               <p>Click on a document to see more details.</p>
             </>
@@ -170,17 +154,20 @@ function ListDocuments() {
                 setSelectedDocument({ isEditable: true });
                 setShow(true);
               }}
+              style={{ width: "150px" }}
             >
               Add new document
             </Button>
           )}
         </Col>
       </Row>
-      <div
-        className="mx-auto"
-        style={{
-          paddingBottom: "5rem",
-        }}
+      <Row
+        xs={thinCardLayout ? 1 : 1}
+        sm={thinCardLayout ? 1 : 2}
+        md={thinCardLayout ? 1 : 3}
+        lg={thinCardLayout ? 1 : 4}
+        className="g-2 mx-auto"
+        style={{ width: "100%" }}
       >
         <Row
           xs={1}

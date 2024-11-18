@@ -45,7 +45,8 @@ export class DocumentSnippet {
       latitude: null,
       longitude: null,
       municipality: "Whole municipality",
-    }
+    },
+    stakeholders
   ) {
     this.id = id;
     this.title = title;
@@ -55,6 +56,7 @@ export class DocumentSnippet {
       : "-";
     this.type = type;
     this.geolocation = geolocation;
+    this.stakeholders = stakeholders;
   }
 }
 

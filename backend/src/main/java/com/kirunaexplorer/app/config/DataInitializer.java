@@ -114,7 +114,7 @@ public class DataInitializer implements CommandLineRunner {
                 "Deformation forecast",
                 "The development plan shapes the form of the new city. The document, unlike previous competition documents, is written entirely in Swedish, which reflects the target audience: the citizens of Kiruna. The plan obviously contains many elements of the winning masterplan from the competition, some recommended by the jury, and others that were deemed appropriate to integrate later. The document is divided into four parts, with the third part, spanning 80 pages, describing the shape the new city will take and the strategies to be implemented for its relocation through plans, sections, images, diagrams, and texts. The document also includes numerous studies aimed at demonstrating the future success of the project.",
                 "LKAB",
-                "Techincal document",
+                "Technical document",
                 "1:12000",
                 LocalDate.of(2014, 12, 1),
                 DatePrecision.FULL_DATE,
