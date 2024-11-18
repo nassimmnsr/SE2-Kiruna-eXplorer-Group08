@@ -154,7 +154,6 @@ function ListDocuments({ thinCardLayout = false }) {
                 setSelectedDocument({ isEditable: true });
                 setShow(true);
               }}
-              style={{ width: "150px" }}
             >
               Add new document
             </Button>
@@ -235,7 +234,7 @@ function ListDocuments({ thinCardLayout = false }) {
             onLinkConfirm={handleLinkConfirm}
           />
         )}
-      </div>
+      </Row>
     </Container>
   );
 }
