@@ -1,9 +1,7 @@
 package com.kirunaexplorer.app.dto.request;
 
 import com.kirunaexplorer.app.dto.inout.GeoReferenceDTO;
-import com.kirunaexplorer.app.dto.inout.LinksDTO;
 import com.kirunaexplorer.app.model.Document;
-
 import com.kirunaexplorer.app.validation.groups.PostDocument;
 import com.kirunaexplorer.app.validation.groups.PutDocument;
 import jakarta.validation.Valid;
@@ -13,6 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 public record DocumentRequestDTO(
     @NotNull(groups = {PutDocument.class})
@@ -54,6 +53,11 @@ public record DocumentRequestDTO(
     @Size(max = 1000)
     String description
 ) {
+
+    @Override
+    public GeoReferenceDTO geolocation() {
+        return Objects.requireNonNullElseGet(this.geolocation, () -> new GeoReferenceDTO(null, null, null));    // some idiomatic shit right here, I like it
+    }
 
     /***
      * Converts the DocumentRequestDTO to a Document object.

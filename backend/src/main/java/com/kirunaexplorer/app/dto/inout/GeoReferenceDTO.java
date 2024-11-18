@@ -3,11 +3,12 @@ package com.kirunaexplorer.app.dto.inout;
 import com.kirunaexplorer.app.model.Document;
 import com.kirunaexplorer.app.model.GeoReference;
 import com.kirunaexplorer.app.validation.annotation.OneOfGeoReference;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Size;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
-
-import jakarta.validation.constraints.*;
 
 @OneOfGeoReference
 public record GeoReferenceDTO(
@@ -31,7 +32,7 @@ public record GeoReferenceDTO(
         return new GeoReference(
             document,
             municipality != null,
-            municipality == null ? createPoint(latitude, longitude) : null
+            (latitude != null && longitude != null) ? createPoint(latitude, longitude) : null
         );
     }
 
