@@ -15,14 +15,6 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
 });
 
-// Function to center the map on a given position
-function MapCenterer({ position }) {
-  const map = useMap();
-  useEffect(() => {
-    map.setView(position);
-  }, [position, map]);
-  return null;
-}
 
 const kirunaBorderCoordinates = [
     [67.8774793377591, 20.170706869100258],
@@ -189,32 +181,6 @@ const kirunaBorderCoordinates = [
     [67.87748831623034, 20.17115137627556],
     [67.8774793377591, 20.170706869100258]
 ];
-
-const isPointInPolygon = (point) => {
-  const kirunaBorderCoordinatesLngLat = kirunaBorderCoordinates.map(([lat, lng]) => [lng, lat]);
-  const polygon = [
-    ...kirunaBorderCoordinatesLngLat,
-    kirunaBorderCoordinatesLngLat[0], // Close the loop
-  ];
-  const [x, y] = [point.lng, point.lat]; // Ensure [lng, lat]
-  let inside = false;
-
-  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-    const [xi, yi] = polygon[i];
-    const [xj, yj] = polygon[j];
-
-    const intersect =
-      yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
-    if (intersect) inside = !inside;
-  }
-
-  return inside;
-};
-
-
-
-
-
 function DocumentModal(props) {
   const [isEditable, setIsEditable] = useState(false);
 
@@ -328,8 +294,25 @@ function DocumentModal(props) {
     // Geolocation validation
   if (geolocation.latitude && geolocation.longitude) {
     const point = { lat: geolocation.latitude, lng: geolocation.longitude };
-    const valid = isPointInPolygon(point);
-    if (!valid) {
+    
+    const kirunaBorderCoordinatesLngLat = kirunaBorderCoordinates.map(([lat, lng]) => [lng, lat]);
+    const polygon = [
+      ...kirunaBorderCoordinatesLngLat,
+      kirunaBorderCoordinatesLngLat[0], // Close the loop
+    ];
+    const [x, y] = [point.lng, point.lat]; // Ensure [lng, lat]
+    let inside = false;
+  
+    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+      const [xi, yi] = polygon[i];
+      const [xj, yj] = polygon[j];
+  
+      const intersect =
+        yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
+      if (intersect) inside = !inside;
+    }
+  
+    if (!inside) {
       newErrors.latitude = "Geolocation must be within the Kiruna boundary.";
       newErrors.longitude = "Geolocation must be within the Kiruna boundary.";
     }
@@ -870,7 +853,7 @@ function DocumentFormComponent(props) {
     >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       <Marker position={markerPosition} />
-      <Polygon positions={kirunaBorderCoordinates} />
+      { geolocation.municipality === "Whole municipality" ? (<Polygon positions={kirunaBorderCoordinates} />) : null }
       <MapClickHandler />
     </MapContainer>
   </div>
