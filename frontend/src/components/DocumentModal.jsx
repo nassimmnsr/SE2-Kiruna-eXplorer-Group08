@@ -24,8 +24,8 @@ export default function DocumentModal(props) {
     language: "",
     nrPages: 0,
     geolocation: {
-      latitude: null,
-      longitude: null,
+      latitude: "",
+      longitude: "",
       municipality: "Whole municipality",
     },
     description: "",
@@ -57,10 +57,10 @@ export default function DocumentModal(props) {
         geolocation: {
           latitude: props.document.geolocation
             ? props.document.geolocation.latitude
-            : null,
+            : "",
           longitude: props.document.geolocation
             ? props.document.geolocation.longitude
-            : null,
+            : "",
           municipality: props.document.geolocation
             ? props.document.geolocation.municipality
             : "Whole municipality",
@@ -79,17 +79,11 @@ export default function DocumentModal(props) {
       document.month ? "-" + document.month.padStart(2, "0") : ""
     }${document.day ? "-" + document.day.padStart(2, "0") : ""}`;
 
-
-    const refactorGeolocation = (geolocation) => {
-      const updatedGeolocation = { ...geolocation };
-      for (const key in updatedGeolocation) {
-        if (updatedGeolocation[key] === "") {
-          updatedGeolocation[key] = null;
-        }
-      }
-      return updatedGeolocation;
-    }
-    
+    const sanitizedGeolocation = {
+      latitude: document.geolocation.latitude || null,
+      longitude: document.geolocation.longitude || null,
+      municipality: document.geolocation.municipality || null,
+    };
 
     // Title validation
     if (typeof document.title !== "string" || !document.title.trim()) {
@@ -163,12 +157,12 @@ export default function DocumentModal(props) {
     }
 
     // Number of pages validation
-    if (document.nrPages && typeof nrPages !== "number") {
+    if (document.nrPages && typeof document.nrPages !== "number") {
       newErrors.nrPages = "Number of pages must be an integer";
     }
 
     // Geolocation validation
-    if (typeof geolocation === "object" && document.geolocation) {
+    if (typeof document.geolocation === "object" && document.geolocation) {
       if (
         (document.geolocation.latitude &&
           (document.geolocation.latitude > 67.88398 ||
@@ -188,9 +182,9 @@ export default function DocumentModal(props) {
           "Longitude must be in the range between 20.14402 and 20.36870.";
       }
       if (
-        document.geolocation.latitude &&
-        document.geolocation.longitude &&
-        document.geolocation.municipality !== "Whole municipality"
+        !document.geolocation.latitude &&
+        !document.geolocation.longitude &&
+        document.geolocation.municipality === "Whole municipality"
       ) {
         newErrors.municipality =
           "Geolocation must be 'Whole municipality' or a valid coordinate.";
@@ -207,6 +201,7 @@ export default function DocumentModal(props) {
       return;
     }
 
+
     if (props.document.id === undefined) {
       props.handleAdd(new Document(
         null,
@@ -218,7 +213,7 @@ export default function DocumentModal(props) {
         document.nrConnections,
         document.language,
         document.nrPages,
-        refactorGeolocation(document.geolocation),
+        sanitizedGeolocation,
         document.description
       ));
     }
@@ -647,7 +642,7 @@ function DocumentFormComponent({ document, errors, handleChange }) {
             handleChange("geolocation", {
               ...document.geolocation,
               latitude: e.target.value,
-              municipality: null,
+              municipality: "",
             })
           }
           id="formDocumentGeolocationLatitude"
@@ -667,7 +662,7 @@ function DocumentFormComponent({ document, errors, handleChange }) {
             handleChange("geolocation", {
               ...document.geolocation,
               latitude: e.target.value,
-              municipality: null,
+              municipality: "",
             })
           }
           disabled={document.geolocation.municipality === "Whole municipality"}
@@ -685,7 +680,7 @@ function DocumentFormComponent({ document, errors, handleChange }) {
             handleChange("geolocation", {
               ...document.geolocation,
               longitude: e.target.value,
-              municipality: null,
+              municipality: "",
             })
           }
           id="formDocumentGeolocationLongitude"
@@ -715,31 +710,12 @@ function DocumentFormComponent({ document, errors, handleChange }) {
           label="Whole municipality"
           checked={document.geolocation.municipality === "Whole municipality"}
           onChange={(e) => {
-            if (e.target.checked) {
-              handleChange("geolocation", {
-                latitude: "",
-                longitude: "",
-                municipality: "Whole municipality",
-              });
-            } else {
-              handleChange("geolocation", {
-                ...document.geolocation,
-                municipality: "",
-              });
-            }
-            window.document.getElementById(
-              "formDocumentGeolocationLatitude"
-            ).disabled = e.target.checked;
-            window.document.getElementById(
-              "formDocumentGeolocationLongitude"
-            ).disabled = e.target.checked;
-            if (e.target.checked) {
-              handleChange("geolocation", {
-                latitude: "",
-                longitude: "",
-                municipality: "Whole municipality",
-              });
-            }
+            const isChecked = e.target.checked;
+            handleChange("geolocation", {
+              latitude: isChecked ? "" : document.geolocation.latitude,
+              longitude: isChecked ? "" : document.geolocation.longitude,
+              municipality: isChecked ? "Whole municipality" : "",
+            });
           }}
           className="mt-2"
         />
