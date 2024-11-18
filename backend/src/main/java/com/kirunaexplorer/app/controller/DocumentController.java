@@ -4,8 +4,12 @@ import com.kirunaexplorer.app.dto.request.DocumentRequestDTO;
 import com.kirunaexplorer.app.dto.response.DocumentBriefResponseDTO;
 import com.kirunaexplorer.app.dto.response.DocumentResponseDTO;
 import com.kirunaexplorer.app.service.DocumentService;
+import com.kirunaexplorer.app.validation.groups.PostDocument;
+import com.kirunaexplorer.app.validation.groups.PutDocument;
 import jakarta.validation.Valid;
+import jakarta.validation.groups.Default;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -46,7 +50,7 @@ public class DocumentController {
      * @return ResponseEntity<Void>
      */
     @PostMapping
-    public ResponseEntity<Void> createDocument(@RequestBody @Valid DocumentRequestDTO document) {
+    public ResponseEntity<Void> createDocument(@RequestBody @Validated({Default.class, PostDocument.class}) DocumentRequestDTO document) {
         Long documentId = documentService.createDocument(document);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
             .path("/{id}")
@@ -61,7 +65,7 @@ public class DocumentController {
      * @return ResponseEntity<Void>
      */
     @PutMapping
-    public ResponseEntity<Void> updateDocument(@RequestBody DocumentRequestDTO document) {
+    public ResponseEntity<Void> updateDocument(@RequestBody @Validated({Default.class, PutDocument.class}) DocumentRequestDTO document) {
         documentService.updateDocument(document);
         return ResponseEntity.noContent().build();
     }

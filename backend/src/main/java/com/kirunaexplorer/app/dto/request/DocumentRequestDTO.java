@@ -4,6 +4,8 @@ import com.kirunaexplorer.app.dto.inout.GeoReferenceDTO;
 import com.kirunaexplorer.app.dto.inout.LinksDTO;
 import com.kirunaexplorer.app.model.Document;
 
+import com.kirunaexplorer.app.validation.groups.PostDocument;
+import com.kirunaexplorer.app.validation.groups.PutDocument;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 
@@ -13,6 +15,8 @@ import java.util.HashSet;
 import java.util.List;
 
 public record DocumentRequestDTO(
+    @NotNull(groups = {PutDocument.class})
+    @Null(groups = {PostDocument.class})
     Long id,
 
     @NotNull
@@ -48,9 +52,7 @@ public record DocumentRequestDTO(
     GeoReferenceDTO geolocation,
 
     @Size(max = 1000)
-    String description,
-
-    List<LinksDTO> links
+    String description
 ) {
 
     /***
