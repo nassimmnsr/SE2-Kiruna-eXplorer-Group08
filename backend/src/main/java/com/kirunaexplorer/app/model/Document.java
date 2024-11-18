@@ -90,7 +90,8 @@ public class Document {
             this.title,
             this.scale,
             parseDate(this.issuanceDate, this.datePrecision),
-            this.type
+            this.type,
+            this.geoReference.toGeolocationDTO()
         );
     }
 

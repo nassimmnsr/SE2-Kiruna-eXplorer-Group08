@@ -56,6 +56,19 @@ const defaultIcon = new L.Icon({
   shadowSize: [41, 41],
 });
 
+const ZoomToMarker = ({ position, zoomLevel }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    if (position) {
+      map.flyTo(position, zoomLevel || map.getZoom(), { duration: 1.5 }); // Default to current zoom if zoomLevel not provided
+    }
+  }, [position, zoomLevel, map]);
+
+  return null;
+};
+
+
 const MapKiruna = () => {
   const [documents, setDocuments] = useState([]);
   const [selectedDocument, setSelectedDocument] = useState(null);
@@ -262,13 +275,11 @@ const MapKiruna = () => {
             selectedDocument.geolocation.municipality === "Entire municipality" && 
             <Polygon positions={kirunaBorderCoordinates} color="purple" weight={3} fillOpacity={0.1} />
             }
-          <MarkerClusterGroup>
+            <MarkerClusterGroup>
             {documents.map((doc, index) => {
-              const position = doc.geolocation.latitude
-                ? [doc.geolocation.latitude, doc.geolocation.longitude]
-                : kirunaPosition;
+              const position = doc.geolocation.latitude ? [doc.geolocation.longitude, doc.geolocation.latitude] : kirunaPosition;
               const icon = iconMapping[doc.type] || defaultIcon;
-  
+
               return (
                 <Marker
                   key={index}
@@ -281,6 +292,17 @@ const MapKiruna = () => {
               );
             })}
           </MarkerClusterGroup>
+          {selectedDocument && selectedDocument.geolocation.latitude ? (
+            <ZoomToMarker
+              position={[
+                selectedDocument.geolocation.longitude,
+                selectedDocument.geolocation.latitude,
+              ]}
+              zoomLevel={15} // Zoom to level 15 for the selected document
+            />
+          ) : (
+            <ZoomToMarker position={kirunaPosition} zoomLevel={12} /> // Reset to initial view
+          )}
         </MapContainer>
       </div>
   

@@ -53,10 +53,14 @@ const DocumentSidePanel = ({ document, onClose }) => {
             <strong>Pages:</strong> {document.nrPages > 0 ? document.nrPages : "-"}
           </Card.Text>
           <div className="divider" />
+          {/* Geolocation */}
+          <Card.Text>
+            <strong>Geolocation:</strong> <span>{document.geolocation.municipality ? document.geolocation.municipality : document.geolocation.latitude + ", " + document.geolocation.longitude } </span>
+          </Card.Text>
+          <div className="divider" />
           {/* Description */}
           <Card.Text className="mt-4">
-            <strong>Description:</strong>
-            <p>{document.description}</p>
+            <strong>Description:</strong> <br />{document.description}
           </Card.Text>
         </Card.Body>
       </Card>
