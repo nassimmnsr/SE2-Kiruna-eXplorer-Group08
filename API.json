@@ -133,13 +133,6 @@
                         "type": "string",
                         "description": "The description of the document",
                         "maxLength": 1000
-                    },
-                    "links": {
-                        "type": "array",
-                        "description": "The links of the document",
-                        "items": {
-                            "$ref": "#/components/schemas/link"
-                        }
                     }
                 },
                 "required": [
@@ -170,6 +163,17 @@
                             "description": "The title of the document",
                             "minLength": 2,
                             "maxLength": 64
+                        },
+                        "stakeholders": {
+                            "type": "array",
+                            "description": "The stakeholders of the document",
+                            "items": {
+                                "type": "string",
+                                "description": "The name of the stakeholder",
+                                "minLength": 2,
+                                "maxLength": 64
+                            },
+                            "minLength": 1
                         },
                         "scale": {
                             "description": "The scale of the document",
