@@ -8,91 +8,103 @@ import "../App.css";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
 
-function DocumentModal(props) {
+export default function DocumentModal(props) {
   const [isEditable, setIsEditable] = useState(false);
 
-  const [title, setTitle] = useState("");
-  const [stakeholders, setStakeholders] = useState([]);
-  const [scale, setScale] = useState("");
-  const [issuanceDate, setIssuanceDate] = useState("");
-  const [day, setDay] = useState("");
-  const [month, setMonth] = useState("");
-  const [year, setYear] = useState("");
-  const [type, setType] = useState("");
-  const [nrConnections, setNrConnections] = useState(0);
-  const [language, setLanguage] = useState("");
-  const [nrPages, setNrPages] = useState(0);
-  const [geolocation, setGeolocation] = useState({
-    latitude: null,
-    longitude: null,
-    municipality: "Whole municipality",
+  const [document, setDocument] = useState({
+    title: "",
+    stakeholders: [],
+    scale: "",
+    issuanceDate: "",
+    day: "",
+    month: "",
+    year: "",
+    type: "",
+    nrConnections: 0,
+    language: "",
+    nrPages: 0,
+    geolocation: {
+      latitude: null,
+      longitude: null,
+      municipality: "Whole municipality",
+    },
+    description: "",
   });
-  const [description, setDescription] = useState("");
   const [errors, setErrors] = useState({});
 
   // Update the state when the document prop changes
   useEffect(() => {
     if (props.document) {
       setIsEditable(props.document.isEditable || false);
-      setTitle(props.document.title || "");
-      setStakeholders(props.document.stakeholders || []);
-      setScale(props.document.scale || "");
-      setIssuanceDate(props.document.issuanceDate || "");
-      setType(props.document.type || "");
-      setNrConnections(props.document.nrConnections || 0);
-      setLanguage(props.document.language || "");
-      setNrPages(props.document.nrPages || 0);
-      setGeolocation(
-        props.document.geolocation || {
-          latitude: null,
-          longitude: null,
-          municipality: "Whole municipality",
-        }
-      );
-      setDescription(props.document.description || "");
-
-      // Split issuanceDate into day, month, and year
-      if (props.document.issuanceDate) {
-        const dateParts = props.document.issuanceDate.split("/");
-        if (dateParts.length === 3) {
-          setDay(dateParts[0]);
-          setMonth(dateParts[1]);
-          setYear(dateParts[2]);
-        } else if (dateParts.length === 2) {
-          setMonth(dateParts[0]);
-          setYear(dateParts[1]);
-        } else if (dateParts.length === 1) {
-          setYear(dateParts[0]);
-        }
-      }
+      setDocument({
+        title: props.document.title || "",
+        stakeholders: props.document.stakeholders || [],
+        scale: props.document.scale || "",
+        issuanceDate: props.document.issuanceDate || "",
+        day: props.document.issuanceDate
+          ? props.document.issuanceDate.split("-")[2] || ""
+          : "",
+        month: props.document.issuanceDate
+          ? props.document.issuanceDate.split("-")[1] || ""
+          : "",
+        year: props.document.issuanceDate
+          ? props.document.issuanceDate.split("-")[0] || ""
+          : "",
+        type: props.document.type || "",
+        nrConnections: props.document.nrConnections || 0,
+        language: props.document.language || "",
+        nrPages: props.document.nrPages || 0,
+        geolocation: {
+          latitude: props.document.geolocation
+            ? props.document.geolocation.latitude
+            : null,
+          longitude: props.document.geolocation
+            ? props.document.geolocation.longitude
+            : null,
+          municipality: props.document.geolocation
+            ? props.document.geolocation.municipality
+            : "Whole municipality",
+        },
+        description: props.document.description || "",
+      });
     }
     setErrors({});
   }, [props.document]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const newErrors = {}; // Reset errors
 
-    const combinedIssuanceDate = `${year}${
-      month ? "-" + month.padStart(2, "0") : ""
-    }${day ? "-" + day.padStart(2, "0") : ""}`;
+    const combinedIssuanceDate = `${document.year}${
+      document.month ? "-" + document.month.padStart(2, "0") : ""
+    }${document.day ? "-" + document.day.padStart(2, "0") : ""}`;
 
-    // Reset errors
-    const newErrors = {};
+
+    const refactorGeolocation = (geolocation) => {
+      const updatedGeolocation = { ...geolocation };
+      for (const key in updatedGeolocation) {
+        if (updatedGeolocation[key] === "") {
+          updatedGeolocation[key] = null;
+        }
+      }
+      return updatedGeolocation;
+    }
+    
 
     // Title validation
-    if (typeof title !== "string" || !title.trim()) {
+    if (typeof document.title !== "string" || !document.title.trim()) {
       newErrors.title = "Title is required and must be a non-empty string.";
-    } else if (title.length < 2) {
+    } else if (document.title.length < 2) {
       newErrors.title = "Title must be at least 2 characters.";
-    } else if (title.length > 64) {
+    } else if (document.title.length > 64) {
       newErrors.title = "Title must be less than 64 characters.";
     }
 
     // Stakeholders validation
     if (
-      !Array.isArray(stakeholders) ||
-      stakeholders.length === 0 ||
-      stakeholders.some((s) => typeof s !== "string" || !s.trim())
+      !Array.isArray(document.stakeholders) ||
+      document.stakeholders.length === 0 ||
+      document.stakeholders.some((s) => typeof s !== "string" || !s.trim())
     ) {
       newErrors.stakeholders =
         "At least one stakeholder is required, and all must be non-empty strings.";
@@ -105,10 +117,12 @@ function DocumentModal(props) {
       /^1:[1-9][0-9]*$/,
     ];
     if (
-      typeof scale !== "string" ||
-      !scale.trim() ||
+      typeof document.scale !== "string" ||
+      !document.scale.trim() ||
       !scalePatterns.some((pattern) =>
-        typeof pattern === "string" ? pattern === scale : pattern.test(scale)
+        typeof pattern === "string"
+          ? pattern === document.scale
+          : pattern.test(document.scale)
       )
     ) {
       newErrors.scale =
@@ -136,44 +150,47 @@ function DocumentModal(props) {
       "Prescriptive document",
       "Informative document",
     ];
-    if (!validTypes.includes(type)) {
+    if (!validTypes.includes(document.type)) {
       newErrors.type =
         "Type is required and must be one of the predefined values.";
     }
 
-    if (language && (language.length < 2 || language.length > 64)) {
+    if (
+      document.language &&
+      (document.language.length < 2 || document.language.length > 64)
+    ) {
       newErrors.language = "Language must be between 2 and 64 characters.";
     }
 
     // Number of pages validation
-    if (nrPages && typeof nrPages !== "number") {
+    if (document.nrPages && typeof nrPages !== "number") {
       newErrors.nrPages = "Number of pages must be an integer";
     }
 
     // Geolocation validation
-    if (typeof geolocation === "object" && geolocation) {
+    if (typeof geolocation === "object" && document.geolocation) {
       if (
-        (geolocation.latitude &&
-          (geolocation.latitude > 67.88398 ||
-            geolocation.latitude < 67.82295)) ||
-        (geolocation.longitude && !geolocation.latitude)
+        (document.geolocation.latitude &&
+          (document.geolocation.latitude > 67.88398 ||
+            document.geolocation.latitude < 67.82295)) ||
+        (document.geolocation.longitude && !document.geolocation.latitude)
       ) {
         newErrors.latitude =
           "Latitude must be in the range between 67.82295 and 67.88398.";
       }
       if (
-        (geolocation.longitude &&
-          (geolocation.longitude > 20.3687 ||
-            geolocation.longitude < 20.14402)) ||
-        (geolocation.latitude && !geolocation.longitude)
+        (document.geolocation.longitude &&
+          (document.geolocation.longitude > 20.3687 ||
+            document.geolocation.longitude < 20.14402)) ||
+        (document.geolocation.latitude && !document.geolocation.longitude)
       ) {
         newErrors.longitude =
           "Longitude must be in the range between 20.14402 and 20.36870.";
       }
       if (
-        geolocation.latitude &&
-        geolocation.longitude &&
-        geolocation.municipality !== "Whole municipality"
+        document.geolocation.latitude &&
+        document.geolocation.longitude &&
+        document.geolocation.municipality !== "Whole municipality"
       ) {
         newErrors.municipality =
           "Geolocation must be 'Whole municipality' or a valid coordinate.";
@@ -181,7 +198,7 @@ function DocumentModal(props) {
     }
 
     // Description validation
-    if (description && description.length > 1000) {
+    if (document.description && document.description.length > 1000) {
       newErrors.description = "Description must not exceed 1000 characters.";
     }
 
@@ -191,41 +208,25 @@ function DocumentModal(props) {
     }
 
     if (props.document.id === undefined) {
-      props.handleAdd(
-        new Document(
-          null, // id
-          title, // title
-          stakeholders, // stakeholders
-          scale, // scale
-          combinedIssuanceDate, // issuanceDate
-          type, // type
-          0, // nrConnections (default 0)
-          language, // language
-          nrPages, // nrPages
-          geolocation, // geolocation
-          description // description
-        )
-      );
-    } else {
-      props.handleSave(
-        new Document(
-          props.document.id,
-          title,
-          stakeholders,
-          scale,
-          combinedIssuanceDate,
-          type,
-          nrConnections,
-          language,
-          nrPages,
-          {
-            latitude: geolocation.latitude,
-            longitude: geolocation.longitude,
-          },
-          description
-        )
-      );
+      props.handleAdd(new Document(
+        null,
+        document.title,
+        document.stakeholders,
+        document.scale,
+        combinedIssuanceDate,
+        document.type,
+        document.nrConnections,
+        document.language,
+        document.nrPages,
+        refactorGeolocation(document.geolocation),
+        document.description
+      ));
     }
+    // else {
+    //   props.handleSave(
+    //     new Document(props.document.id, ...document)
+    //   );
+    // }
     props.onHide();
   };
 
@@ -234,8 +235,14 @@ function DocumentModal(props) {
   // };
 
   const handleLinkToClick = () => {
+    props.onLinkToClick(props.document);
     props.onHide();
-    props.onLinkToClick();
+  };
+  const handleChange = (field, value) => {
+    setDocument((prevDocument) => ({
+      ...prevDocument,
+      [field]: value,
+    }));
   };
 
   return (
@@ -248,55 +255,23 @@ function DocumentModal(props) {
     >
       <Modal.Header closeButton className="modal-header">
         <Modal.Title>
-          {isEditable ? "Enter the values in the following fields" : title}
+          {isEditable
+            ? "Enter the values in the following fields"
+            : document.title}
         </Modal.Title>
       </Modal.Header>
       <Modal.Body className="modal-body">
         {isEditable ? (
           <DocumentFormComponent
-            title={title}
-            stakeholders={stakeholders}
-            scale={scale}
-            issuanceDate={issuanceDate}
-            day={day}
-            month={month}
-            year={year}
-            type={type}
-            nrConnections={nrConnections}
-            language={language}
-            nrPages={nrPages}
-            geolocation={geolocation}
-            description={description}
-            setTitle={setTitle}
-            setStakeholders={setStakeholders}
-            setScale={setScale}
-            setIssuanceDate={setIssuanceDate}
-            setDay={setDay}
-            setMonth={setMonth}
-            setYear={setYear}
-            setType={setType}
-            setNrConnections={setNrConnections}
-            setLanguage={setLanguage}
-            setNrPages={setNrPages}
-            setGeolocation={setGeolocation}
-            setDescription={setDescription}
+            document={document}
+            setDocument={setDocument}
             errors={errors}
             setErrors={setErrors}
             handleSubmit={handleSubmit}
+            handleChange={handleChange}
           />
         ) : (
-          <ModalBodyComponent
-            title={title}
-            stakeholders={stakeholders}
-            scale={scale}
-            issuanceDate={issuanceDate}
-            type={type}
-            nrConnections={nrConnections}
-            language={language}
-            nrPages={nrPages}
-            geolocation={geolocation}
-            description={description}
-          />
+          <ModalBodyComponent document={document} />
         )}
       </Modal.Body>
       <Modal.Footer className="mt-3">
@@ -339,27 +314,29 @@ DocumentModal.propTypes = {
   onLinkToClick: PropTypes.func.isRequired,
 };
 
-function ModalBodyComponent(props) {
+function ModalBodyComponent({ document }) {
   return (
     <div className="document-info">
       <div className="info-section">
         <div className="info-item">
           <label>Stakeholders:</label>
-          <span>{props.stakeholders}</span>
+          <span>
+            {document.stakeholders ? document.stakeholders.join(", ") : ""}
+          </span>
         </div>
         <div className="divider"></div>
         <div className="info-item">
           <label>Scale:</label>
-          <span>{props.scale}</span>
+          <span>{document.scale}</span>
         </div>
         <div className="divider"></div>
         <div className="info-item">
           <label>Issuance Date:</label>
           <span>
-            {dayjs(props.issuanceDate).format(
-              props.issuanceDate.length === 4
+            {dayjs(document.issuanceDate).format(
+              document.issuanceDate.length === 4
                 ? "YYYY"
-                : props.issuanceDate.length === 7
+                : document.issuanceDate.length === 7
                 ? "MM/YYYY"
                 : "DD/MM/YYYY"
             )}
@@ -368,13 +345,13 @@ function ModalBodyComponent(props) {
         <div className="divider"></div>
         <div className="info-item">
           <label>Type:</label>
-          <span>{props.type}</span>
+          <span>{document.type}</span>
         </div>
         <div className="divider"></div>
         <div className="info-item">
           <label>Connections:</label>
           <span>
-            {props.nrConnections === 0 ? (
+            {document.nrConnections === 0 ? (
               <OverlayTrigger
                 placement="top"
                 overlay={
@@ -386,28 +363,28 @@ function ModalBodyComponent(props) {
                 <i className="bi bi-exclamation-triangle"></i>
               </OverlayTrigger>
             ) : (
-              props.nrConnections
+              document.nrConnections
             )}
           </span>
         </div>
         <div className="divider"></div>
         <div className="info-item">
           <label>Language:</label>
-          <span>{props.language ? `${props.language}` : "-"}</span>
+          <span>{document.language ? `${document.language}` : "-"}</span>
         </div>
         <div className="divider"></div>
         <div className="info-item">
           <label>Pages:</label>
-          <span>{props.nrPages > 0 ? `${props.nrPages}` : "-"}</span>
+          <span>{document.nrPages > 0 ? `${document.nrPages}` : "-"}</span>
         </div>
         <div className="divider"></div>
         <div className="info-item">
           <label>Location:</label>
           <span>
-            {props.geolocation.latitude && props.geolocation.longitude ? (
-              `${props.geolocation.latitude}, ${props.geolocation.longitude}`
-            ) : props.geolocation.municipality ? (
-              `${props.geolocation.municipality}`
+            {document.geolocation.latitude && document.geolocation.longitude ? (
+              `${document.geolocation.latitude}, ${document.geolocation.longitude}`
+            ) : document.geolocation.municipality ? (
+              `${document.geolocation.municipality}`
             ) : (
               <OverlayTrigger
                 placement="top"
@@ -427,57 +404,25 @@ function ModalBodyComponent(props) {
       <div className="divider-vertical"></div>
       <div className="description-area">
         <label>Description:</label>
-        <p>{props.description}</p>
+        <p>{document.description}</p>
       </div>
     </div>
   );
 }
 
 ModalBodyComponent.propTypes = {
-  title: PropTypes.string,
-  stakeholders: PropTypes.array,
-  scale: PropTypes.string,
-  issuanceDate: PropTypes.string,
-  type: PropTypes.string,
-  nrConnections: PropTypes.number,
-  language: PropTypes.string,
-  nrPages: PropTypes.number,
-  geolocation: PropTypes.shape({
-    latitude: PropTypes.number,
-    longitude: PropTypes.number,
-    municipality: PropTypes.string,
-  }),
-  description: PropTypes.string,
+  document: PropTypes.object.isRequired,
 };
 
-ModalBodyComponent.defaultProps = {
-  stakeholders: [],
-};
-
-function DocumentFormComponent(props) {
+function DocumentFormComponent({ document, errors, handleChange }) {
   const dayRef = useRef(null);
   const monthRef = useRef(null);
   const yearRef = useRef(null);
 
-  const handleAddStakeholder = () => {
-    props.setStakeholders([...props.stakeholders, ""]);
-  };
-
-  const handleDeleteStakeholder = (index) => {
-    const newStakeholders = props.stakeholders.filter((_, i) => i !== index);
-    props.setStakeholders(newStakeholders);
-  };
-
-  const handleStakeholderChange = (index, value) => {
-    const newStakeholders = [...props.stakeholders];
-    newStakeholders[index] = value;
-    props.setStakeholders(newStakeholders);
-  };
-
   const handleDayChange = (e) => {
     const value = e.target.value;
     if (value.length <= 2) {
-      props.setDay(value);
+      handleChange("day", value);
       if (value.length === 2) {
         monthRef.current.focus();
       }
@@ -487,7 +432,7 @@ function DocumentFormComponent(props) {
   const handleMonthChange = (e) => {
     const value = e.target.value;
     if (value.length <= 2) {
-      props.setMonth(value);
+      handleChange("month", value);
       if (value.length === 2) {
         yearRef.current.focus();
       }
@@ -497,7 +442,7 @@ function DocumentFormComponent(props) {
   const handleYearChange = (e) => {
     const value = e.target.value;
     if (value.length <= 4) {
-      props.setYear(value);
+      handleChange("year", value);
     }
   };
 
@@ -508,77 +453,93 @@ function DocumentFormComponent(props) {
         <Form.Label>Title *</Form.Label>
         <Form.Control
           type="text"
-          value={props.title}
-          onChange={(e) => props.setTitle(e.target.value)}
-          isInvalid={!!props.errors.title}
+          value={document.title}
+          onChange={(e) => handleChange("title", e.target.value)}
+          isInvalid={!!errors.title}
           required
         />
-        {props.errors.title && (
-          <Form.Control.Feedback type="invalid">
-            {props.errors.title}
-          </Form.Control.Feedback>
-        )}
+        <Form.Control.Feedback type="invalid">
+          {errors.title}
+        </Form.Control.Feedback>
       </Form.Group>
-      <div className="divider"></div>
+
+      <div className="divider" />
+
       {/* STAKEHOLDERS */}
       <Form.Group className="mb-3" controlId="formDocumentStakeholders">
         <Form.Label>Stakeholders *</Form.Label>
-        {props.stakeholders.map((stakeholder, index) => (
+        {document.stakeholders.map((stakeholder, index) => (
           <div key={index} className="d-flex mb-2">
             <Form.Control
               type="text"
               value={stakeholder}
-              onChange={(e) => handleStakeholderChange(index, e.target.value)}
-              isInvalid={!!props.errors.stakeholders}
+              onChange={(e) => {
+                const newStakeholders = [...document.stakeholders];
+                newStakeholders[index] = e.target.value;
+                handleChange("stakeholders", newStakeholders);
+              }}
+              isInvalid={!!errors.stakeholders}
               required
             />
             <Button
               variant="danger"
-              onClick={() => handleDeleteStakeholder(index)}
+              onClick={() => {
+                const newStakeholders = document.stakeholders.filter(
+                  (_, i) => i !== index
+                );
+                handleChange("stakeholders", newStakeholders);
+              }}
               className="ms-2"
+              title="Delete stakeholder"
             >
               <i className="bi bi-trash"></i>
             </Button>
           </div>
         ))}
-        {props.errors.stakeholders && (
-          <Form.Control.Feedback type="invalid">
-            {props.errors.stakeholders}
-          </Form.Control.Feedback>
-        )}
+        <Form.Control.Feedback type="invalid">
+          {errors.stakeholders}
+        </Form.Control.Feedback>
         <div>
-          <Button variant="primary" onClick={handleAddStakeholder}>
-            Add Stakeholder
+          <Button
+            title="Add new stakeholder"
+            variant="primary"
+            onClick={() =>
+              handleChange("stakeholders", [...document.stakeholders, ""])
+            }
+          >
+            <i className="bi bi-plus-square"></i>
           </Button>
         </div>
       </Form.Group>
-      <div className="divider"></div>
+
+      <div className="divider" />
+
       {/* SCALE */}
       <Form.Group className="mb-3" controlId="formDocumentScale">
         <Form.Label>Scale *</Form.Label>
         <Form.Control
           type="text"
-          value={props.scale}
-          onChange={(e) => props.setScale(e.target.value)}
-          isInvalid={!!props.errors.scale}
+          value={document.scale}
+          onChange={(e) => handleChange("scale", e.target.value)}
+          isInvalid={!!errors.scale}
           required
         />
-        {props.errors.scale && (
-          <Form.Control.Feedback type="invalid">
-            {props.errors.scale}
-          </Form.Control.Feedback>
-        )}
+        <Form.Control.Feedback type="invalid">
+          {errors.scale}
+        </Form.Control.Feedback>
       </Form.Group>
-      <div className="divider"></div>
+
+      <div className="divider" />
+
       {/* ISSUANCE DATE */}
       <Form.Group className="mb-3" controlId="formDocumentIssuanceDate">
         <Form.Label>Issuance Date *</Form.Label>
         <div className="d-flex">
           <Form.Control
             type="text"
-            value={props.day}
-            onChange={handleDayChange}
-            isInvalid={!!props.errors.issuanceDate}
+            value={document.day}
+            onChange={(e) => handleDayChange(e)}
+            isInvalid={!!errors.issuanceDate}
             placeholder="DD"
             className="me-1"
             ref={dayRef}
@@ -587,9 +548,9 @@ function DocumentFormComponent(props) {
           <span>/</span>
           <Form.Control
             type="text"
-            value={props.month}
-            onChange={handleMonthChange}
-            isInvalid={!!props.errors.issuanceDate}
+            value={document.month}
+            onChange={(e) => handleMonthChange(e)}
+            isInvalid={!!errors.issuanceDate}
             placeholder="MM"
             className="mx-1"
             ref={monthRef}
@@ -598,9 +559,9 @@ function DocumentFormComponent(props) {
           <span>/</span>
           <Form.Control
             type="text"
-            value={props.year}
-            onChange={handleYearChange}
-            isInvalid={!!props.errors.issuanceDate}
+            value={document.year}
+            onChange={(e) => handleYearChange(e)}
+            isInvalid={!!errors.issuanceDate}
             placeholder="YYYY"
             className="ms-1"
             ref={yearRef}
@@ -608,18 +569,20 @@ function DocumentFormComponent(props) {
           />
         </div>
         <Form.Control.Feedback type="invalid">
-          {props.errors.issuanceDate}
+          {errors.issuanceDate}
         </Form.Control.Feedback>
       </Form.Group>
-      <div className="divider"></div>
+
+      <div className="divider" />
+
       {/* TYPE */}
       <Form.Group className="mb-3" controlId="formDocumentType">
         <Form.Label>Type *</Form.Label>
         <Form.Control
           as="select"
-          value={props.type}
-          onChange={(e) => props.setType(e.target.value)}
-          isInvalid={!!props.errors.type}
+          value={document.type}
+          onChange={(e) => handleChange("type", e.target.value)}
+          isInvalid={!!errors.type}
           required
         >
           <option value="">Select type</option>
@@ -629,35 +592,48 @@ function DocumentFormComponent(props) {
           <option value="Prescriptive document">Prescriptive document</option>
           <option value="Informative document">Informative document</option>
         </Form.Control>
-        {props.errors.type && (
-          <Form.Control.Feedback type="invalid">
-            {props.errors.type}
-          </Form.Control.Feedback>
-        )}
+        <Form.Control.Feedback type="invalid">
+          {errors.type}
+        </Form.Control.Feedback>
       </Form.Group>
-      <div className="divider"></div>
+
+      <div className="divider" />
+
       {/* LANGUAGE */}
       <Form.Group className="mb-3" controlId="formDocumentLanguage">
         <Form.Label>Language</Form.Label>
         <Form.Control
           type="text"
-          value={props.language}
-          onChange={(e) => props.setLanguage(e.target.value)}
+          value={document.language}
+          onChange={(e) => handleChange("language", e.target.value)}
+          isInvalid={!!errors.language}
         />
+        <Form.Control.Feedback type="invalid">
+          {errors.language}
+        </Form.Control.Feedback>
       </Form.Group>
-      <div className="divider"></div>
+
+      <div className="divider" />
+
       {/* PAGES */}
       <Form.Group className="mb-3" controlId="formDocumentNrPages">
         <Form.Label>Pages</Form.Label>
         <Form.Control
           type="number"
-          value={props.nrPages}
+          value={document.nrPages}
           min={0}
-          onChange={(e) => props.setNrPages(Number(e.target.value))}
+          onChange={(e) => handleChange("nrPages", Number(e.target.value))}
+          isInvalid={!!errors.nrPages}
         />
+        <Form.Control.Feedback type="invalid">
+          {errors.nrPages}
+        </Form.Control.Feedback>
       </Form.Group>
-      <div className="divider"></div>
+
+      <div className="divider" />
+
       {/* GEOLOCATION */}
+
       <Form.Group className="mb-3">
         <Form.Label>Latitude</Form.Label>
         <Form.Control
@@ -665,103 +641,100 @@ function DocumentFormComponent(props) {
           min={67.82295}
           max={67.88398}
           step={0.00001}
-          value={props.geolocation.latitude}
-          isInvalid={!!props.errors.latitude}
+          value={document.geolocation.latitude}
+          isInvalid={!!errors.latitude}
           onChange={(e) =>
-            props.setGeolocation({
-              ...props.geolocation,
+            handleChange("geolocation", {
+              ...document.geolocation,
               latitude: e.target.value,
               municipality: null,
             })
           }
           id="formDocumentGeolocationLatitude"
-          disabled={props.geolocation.municipality === "Whole municipality"}
+          disabled={document.geolocation.municipality === "Whole municipality"}
         />
-        {props.errors.latitude && (
-          <Form.Control.Feedback type="invalid">
-            {props.errors.latitude}
-          </Form.Control.Feedback>
-        )}
+        <Form.Control.Feedback type="invalid">
+          {errors.latitude}
+        </Form.Control.Feedback>
+
         <Form.Range
           min={67.82295}
           max={67.88398}
           step={0.00001}
-          value={props.geolocation.latitude}
-          isInvalid={!!props.errors.latitude}
+          value={document.geolocation.latitude}
+          isInvalid={!!errors.latitude}
           onChange={(e) =>
-            props.setGeolocation({
-              ...props.geolocation,
+            handleChange("geolocation", {
+              ...document.geolocation,
               latitude: e.target.value,
               municipality: null,
             })
           }
-          disabled={props.geolocation.municipality === "Whole municipality"}
+          disabled={document.geolocation.municipality === "Whole municipality"}
         />
 
         <Form.Label>Longitude</Form.Label>
         <Form.Control
           type="number"
-          value={props.geolocation.longitude}
+          value={document.geolocation.longitude}
           min={20.14402}
           max={20.3687}
           step={0.00001}
-          isInvalid={!!props.errors.longitude}
+          isInvalid={!!errors.longitude}
           onChange={(e) =>
-            props.setGeolocation({
-              ...props.geolocation,
+            handleChange("geolocation", {
+              ...document.geolocation,
               longitude: e.target.value,
               municipality: null,
             })
           }
           id="formDocumentGeolocationLongitude"
-          disabled={props.geolocation.municipality === "Whole municipality"}
+          disabled={document.geolocation.municipality === "Whole municipality"}
         />
-        {props.errors.longitude && (
-          <Form.Control.Feedback type="invalid">
-            {props.errors.longitude}
-          </Form.Control.Feedback>
-        )}
+        <Form.Control.Feedback type="invalid">
+          {errors.longitude}
+        </Form.Control.Feedback>
         <Form.Range
           min={20.14402}
           max={20.3687}
           step={0.00001}
-          value={props.geolocation.longitude}
-          isInvalid={!!props.errors.longitude}
+          value={document.geolocation.longitude}
+          isInvalid={!!errors.longitude}
           onChange={(e) =>
-            props.setGeolocation({
-              ...props.geolocation,
+            handleChange("geolocation", {
+              ...document.geolocation,
               longitude: e.target.value,
-              municipality: null,
+              municipality: "",
             })
           }
-          disabled={props.geolocation.municipality === "Whole municipality"}
+          disabled={document.geolocation.municipality === "Whole municipality"}
         />
 
         <Form.Check
           type="checkbox"
           label="Whole municipality"
-          checked={props.geolocation.municipality === "Whole municipality"}
+          checked={document.geolocation.municipality === "Whole municipality"}
           onChange={(e) => {
             if (e.target.checked) {
-              props.setGeolocation({
-                latitude: null,
-                longitude: null,
+              handleChange("geolocation", {
+                latitude: "",
+                longitude: "",
                 municipality: "Whole municipality",
               });
             } else {
-              props.setGeolocation({
-                ...props.geolocation,
-                municipality: null,
+              handleChange("geolocation", {
+                ...document.geolocation,
+                municipality: "",
               });
             }
-            document.getElementById(
+            window.document.getElementById(
               "formDocumentGeolocationLatitude"
             ).disabled = e.target.checked;
-            document.getElementById(
+            window.document.getElementById(
               "formDocumentGeolocationLongitude"
             ).disabled = e.target.checked;
             if (e.target.checked) {
-              props.setGeolocation({
+              handleChange("geolocation", {
                 latitude: "",
                 longitude: "",
                 municipality: "Whole municipality",
@@ -771,66 +744,34 @@ function DocumentFormComponent(props) {
           className="mt-2"
         />
       </Form.Group>
-      {props.errors.municipality && (
-        <Form.Control.Feedback type="invalid">
-          {props.errors.municipality}
-        </Form.Control.Feedback>
-      )}
-      <div className="divider"></div>
+      <Form.Control.Feedback type="invalid">
+        {errors.municipality}
+      </Form.Control.Feedback>
+
+      <div className="divider" />
+
       {/* DESCRIPTION */}
       <Form.Group className="mb-3" controlId="formDocumentDescription">
         <Form.Label>Description</Form.Label>
         <Form.Control
           as="textarea"
           rows={3}
-          value={props.description}
-          onChange={(e) => props.setDescription(e.target.value)}
-          isInvalid={!!props.errors.description}
-          required
+          value={document.description}
+          onChange={(e) => handleChange("description", e.target.value)}
+          isInvalid={!!errors.description}
         />
-        {props.errors.description && (
-          <Form.Control.Feedback type="invalid">
-            {props.errors.description}
-          </Form.Control.Feedback>
-        )}
+        <Form.Control.Feedback type="invalid">
+          {errors.description}
+        </Form.Control.Feedback>
       </Form.Group>
     </Form>
   );
 }
 
 DocumentFormComponent.propTypes = {
-  title: PropTypes.string.isRequired,
-  stakeholders: PropTypes.array.isRequired,
-  scale: PropTypes.string.isRequired,
-  issuanceDate: PropTypes.string.isRequired,
-  day: PropTypes.string.isRequired,
-  month: PropTypes.string.isRequired,
-  year: PropTypes.string.isRequired,
-  type: PropTypes.string.isRequired,
-  nrConnections: PropTypes.number.isRequired,
-  language: PropTypes.string.isRequired,
-  nrPages: PropTypes.number.isRequired,
-  geolocation: PropTypes.shape({
-    latitude: PropTypes.number,
-    longitude: PropTypes.number,
-    municipality: PropTypes.string,
-  }),
-  description: PropTypes.string.isRequired,
-  setTitle: PropTypes.func.isRequired,
-  setStakeholders: PropTypes.func.isRequired,
-  setScale: PropTypes.func.isRequired,
-  setIssuanceDate: PropTypes.func.isRequired,
-  setDay: PropTypes.func.isRequired,
-  setMonth: PropTypes.func.isRequired,
-  setYear: PropTypes.func.isRequired,
-  setType: PropTypes.func.isRequired,
-  setNrConnections: PropTypes.func.isRequired,
-  setLanguage: PropTypes.func.isRequired,
-  setNrPages: PropTypes.func.isRequired,
-  setGeolocation: PropTypes.func.isRequired,
-  setDescription: PropTypes.func.isRequired,
+  document: PropTypes.object.isRequired,
+  setDocument: PropTypes.func.isRequired,
   errors: PropTypes.object.isRequired,
   setErrors: PropTypes.func.isRequired,
+  handleChange: PropTypes.func.isRequired,
 };
-
-export default DocumentModal;
