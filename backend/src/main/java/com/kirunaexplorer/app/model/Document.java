@@ -85,13 +85,15 @@ public class Document {
      * @return DocumentBriefResponseDTO object
      */
     public DocumentBriefResponseDTO toBriefResponseDTO() {
+        System.out.println(this.stakeholders.split("/"));
         return new DocumentBriefResponseDTO(
             this.id,
             this.title,
             this.scale,
             parseDate(this.issuanceDate, this.datePrecision),
             this.type,
-            this.geoReference.toGeolocationDTO()
+            this.geoReference.toGeolocationDTO(),
+            List.of(this.stakeholders.split("/"))
         );
     }
 
