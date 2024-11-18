@@ -102,6 +102,11 @@ export default function DocumentModal(props) {
     ) {
       newErrors.stakeholders =
         "At least one stakeholder is required, and all must be non-empty strings.";
+    } else if (
+      new Set(document.stakeholders.map((s) => s.trim().toLowerCase())).size !==
+      document.stakeholders.length
+    ) {
+      newErrors.stakeholders = "Stakeholders must not contain duplicates.";
     }
 
     // Scale validation
@@ -182,8 +187,7 @@ export default function DocumentModal(props) {
           "Longitude must be in the range between 20.14402 and 20.36870.";
       }
       if (
-        !document.geolocation.latitude &&
-        !document.geolocation.longitude &&
+        (document.geolocation.latitude || document.geolocation.longitude) &&
         document.geolocation.municipality === "Whole municipality"
       ) {
         newErrors.municipality =
@@ -201,21 +205,22 @@ export default function DocumentModal(props) {
       return;
     }
 
-
     if (props.document.id === undefined) {
-      props.handleAdd(new Document(
-        null,
-        document.title,
-        document.stakeholders,
-        document.scale,
-        combinedIssuanceDate,
-        document.type,
-        document.nrConnections,
-        document.language,
-        document.nrPages,
-        sanitizedGeolocation,
-        document.description
-      ));
+      props.handleAdd(
+        new Document(
+          null,
+          document.title,
+          document.stakeholders,
+          document.scale,
+          combinedIssuanceDate,
+          document.type,
+          document.nrConnections,
+          document.language,
+          document.nrPages,
+          sanitizedGeolocation,
+          document.description
+        )
+      );
     }
     // else {
     //   props.handleSave(
@@ -410,6 +415,8 @@ ModalBodyComponent.propTypes = {
 };
 
 function DocumentFormComponent({ document, errors, handleChange }) {
+  const [customScaleValue, setCustomScaleValue] = useState("");
+
   const dayRef = useRef(null);
   const monthRef = useRef(null);
   const yearRef = useRef(null);
@@ -463,37 +470,67 @@ function DocumentFormComponent({ document, errors, handleChange }) {
       {/* STAKEHOLDERS */}
       <Form.Group className="mb-3" controlId="formDocumentStakeholders">
         <Form.Label>Stakeholders *</Form.Label>
-        {document.stakeholders.map((stakeholder, index) => (
-          <div key={index} className="d-flex mb-2">
-            <Form.Control
-              type="text"
-              value={stakeholder}
-              onChange={(e) => {
-                const newStakeholders = [...document.stakeholders];
-                newStakeholders[index] = e.target.value;
-                handleChange("stakeholders", newStakeholders);
-              }}
-              isInvalid={!!errors.stakeholders}
-              required
-            />
-            <Button
-              variant="danger"
-              onClick={() => {
-                const newStakeholders = document.stakeholders.filter(
-                  (_, i) => i !== index
-                );
-                handleChange("stakeholders", newStakeholders);
-              }}
-              className="ms-2"
-              title="Delete stakeholder"
-            >
-              <i className="bi bi-trash"></i>
-            </Button>
-          </div>
+        {[
+          "LKAB",
+          "Municipality",
+          "Regional authority",
+          "Architecture firms",
+          "Citizen",
+        ].map((stakeholderOption) => (
+          <Form.Check
+            key={stakeholderOption}
+            type="checkbox"
+            label={stakeholderOption}
+            checked={document.stakeholders.includes(stakeholderOption)}
+            onChange={(e) => {
+              const newStakeholders = e.target.checked
+                ? [...document.stakeholders, stakeholderOption]
+                : document.stakeholders.filter((s) => s !== stakeholderOption);
+              handleChange("stakeholders", newStakeholders);
+            }}
+            isInvalid={!!errors.stakeholders}
+          />
         ))}
-        <Form.Control.Feedback type="invalid">
-          {errors.stakeholders}
-        </Form.Control.Feedback>
+        {document.stakeholders
+          .filter(
+            (stakeholder) =>
+              ![
+                "LKAB",
+                "Municipality",
+                "Regional authority",
+                "Architecture firms",
+                "Citizen",
+              ].includes(stakeholder)
+          )
+          .map((stakeholder, index) => (
+            <div key={index} className="d-flex mb-2">
+              <Form.Control
+                type="text"
+                value={stakeholder}
+                onChange={(e) => {
+                  const newStakeholders = [...document.stakeholders];
+                  newStakeholders[
+                    document.stakeholders.findIndex((s) => s === stakeholder)
+                  ] = e.target.value;
+                  handleChange("stakeholders", newStakeholders);
+                }}
+                placeholder="Name"
+                className="me-2"
+              />
+              <Button
+                variant="danger"
+                onClick={() => {
+                  const newStakeholders = document.stakeholders.filter(
+                    (s) => s !== stakeholder
+                  );
+                  handleChange("stakeholders", newStakeholders);
+                }}
+                title="Delete stakeholder"
+              >
+                <i className="bi bi-trash"></i>
+              </Button>
+            </div>
+          ))}
         <div>
           <Button
             title="Add new stakeholder"
@@ -505,6 +542,9 @@ function DocumentFormComponent({ document, errors, handleChange }) {
             <i className="bi bi-plus-square"></i>
           </Button>
         </div>
+        <Form.Control.Feedback type="invalid">
+          {errors.stakeholders}
+        </Form.Control.Feedback>
       </Form.Group>
 
       <div className="divider" />
@@ -513,12 +553,56 @@ function DocumentFormComponent({ document, errors, handleChange }) {
       <Form.Group className="mb-3" controlId="formDocumentScale">
         <Form.Label>Scale *</Form.Label>
         <Form.Control
-          type="text"
+          as="select"
           value={document.scale}
           onChange={(e) => handleChange("scale", e.target.value)}
           isInvalid={!!errors.scale}
           required
-        />
+        >
+          <option value="">Select scale</option>
+          <option value="Text">Text</option>
+          <option value="Blueprint/Material effects">
+            Blueprint / Material effect
+          </option>
+          <option value="Scale">Scale</option>
+        </Form.Control>
+        {document.scale !== "Text" &&
+          document.scale !== "Blueprint/Material effects" &&
+          document.scale !== "" && (
+            <div className="d-flex mt-2">
+              <Form.Control
+                type="number"
+                min={1}
+                value={customScaleValue.split(":")[0] || ""}
+                onChange={(e) =>
+                  setCustomScaleValue(
+                    `${e.target.value}:${customScaleValue.split(":")[1] || ""}`
+                  )
+                }
+                onBlur={() => handleChange("scale", customScaleValue)}
+                isInvalid={!!errors.scale}
+                placeholder="1"
+                className="me-1"
+                style={{ width: "50px" }}
+              />
+              <span>:</span>
+              <Form.Control
+                type="number"
+                min={1}
+                value={customScaleValue.split(":")[1] || ""}
+                onChange={(e) =>
+                  setCustomScaleValue(
+                    `${customScaleValue.split(":")[0] || ""}:${e.target.value}`
+                  )
+                }
+                onBlur={() => handleChange("scale", customScaleValue)}
+                isInvalid={!!errors.scale}
+                placeholder="100"
+                className="ms-1"
+                style={{ width: "100px" }}
+              />
+            </div>
+          )}
         <Form.Control.Feedback type="invalid">
           {errors.scale}
         </Form.Control.Feedback>
@@ -538,7 +622,7 @@ function DocumentFormComponent({ document, errors, handleChange }) {
             placeholder="DD"
             className="me-1"
             ref={dayRef}
-            style={{ width: "70px" }}
+            style={{ width: "80px" }}
           />
           <span>/</span>
           <Form.Control
@@ -549,7 +633,7 @@ function DocumentFormComponent({ document, errors, handleChange }) {
             placeholder="MM"
             className="mx-1"
             ref={monthRef}
-            style={{ width: "70px" }}
+            style={{ width: "80px" }}
           />
           <span>/</span>
           <Form.Control
@@ -571,6 +655,7 @@ function DocumentFormComponent({ document, errors, handleChange }) {
       <div className="divider" />
 
       {/* TYPE */}
+
       <Form.Group className="mb-3" controlId="formDocumentType">
         <Form.Label>Type *</Form.Label>
         <Form.Control
@@ -628,7 +713,6 @@ function DocumentFormComponent({ document, errors, handleChange }) {
       <div className="divider" />
 
       {/* GEOLOCATION */}
-
       <Form.Group className="mb-3">
         <Form.Label>Latitude</Form.Label>
         <Form.Control
