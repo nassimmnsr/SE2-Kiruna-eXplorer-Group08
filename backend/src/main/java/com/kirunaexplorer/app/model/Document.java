@@ -74,8 +74,7 @@ public class Document {
             this.language,
             this.pages,
             this.geoReference.toGeolocationDTO(),
-            this.description,
-            null            // TODO put the mapping function here for the links
+            this.description
         );
     }
 
