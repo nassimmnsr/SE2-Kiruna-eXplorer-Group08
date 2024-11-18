@@ -214,6 +214,10 @@ function DocumentModal(props) {
     setSliderOpen(false);
   };
 
+  const handleSnippetClick = (snippet) => {
+    setSelectedDocument(snippet);
+  };
+
   return (
     <Modal
       show={props.show}
@@ -307,6 +311,7 @@ function DocumentModal(props) {
         documentId={props.document.id}
         isOpen={isSliderOpen}
         onClose={handleCloseSlider}
+        onSnippetClick={handleSnippetClick}
       />
     </Modal>
   );

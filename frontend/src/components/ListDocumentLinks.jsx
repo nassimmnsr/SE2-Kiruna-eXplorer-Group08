@@ -1,59 +1,64 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from 'react-bootstrap';
+import { Button, Card, Row, Col } from 'react-bootstrap';
 import API from '../API.mjs';
 import '../App.css';
 
-const ListDocumentLinks = ({ documentId, isOpen, onClose }) => {
-  const [links, setLinks] = useState([]);
+const ListDocumentLinks = ({ documentId, isOpen, onClose, onSnippetClick }) => {
   const [snippets, setSnippets] = useState([]);
 
   useEffect(() => {
-    if (documentId) {
-      API.getAllLinksOfDocument(documentId)
+    if (isOpen) {
+      API.getAllDocumentSnippets()
         .then((response) => {
-          setLinks(response);
+          setSnippets(response);
         })
         .catch((error) => {
           console.error(error);
         });
-    }
-  }, [documentId]);
-
-  useEffect(() => {
-    if (!isOpen) {
-      setLinks([]);
-      setSnippets([]);
     }
   }, [isOpen]);
 
   useEffect(() => {
-    if (isOpen && documentId) {
-      API.getAllLinksOfDocument(documentId)
-        .then((response) => {
-          setLinks(response);
-          return Promise.all(response.map(link => API.getDocumentById(link.documentId)));
-        })
-        .then((documents) => {
-          setSnippets(documents);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+    if (!isOpen) {
+      setSnippets([]);
     }
-  }, [documentId, isOpen]);
+  }, [isOpen]);
+
+  const handleSnippetClick = (snippet) => {
+    onSnippetClick(snippet);
+    onClose();
+  };
 
   return (
     <div className={`slider ${isOpen ? 'open' : ''}`}>
+      <div className="snippet-list">
+        <Row xs={1} className="g-4" style={{ width: "109%" }}>
+          {snippets.map((snippet) => (
+            <Col key={snippet.id}>
+              <Card className="document-card h-100" onClick={() => handleSnippetClick(snippet)}>
+                <Card.Body>
+                  <Card.Title className="document-card-title">
+                    {snippet.title}
+                  </Card.Title>
+                  <div className="divider" />
+                  <Card.Text className="document-card-text">
+                    <strong>Scale:</strong> {snippet.scale}
+                  </Card.Text>
+                  <Card.Text className="document-card-text">
+                    <strong>Issuance Date:</strong> {snippet.issuanceDate}
+                  </Card.Text>
+                  <Card.Text className="document-card-text">
+                    <strong>Type:</strong> {snippet.type}
+                  </Card.Text>
+                </Card.Body>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      </div>
       <Button variant="secondary" onClick={onClose} className="close-button">
         Close
       </Button>
-      <ul>
-        {snippets.map((snippet) => (
-          <li key={snippet.id}>
-            <a href={`/documents/${snippet.id}`}>{snippet.title} - {snippet.type}</a>
-          </li>
-        ))}
-      </ul>
     </div>
   );
 };

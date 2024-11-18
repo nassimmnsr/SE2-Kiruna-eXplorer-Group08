@@ -193,7 +193,7 @@ button:hover {
   height: calc(100% - 40px);
   background: white;
   box-shadow: -2px 0 5px rgba(0,0,0,0.5);
-  transition: right 0.5s ease, opacity 1s ease;
+  transition: right 0.3s ease, opacity 0.3s ease;
   border-radius: 8px;
   padding: 20px;
   opacity: 0;
@@ -206,8 +206,9 @@ button:hover {
 
 .close-button {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  bottom: 10px;
+  left: 85%;
+  transform: translateX(-50%);
 }
 
 .snippet-item {
@@ -225,4 +226,15 @@ button:hover {
 .snippet-issuance-date {
   font-size: 0.9rem;
   color: #555;
+}
+
+.snippet-list {
+  max-height: calc(100% - 40px); /* Adjust based on header and padding */
+  overflow-y: auto;
+  scrollbar-width: none; /* For Firefox */
+  -ms-overflow-style: none;  /* For Internet Explorer and Edge */
+}
+
+.snippet-list::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Opera */
 }
