@@ -226,21 +226,6 @@ export default function ListDocuments() {
             onLinkConfirm={handleLinkConfirm}
           />
         )}
-        {selectedDocumentFromSnippet && (
-          <DocumentModal
-            onLinkToClick={handleLinkToClick}
-            show={show}
-            onHide={() => {
-              setSelectedDocumentFromSnippet(null);
-              setShow(false);
-            }}
-            document={selectedDocumentFromSnippet}
-            handleSave={handleSave}
-            handleDelete={handleDelete}
-            handleAdd={handleAdd}
-            onSnippetClick={handleSelection}
-          />
-        )}
       </Row>
     </Container>
   );

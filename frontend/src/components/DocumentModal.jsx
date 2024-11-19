@@ -455,19 +455,6 @@ export default function DocumentModal(props) {
     setSliderOpen(false);
   };
 
-  const handleLinksClick = () => {
-    setSliderOpen(!isSliderOpen);
-  };
-
-  const handleCloseSlider = () => {
-    setSliderOpen(false);
-  };
-
-  const handleSnippetClick = (snippet) => {
-    props.onSnippetClick(snippet);
-    setSliderOpen(false);
-  };
-
   return (
     <Modal
       show={props.show}
