@@ -457,6 +457,7 @@ function DocumentFormComponent({ document, errors, handleChange }) {
           type="text"
           value={document.title}
           onChange={(e) => handleChange("title", e.target.value)}
+          placeholder="Example title"
           isInvalid={!!errors.title}
           required
         />
@@ -514,7 +515,8 @@ function DocumentFormComponent({ document, errors, handleChange }) {
                   ] = e.target.value;
                   handleChange("stakeholders", newStakeholders);
                 }}
-                placeholder="Name"
+                placeholder="Example stakeholder"
+                isInvalid={!!errors.stakeholders}
                 className="me-2"
               />
               <Button
@@ -533,6 +535,7 @@ function DocumentFormComponent({ document, errors, handleChange }) {
           ))}
         <div>
           <Button
+            className="mt-2"
             title="Add new stakeholder"
             variant="primary"
             onClick={() =>
@@ -686,6 +689,7 @@ function DocumentFormComponent({ document, errors, handleChange }) {
           type="text"
           value={document.language}
           onChange={(e) => handleChange("language", e.target.value)}
+          placeholder="English"
           isInvalid={!!errors.language}
         />
         <Form.Control.Feedback type="invalid">
@@ -818,6 +822,7 @@ function DocumentFormComponent({ document, errors, handleChange }) {
           rows={3}
           value={document.description}
           onChange={(e) => handleChange("description", e.target.value)}
+          placeholder="Description of the document"
           isInvalid={!!errors.description}
         />
         <Form.Control.Feedback type="invalid">
