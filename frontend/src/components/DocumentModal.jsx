@@ -420,12 +420,23 @@ export default function DocumentModal(props) {
           document.description
         )
       );
+    } else {
+      props.handleSave(
+        new Document(
+          props.document.id,
+          document.title,
+          document.stakeholders,
+          document.scale,
+          combinedIssuanceDate,
+          document.type,
+          document.nrConnections,
+          document.language,
+          document.nrPages,
+          sanitizedGeolocation,
+          document.description
+        )
+      );
     }
-    // else {
-    //   props.handleSave(
-    //     new Document(props.document.id, ...document)
-    //   );
-    // }
     props.onHide();
   };
 
@@ -471,21 +482,27 @@ export default function DocumentModal(props) {
         )}
       </Modal.Body>
       <Modal.Footer className="mt-3">
-        <Button variant="secondary" onClick={props.onHide}>
-          Close
-        </Button>
         {isEditable ? (
-          <Button variant="primary" onClick={handleSubmit}>
-            Save
+          <Button title="Save" variant="success" onClick={handleSubmit}>
+            <i className="bi bi-check-square"></i>
           </Button>
         ) : (
           <div className="d-flex align-items-center">
             <Button
+              title="Link to"
               variant="primary"
               onClick={handleLinkToClick}
               className="me-2"
             >
-              Link to
+              <i className="bi bi-box-arrow-up-right"></i>
+            </Button>
+            <Button
+              title="Edit"
+              variant="primary"
+              onClick={() => setIsEditable(true)}
+              className="me-2"
+            >
+              <i className="bi bi-pencil-square"></i>
             </Button>
           </div>
         )}
@@ -609,8 +626,16 @@ function DocumentFormComponent({
   handleChange,
   kirunaBorderCoordinates,
 }) {
-  const [customScaleValue, setCustomScaleValue] = useState("");
-  const [enableCustomScale, setEnableCustomScale] = useState(false);
+  const [customScaleValue, setCustomScaleValue] = useState(
+    document.scale !== "Text" && document.scale !== "Blueprint/Material effects"
+      ? document.scale
+      : ""
+  );
+  const [enableCustomScale, setEnableCustomScale] = useState(
+    document.scale !== "Text" &&
+      document.scale !== "Blueprint/Material effects" &&
+      document.scale !== ""
+  );
   const defaultPosition = [67.84, 20.2253]; // Default center position (Kiruna)
   const [markerPosition, setMarkerPosition] = useState([
     document.geolocation.latitude
