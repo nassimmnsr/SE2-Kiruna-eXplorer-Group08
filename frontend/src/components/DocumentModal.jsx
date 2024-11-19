@@ -416,6 +416,7 @@ ModalBodyComponent.propTypes = {
 
 function DocumentFormComponent({ document, errors, handleChange }) {
   const [customScaleValue, setCustomScaleValue] = useState("");
+  const [enableCustomScale, setEnableCustomScale] = useState(false);
 
   const dayRef = useRef(null);
   const monthRef = useRef(null);
@@ -555,28 +556,58 @@ function DocumentFormComponent({ document, errors, handleChange }) {
       {/* SCALE */}
       <Form.Group className="mb-3" controlId="formDocumentScale">
         <Form.Label>Scale *</Form.Label>
-        <Form.Control
-          as="select"
-          value={document.scale}
-          onChange={(e) => handleChange("scale", e.target.value)}
+        {/* Predefined Scale Options */}
+        <Form.Check
+          type="radio"
+          label="Text"
+          name="scaleOptions"
+          id="scaleText"
+          value="Text"
+          checked={document.scale === "Text"}
+          onChange={(e) => {
+            handleChange("scale", e.target.value);
+            setCustomScaleValue(""); // Clear custom scale when switching to predefined scale
+            setEnableCustomScale(false); // Disable custom scale inputs
+          }}
           isInvalid={!!errors.scale}
-          required
-        >
-          <option value="">Select scale</option>
-          <option value="Text">Text</option>
-          <option value="Blueprint/Material effects">
-            Blueprint / Material effect
-          </option>
-          <option value="Scale">Scale</option>
-        </Form.Control>
-        {document.scale !== "Text" &&
-          document.scale !== "Blueprint/Material effects" &&
-          document.scale !== "" && (
-            <div className="d-flex mt-2">
+        />
+        <Form.Check
+          type="radio"
+          label="Blueprint/Material effects"
+          name="scaleOptions"
+          id="scaleBlueprint"
+          value="Blueprint/Material effects"
+          checked={document.scale === "Blueprint/Material effects"}
+          onChange={(e) => {
+            handleChange("scale", e.target.value);
+            setCustomScaleValue(""); // Clear custom scale when switching to predefined scale
+            setEnableCustomScale(false); // Disable custom scale inputs
+          }}
+          isInvalid={!!errors.scale}
+        />
+        {/* Custom Scale Option */}
+        <Form.Check
+          type="radio"
+          name="scaleOptions"
+          id="scaleCustom"
+          value="Custom"
+          checked={
+            enableCustomScale ||
+            (document.scale &&
+              !["Text", "Blueprint/Material effects"].includes(document.scale))
+          }
+          onChange={() => {
+            setEnableCustomScale(true); // Enable custom scale inputs
+            handleChange("scale", customScaleValue); // Set scale to the current custom value
+          }}
+          isInvalid={!!errors.scale}
+          label={
+            <div className="d-flex align-items-center">
               <Form.Control
                 type="number"
                 min={1}
                 value={customScaleValue.split(":")[0] || ""}
+                disabled={!enableCustomScale}
                 onChange={(e) =>
                   setCustomScaleValue(
                     `${e.target.value}:${customScaleValue.split(":")[1] || ""}`
@@ -584,15 +615,15 @@ function DocumentFormComponent({ document, errors, handleChange }) {
                 }
                 onBlur={() => handleChange("scale", customScaleValue)}
                 isInvalid={!!errors.scale}
-                placeholder="1"
                 className="me-1"
-                style={{ width: "50px" }}
+                style={{ width: "80px" }}
               />
               <span>:</span>
               <Form.Control
                 type="number"
                 min={1}
                 value={customScaleValue.split(":")[1] || ""}
+                disabled={!enableCustomScale}
                 onChange={(e) =>
                   setCustomScaleValue(
                     `${customScaleValue.split(":")[0] || ""}:${e.target.value}`
@@ -600,12 +631,12 @@ function DocumentFormComponent({ document, errors, handleChange }) {
                 }
                 onBlur={() => handleChange("scale", customScaleValue)}
                 isInvalid={!!errors.scale}
-                placeholder="100"
                 className="ms-1"
                 style={{ width: "100px" }}
               />
             </div>
-          )}
+          }
+        />
         <Form.Control.Feedback type="invalid">
           {errors.scale}
         </Form.Control.Feedback>
@@ -794,7 +825,7 @@ function DocumentFormComponent({ document, errors, handleChange }) {
         />
 
         <Form.Check
-          type="checkbox"
+          type="radio"
           label="Whole municipality"
           checked={document.geolocation.municipality === "Whole municipality"}
           onChange={(e) => {
