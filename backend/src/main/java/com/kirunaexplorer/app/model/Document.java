@@ -115,8 +115,8 @@ public class Document {
      */
     private String parseDate(LocalDate issuanceDate, DatePrecision datePrecision) {
         return switch (datePrecision) {
-            case YEAR_ONLY -> issuanceDate.getYear() + "";
-            case MONTH_YEAR -> issuanceDate.getMonth().toString() + " " + issuanceDate.getYear();
+            case YEAR_ONLY -> String.format("%04d", issuanceDate.getYear());
+            case MONTH_YEAR -> String.format("%04d-%02d", issuanceDate.getYear(), issuanceDate.getMonthValue());
             case FULL_DATE -> issuanceDate.toString();
         };
     }
