@@ -126,6 +126,12 @@ export default function DocumentModal(props) {
     ) {
       newErrors.scale =
         "Scale is required and must match one of the defined patterns.";
+    } else if (document.scale.includes(":")) {
+      const [first, second] = document.scale.split(":").map(Number);
+      if (first >= second) {
+        newErrors.scale =
+          "The first number of the scale must be smaller than the second one.";
+      }
     }
 
     // Issuance date validation
@@ -546,9 +552,9 @@ function DocumentFormComponent({ document, errors, handleChange }) {
             <i className="bi bi-plus-square"></i>
           </Button>
         </div>
-        <Form.Control.Feedback type="invalid">
+        <div style={{ color: "#dc3545", fontSize: "0.875rem" }}>
           {errors.stakeholders}
-        </Form.Control.Feedback>
+        </div>
       </Form.Group>
 
       <div className="divider" />
@@ -637,9 +643,9 @@ function DocumentFormComponent({ document, errors, handleChange }) {
             </div>
           }
         />
-        <Form.Control.Feedback type="invalid">
+        <div style={{ color: "#dc3545", fontSize: "0.875rem" }}>
           {errors.scale}
-        </Form.Control.Feedback>
+        </div>
       </Form.Group>
 
       <div className="divider" />
@@ -681,9 +687,9 @@ function DocumentFormComponent({ document, errors, handleChange }) {
             style={{ width: "100px" }}
           />
         </div>
-        <Form.Control.Feedback type="invalid">
+        <div style={{ color: "#dc3545", fontSize: "0.875rem" }}>
           {errors.issuanceDate}
-        </Form.Control.Feedback>
+        </div>
       </Form.Group>
 
       <div className="divider" />
@@ -825,7 +831,7 @@ function DocumentFormComponent({ document, errors, handleChange }) {
         />
 
         <Form.Check
-          type="radio"
+          type="checkbox"
           label="Whole municipality"
           checked={document.geolocation.municipality === "Whole municipality"}
           onChange={(e) => {
@@ -837,11 +843,10 @@ function DocumentFormComponent({ document, errors, handleChange }) {
             });
           }}
           className="mt-2"
+          feedback={errors.municipality}
+          feedbackType="invalid"
         />
       </Form.Group>
-      <Form.Control.Feedback type="invalid">
-        {errors.municipality}
-      </Form.Control.Feedback>
 
       <div className="divider" />
 
