@@ -41,7 +41,7 @@ public record DocumentRequestDTO(
     @Min(0)
     Integer nrConnections,
 
-    @Size(min = 2, max = 64)
+    @Size(max = 64)
     String language,
 
     @Min(0)

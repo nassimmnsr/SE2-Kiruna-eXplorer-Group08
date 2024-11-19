@@ -8,23 +8,17 @@ export class Document {
     scale,
     issuanceDate,
     type,
-    nrConnections = 0,
-    language = undefined,
-    nrPages = 0,
-    geolocation = {
-      latitude: null,
-      longitude: null,
-      municipality: "Whole municipality",
-    },
+    nrConnections,
+    language,
+    nrPages,
+    geolocation,
     description
   ) {
     this.id = id;
     this.title = title;
     this.stakeholders = stakeholders;
     this.scale = scale;
-    this.issuanceDate = issuanceDate
-      ? dayjs(issuanceDate).format("YYYY-MM-DD")
-      : "-";
+    this.issuanceDate = issuanceDate ? issuanceDate : "-";
     this.type = type;
     this.nrConnections = nrConnections;
     this.language = language;
@@ -51,9 +45,7 @@ export class DocumentSnippet {
     this.id = id;
     this.title = title;
     this.scale = scale;
-    this.issuanceDate = issuanceDate
-      ? dayjs(issuanceDate).format("MM/DD/YYYY")
-      : "-";
+    this.issuanceDate = issuanceDate ? issuanceDate : "-";
     this.type = type;
     this.geolocation = geolocation;
     this.stakeholders = stakeholders;
