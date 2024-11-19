@@ -17,6 +17,7 @@ function ListDocuments() {
   const [linking, setLinking] = useState(false);
   const [selectedLinkDocuments, setSelectedLinkDocuments] = useState([]);
   const [selectedDocumentToLink, setSelectedDocumentToLink] = useState(null);
+  const [selectedDocumentFromSnippet, setSelectedDocumentFromSnippet] = useState(null);
 
   useEffect(() => {
     API.getAllDocumentSnippets()
@@ -206,6 +207,7 @@ function ListDocuments() {
             handleSave={handleSave}
             handleDelete={handleDelete}
             handleAdd={handleAdd}
+            onSnippetClick={handleSelection}
           />
         )}
         {selectedDocumentToLink && showLinkModal && (
@@ -219,6 +221,21 @@ function ListDocuments() {
             selectedLinkDocuments={selectedLinkDocuments}
             document={selectedDocument}
             onLinkConfirm={handleLinkConfirm}
+          />
+        )}
+        {selectedDocumentFromSnippet && (
+          <DocumentModal
+            onLinkToClick={handleLinkToClick}
+            show={show}
+            onHide={() => {
+              setSelectedDocumentFromSnippet(null);
+              setShow(false);
+            }}
+            document={selectedDocumentFromSnippet}
+            handleSave={handleSave}
+            handleDelete={handleDelete}
+            handleAdd={handleAdd}
+            onSnippetClick={handleSelection}
           />
         )}
       </div>

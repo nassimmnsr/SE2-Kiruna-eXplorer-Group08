@@ -215,7 +215,8 @@ function DocumentModal(props) {
   };
 
   const handleSnippetClick = (snippet) => {
-    setSelectedDocument(snippet);
+    props.onSnippetClick(snippet);
+    setSliderOpen(false);
   };
 
   return (
@@ -324,7 +325,7 @@ DocumentModal.propTypes = {
   handleSave: PropTypes.func.isRequired,
   handleAdd: PropTypes.func.isRequired,
   onLinkToClick: PropTypes.func.isRequired,
-  onLinksClick: PropTypes.func.isRequired,
+  onSnippetClick: PropTypes.func.isRequired,
 };
 
 function ModalBodyComponent(props) {
