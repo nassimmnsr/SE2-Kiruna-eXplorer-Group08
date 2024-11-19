@@ -1,4 +1,6 @@
 package com.kirunaexplorer.app.dto.response;
+import com.kirunaexplorer.app.dto.inout.GeoReferenceDTO;
+import java.util.List;
 
 import com.kirunaexplorer.app.dto.inout.GeoReferenceDTO;
 
