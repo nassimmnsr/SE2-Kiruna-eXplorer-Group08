@@ -210,7 +210,9 @@ async function mapAPISnippetsToSnippet(apiSnippets) {
         apiSnippet.title,
         apiSnippet.scale,
         apiSnippet.issuanceDate,
-        apiSnippet.type
+        apiSnippet.type,
+        apiSnippet.geolocation,
+        apiSnippet.stakeholders
       )
   );
 }

@@ -2,6 +2,14 @@ html, body, #root {
   height: 100%;
   margin: 0;
   padding: 0;
+  overflow: hidden;
+}
+
+.scrollable-list-documents{
+  height: calc(100vh - 60px - 10px);
+  overflow-y: auto; 
+  padding: 1rem;
+  margin-top: 15px;
 }
 
 .container-fluid {
@@ -168,15 +176,18 @@ button:hover {
   background-position: center;
   background-repeat: no-repeat;
   width: 100vw;
-  height: 100vh;
+  height: 90vh;
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .splash-title {
   color: white;
   font-size: 8rem;
+  text-align: center;
 }
 
 
