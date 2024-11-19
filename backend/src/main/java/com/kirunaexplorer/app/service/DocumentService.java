@@ -32,8 +32,8 @@ public class DocumentService {
      */
     public List<DocumentBriefResponseDTO> getAllDocuments() {
         return documentRepository.findAll().stream()
-                .map(Document::toBriefResponseDTO)
-                .toList();
+            .map(Document::toDocumentBriefResponseDTO)
+            .toList();
     }
 
     /***
@@ -44,8 +44,8 @@ public class DocumentService {
     public DocumentResponseDTO getDocumentById(Long id) {
 
         return documentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Document not found with ID " + id))
-                .toResponseDTO(documentLinkRepository.countByDocumentId(id));
+            .orElseThrow(() -> new ResourceNotFoundException("Document not found with ID " + id))
+            .toResponseDTO(documentLinkRepository.countByDocumentId(id));
     }
 
     /***
@@ -72,13 +72,13 @@ public class DocumentService {
     public void updateDocument(DocumentRequestDTO documentRequest) {
         Long id = documentRequest.id();
         Document document = documentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Document not found with ID " + id));
+            .orElseThrow(() -> new ResourceNotFoundException("Document not found with ID " + id));
 
         document.updateFromDTO(documentRequest); // Update fields
         documentRepository.save(document);
 
         GeoReference geoReference = geoReferenceRepository.findById(document.getId())
-                .orElseGet(() -> new GeoReference(document.getId(), document)); // Create new if not exist
+            .orElseGet(() -> new GeoReference(document.getId(), document)); // Create new if not exist
 
         geoReference.updateFromDTO(documentRequest.geolocation()); // Update geolocation
         geoReferenceRepository.save(geoReference);

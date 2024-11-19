@@ -1,7 +1,6 @@
 package com.kirunaexplorer.app.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.kirunaexplorer.app.dto.request.DocumentRequestDTO;
 import com.kirunaexplorer.app.dto.response.DocumentBriefResponseDTO;
 import com.kirunaexplorer.app.dto.response.DocumentResponseDTO;
@@ -48,7 +47,7 @@ public class Document {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "document", fetch = FetchType.LAZY )
+    @OneToMany(mappedBy = "document", fetch = FetchType.LAZY)
     @JsonManagedReference
     private Set<DocumentLink> documentLinks;
 
@@ -75,8 +74,7 @@ public class Document {
             this.language,
             this.pages,
             this.geoReference.toGeolocationDTO(),
-            this.description,
-            null            // TODO put the mapping function here for the links
+            this.description
         );
     }
 
@@ -84,13 +82,15 @@ public class Document {
      * Converts the Document object to a DocumentBriefResponseDTO object.
      * @return DocumentBriefResponseDTO object
      */
-    public DocumentBriefResponseDTO toBriefResponseDTO() {
+    public DocumentBriefResponseDTO toDocumentBriefResponseDTO() {
         return new DocumentBriefResponseDTO(
             this.id,
             this.title,
+            List.of(this.stakeholders.split("/")),
             this.scale,
             parseDate(this.issuanceDate, this.datePrecision),
-            this.type
+            this.type,
+            this.geoReference.toGeolocationDTO()
         );
     }
 
@@ -115,8 +115,8 @@ public class Document {
      */
     private String parseDate(LocalDate issuanceDate, DatePrecision datePrecision) {
         return switch (datePrecision) {
-            case YEAR_ONLY -> issuanceDate.getYear() + "";
-            case MONTH_YEAR -> issuanceDate.getMonth().toString() + " " + issuanceDate.getYear();
+            case YEAR_ONLY -> String.format("%04d", issuanceDate.getYear());
+            case MONTH_YEAR -> String.format("%04d-%02d", issuanceDate.getYear(), issuanceDate.getMonthValue());
             case FULL_DATE -> issuanceDate.toString();
         };
     }
