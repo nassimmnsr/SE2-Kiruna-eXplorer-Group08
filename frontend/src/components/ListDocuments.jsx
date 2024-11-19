@@ -7,7 +7,7 @@ import DocumentModal from "./DocumentModal";
 import API from "../API";
 import LinkModal from "./LinkModal";
 
-export default function ListDocuments({ thinCardLayout = false }) {
+export default function ListDocuments() {
   const [documents, setDocuments] = useState([]);
   const [show, setShow] = useState(false);
   const [showLinkModal, setShowLinkModal] = useState(false);
@@ -150,7 +150,6 @@ export default function ListDocuments({ thinCardLayout = false }) {
             <Button
               title="Add new document"
               variant="primary"
-              style={{ width: "170px" }}
               onClick={() => {
                 setSelectedDocument({ isEditable: true });
                 setShow(true);
@@ -175,10 +174,6 @@ export default function ListDocuments({ thinCardLayout = false }) {
         </Col>
       </Row>
       <Row
-        xs={thinCardLayout ? 1 : 1}
-        sm={thinCardLayout ? 1 : 2}
-        md={thinCardLayout ? 1 : 3}
-        lg={thinCardLayout ? 1 : 4}
         className="g-2 mx-auto"
         style={{ width: "100%" }}
       >

@@ -357,7 +357,10 @@ export default function DocumentModal(props) {
 
     // Geolocation validation
     if (document.geolocation.latitude && document.geolocation.longitude) {
-      const point = { lat: document.geolocation.latitude, lng: document.geolocation.longitude };
+      const point = {
+        lat: document.geolocation.latitude,
+        lng: document.geolocation.longitude,
+      };
 
       const kirunaBorderCoordinatesLngLat = kirunaBorderCoordinates.map(
         ([lat, lng]) => [lng, lat]
@@ -383,73 +386,18 @@ export default function DocumentModal(props) {
         newErrors.longitude = "Geolocation must be within the Kiruna boundary.";
       }
     }
-
-    console.log("Validation Errors:", newErrors);
-
-    /*
-    // Geolocation validation
-  if (geolocation.latitude && geolocation.longitude) {
-    const point = { lat: geolocation.latitude, lng: geolocation.longitude };
-    
-    const kirunaBorderCoordinatesLngLat = kirunaBorderCoordinates.map(([lat, lng]) => [lng, lat]);
-    const polygon = [
-      ...kirunaBorderCoordinatesLngLat,
-      kirunaBorderCoordinatesLngLat[0], // Close the loop
-    ];
-    const [x, y] = [point.lng, point.lat]; // Ensure [lng, lat]
-    let inside = false;
-  
-    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-      const [xi, yi] = polygon[i];
-      const [xj, yj] = polygon[j];
-  
-      const intersect =
-        yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
-      if (intersect) inside = !inside;
+    if (
+      (document.geolocation.latitude || document.geolocation.longitude) &&
+      document.geolocation.municipality === "Whole municipality"
+    ) {
+      newErrors.municipality =
+        "Geolocation must be 'Whole municipality' or a valid coordinate.";
     }
-  
-    if (!inside) {
-      newErrors.latitude = "Geolocation must be within the Kiruna boundary.";
-      newErrors.longitude = "Geolocation must be within the Kiruna boundary.";
-    }
-  }
-  
-    console.log("Validation Errors:", newErrors);
 
-    /*
-    // Geolocation validation
-    if (typeof document.geolocation === "object" && document.geolocation) {
-      if (
-        (document.geolocation.latitude &&
-          (document.geolocation.latitude > 67.88398 ||
-            document.geolocation.latitude < 67.82295)) ||
-        (document.geolocation.longitude && !document.geolocation.latitude)
-      ) {
-        newErrors.latitude =
-          "Latitude must be in the range between 67.82295 and 67.88398.";
-      }
-      if (
-        (document.geolocation.longitude &&
-          (document.geolocation.longitude > 20.3687 ||
-            document.geolocation.longitude < 20.14402)) ||
-        (document.geolocation.latitude && !document.geolocation.longitude)
-      ) {
-        newErrors.longitude =
-          "Longitude must be in the range between 20.14402 and 20.36870.";
-      }
-      if (
-        (document.geolocation.latitude || document.geolocation.longitude) &&
-        document.geolocation.municipality === "Whole municipality"
-      ) {
-        newErrors.municipality =
-          "Geolocation must be 'Whole municipality' or a valid coordinate.";
-      }
-    }
-  */
+    // Description validation
     if (document.description && document.description.length > 1000) {
       newErrors.description = "Description must not exceed 1000 characters.";
     }
-    console.log("Validation Errors:", newErrors);
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -655,10 +603,23 @@ ModalBodyComponent.propTypes = {
   document: PropTypes.object.isRequired,
 };
 
-function DocumentFormComponent({ document, errors, handleChange, kirunaBorderCoordinates }) {
+function DocumentFormComponent({
+  document,
+  errors,
+  handleChange,
+  kirunaBorderCoordinates,
+}) {
   const [customScaleValue, setCustomScaleValue] = useState("");
   const [enableCustomScale, setEnableCustomScale] = useState(false);
   const defaultPosition = [67.84, 20.2253]; // Default center position (Kiruna)
+  const [markerPosition, setMarkerPosition] = useState([
+    document.geolocation.latitude
+      ? document.geolocation.latitude
+      : defaultPosition[0],
+    document.geolocation.longitude
+      ? document.geolocation.longitude
+      : defaultPosition[1],
+  ]);
 
   const dayRef = useRef(null);
   const monthRef = useRef(null);
@@ -691,21 +652,8 @@ function DocumentFormComponent({ document, errors, handleChange, kirunaBorderCoo
     }
   };
 
-
-  const [markerPosition, setMarkerPosition] = useState([
-    document.geolocation.latitude != null
-      ? document.geolocation.latitude
-      : defaultPosition[0],
-    document.geolocation.longitude != null
-      ? document.geolocation.longitude
-      : defaultPosition[1],
-  ]);
-
   useEffect(() => {
-    if (
-      document.geolocation.latitude != null &&
-      document.geolocation.longitude != null
-    ) {
+    if (document.geolocation.latitude && document.geolocation.longitude) {
       setMarkerPosition([
         document.geolocation.latitude,
         document.geolocation.longitude,
@@ -1106,23 +1054,6 @@ function DocumentFormComponent({ document, errors, handleChange, kirunaBorderCoo
           disabled={document.geolocation.municipality === "Whole municipality"}
         />
 
-        <Form.Check
-          type="checkbox"
-          label="Whole municipality"
-          checked={document.geolocation.municipality === "Whole municipality"}
-          onChange={(e) => {
-            const isChecked = e.target.checked;
-            setMarkerPosition(defaultPosition);
-            handleChange("geolocation", {
-              latitude: isChecked ? "" : document.geolocation.latitude,
-              longitude: isChecked ? "" : document.geolocation.longitude,
-              municipality: isChecked ? "Whole municipality" : "",
-            });
-          }}
-          className="mt-2"
-          feedback={errors.municipality}
-          feedbackType="invalid"
-        />
         <div style={{ height: "300px", marginBottom: "15px" }}>
           <MapContainer
             center={markerPosition}
@@ -1141,6 +1072,23 @@ function DocumentFormComponent({ document, errors, handleChange, kirunaBorderCoo
           Click on the map to set the location. Latitude and Longitude fields
           will update automatically.
         </Form.Text>
+        <Form.Check
+          type="checkbox"
+          label="Whole municipality"
+          checked={document.geolocation.municipality === "Whole municipality"}
+          onChange={(e) => {
+            const isChecked = e.target.checked;
+            setMarkerPosition(defaultPosition);
+            handleChange("geolocation", {
+              latitude: isChecked ? "" : document.geolocation.latitude,
+              longitude: isChecked ? "" : document.geolocation.longitude,
+              municipality: isChecked ? "Whole municipality" : "",
+            });
+          }}
+          className="mt-2"
+          feedback={errors.municipality}
+          feedbackType="invalid"
+        />
       </Form.Group>
 
       <div className="divider" />

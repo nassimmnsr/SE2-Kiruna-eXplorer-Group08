@@ -1,7 +1,7 @@
 import { Document, DocumentSnippet } from "./model/Document.mjs";
 import Stakeholder from "./model/Stakeholder.mjs";
 
-const SERVER_URL = "http://localhost:8080";
+const SERVER_URL = "http://localhost:8080/api/v1";
 
 /* ************************** *
  *       Link APIs      *
@@ -18,7 +18,7 @@ const createLink = async (document, linkedDocument) => {
   requestBody.type = linkedDocument.linkType.toUpperCase().replace(/ /g, "_");
 
   try {
-    const response = await fetch(`${SERVER_URL}/api/v1/documents/links`, {
+    const response = await fetch(`${SERVER_URL}/documents/links`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -41,9 +41,7 @@ const createLink = async (document, linkedDocument) => {
 
 // Retrieve all documents snippets
 const getAllDocumentSnippets = async (filter) => {
-  const documents = await fetch(
-    `${SERVER_URL}/documents` + (filter ? `?filter=${filter}` : "")
-  )
+  const documents = await fetch(`${SERVER_URL}/documents`)
     .then(handleInvalidResponse)
     .then((response) => response.json())
     .then(mapAPISnippetsToSnippet);
@@ -52,6 +50,7 @@ const getAllDocumentSnippets = async (filter) => {
 
 // Create a new document
 const addDocument = async (document) => {
+  console.log("ADD DOCUMENT: ", document);
   return await fetch(`${SERVER_URL}/documents`, {
     method: "POST",
     headers: {
@@ -163,7 +162,7 @@ async function mapAPIDocumentToDocument(apiDocument) {
   return new Document(
     apiDocument.id,
     apiDocument.title,
-    apiDocument.stakeholders, 
+    apiDocument.stakeholders,
     apiDocument.scale,
     apiDocument.issuanceDate,
     apiDocument.type,

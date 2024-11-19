@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Polygon, useMap } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-markercluster";
 import "leaflet/dist/leaflet.css";
@@ -6,6 +6,7 @@ import "react-leaflet-markercluster/dist/styles.min.css";
 import L from "leaflet";
 import "leaflet-editable";
 import API from "../API";
+import PropTypes from "prop-types";
 import DocumentSidePanel from "./DocumentSidePanel";
 import prescpritiveDocument_LKAB from "../public/icons/Prescriptive-document-LKAB.png";
 import designDocument_LKAB from "../public/icons/Design-document-LKAB.png";
@@ -106,6 +107,11 @@ const ZoomToMarker = ({ position, zoomLevel }) => {
   }, [position, zoomLevel, map]);
 
   return null;
+};
+
+ZoomToMarker.propTypes = {
+  position: PropTypes.arrayOf(PropTypes.number).isRequired,
+  zoomLevel: PropTypes.number,
 };
 
 
