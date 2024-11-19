@@ -111,9 +111,9 @@ export default function DocumentModal(props) {
 
     // Scale validation
     const scalePatterns = [
-      "text",
-      "blueprint/material effects",
-      /^1:[1-9][0-9]*$/,
+      "Text",
+      "Blueprint/Material effects",
+      /^[1-9]:[1-9][0-9]*$/,
     ];
     if (
       typeof document.scale !== "string" ||
