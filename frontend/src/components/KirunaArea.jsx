@@ -1,5 +1,3 @@
-import { Polygon } from "react-leaflet";
-
 const kirunaBorderCoordinates = [
     [68.35793363796827, 19.92808265103298],
     [68.51666549684789, 18.97709677588255],
@@ -801,16 +799,10 @@ const kirunaBorderCoordinates = [
     [68.35793363796827, 19.92808265103298]
           ];
 
-function KirunaArea () {
-    return (
-        <Polygon positions={kirunaBorderCoordinates} color="purple" weight={3} fillOpacity={0.1} />
-    )
-}
-
-export function getKirunaArea() {
+function getKirunaArea() {
   return kirunaBorderCoordinates
 }
 
 
 
-export default KirunaArea;
+export default getKirunaArea;
