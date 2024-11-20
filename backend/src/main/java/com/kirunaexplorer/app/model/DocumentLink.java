@@ -16,23 +16,22 @@ import java.time.LocalDateTime;
 @ToString(exclude = {"document", "linkedDocument"})
 public class DocumentLink {
 
-    @EmbeddedId
-    private DocumentLinkId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id; // Unique identifier for each link
 
     @ManyToOne
-    @MapsId("documentId")
-    @JoinColumn(name = "document_id")
+    @JoinColumn(name = "document_id", nullable = false)
     @JsonBackReference
-    private Document document;
+    private Document document; // The originating document
 
     @ManyToOne
-    @MapsId("linkedDocumentId")
-    @JoinColumn(name = "linked_document_id")
-    private Document linkedDocument;
+    @JoinColumn(name = "linked_document_id", nullable = false)
+    private Document linkedDocument; // The linked document
 
     @Enumerated(EnumType.STRING)
     private DocumentLinkType type;
+
     private LocalDateTime createdAt;
 
-    // TODO write mapping function to convert DocumentLink to DocumentLinkDTO
 }
