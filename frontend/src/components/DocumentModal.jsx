@@ -214,7 +214,7 @@ export default function DocumentModal(props) {
     geolocation: {
       latitude: "",
       longitude: "",
-      municipality: "Whole municipality",
+      municipality: "Entire municipality",
     },
     description: "",
   });
@@ -251,7 +251,7 @@ export default function DocumentModal(props) {
             : "",
           municipality: props.document.geolocation
             ? props.document.geolocation.municipality
-            : "Whole municipality",
+            : "Entire municipality",
         },
         description: props.document.description || "",
       });
@@ -314,7 +314,7 @@ export default function DocumentModal(props) {
         "Scale is required and must match one of the defined patterns.";
     } else if (document.scale.includes(":")) {
       const [first, second] = document.scale.split(":").map(Number);
-      if (first >= second) {
+      if (first > second) {
         newErrors.scale =
           "The first number of the scale must be smaller than the second one.";
       }
@@ -390,10 +390,10 @@ export default function DocumentModal(props) {
     }
     if (
       (document.geolocation.latitude || document.geolocation.longitude) &&
-      document.geolocation.municipality === "Whole municipality"
+      document.geolocation.municipality === "Entire municipality"
     ) {
       newErrors.municipality =
-        "Geolocation must be 'Whole municipality' or a valid coordinate.";
+        "Geolocation must be 'Entire municipality' or a valid coordinate.";
     }
 
     // Description validation
@@ -422,12 +422,23 @@ export default function DocumentModal(props) {
           document.description
         )
       );
+    } else {
+      props.handleSave(
+        new Document(
+          props.document.id,
+          document.title,
+          document.stakeholders,
+          document.scale,
+          combinedIssuanceDate,
+          document.type,
+          document.nrConnections,
+          document.language,
+          document.nrPages,
+          sanitizedGeolocation,
+          document.description
+        )
+      );
     }
-    // else {
-    //   props.handleSave(
-    //     new Document(props.document.id, ...document)
-    //   );
-    // }
     props.onHide();
   };
 
@@ -486,16 +497,14 @@ export default function DocumentModal(props) {
         )}
       </Modal.Body>
       <Modal.Footer className="mt-3">
-        <Button variant="secondary" onClick={props.onHide}>
-          Close
-        </Button>
         {isEditable ? (
-          <Button variant="primary" onClick={handleSubmit}>
-            Save
+          <Button title="Save" variant="success" onClick={handleSubmit}>
+            <i className="bi bi-check-square"></i>
           </Button>
         ) : (
           <div className="d-flex align-items-center">
             <Button
+              title="Link to"
               variant="primary"
               onClick={handleLinksClick}
               className="me-2"
@@ -507,7 +516,15 @@ export default function DocumentModal(props) {
               onClick={handleLinkToClick}
               className="me-2"
             >
-              Link to
+              <i className="bi bi-box-arrow-up-right"></i>
+            </Button>
+            <Button
+              title="Edit"
+              variant="primary"
+              onClick={() => setIsEditable(true)}
+              className="me-2"
+            >
+              <i className="bi bi-pencil-square"></i>
             </Button>
           </div>
         )}
@@ -638,8 +655,16 @@ function DocumentFormComponent({
   handleChange,
   kirunaBorderCoordinates,
 }) {
-  const [customScaleValue, setCustomScaleValue] = useState("");
-  const [enableCustomScale, setEnableCustomScale] = useState(false);
+  const [customScaleValue, setCustomScaleValue] = useState(
+    document.scale !== "Text" && document.scale !== "Blueprint/Material effects"
+      ? document.scale
+      : ""
+  );
+  const [enableCustomScale, setEnableCustomScale] = useState(
+    document.scale !== "Text" &&
+      document.scale !== "Blueprint/Material effects" &&
+      document.scale !== ""
+  );
   const defaultPosition = [67.84, 20.2253]; // Default center position (Kiruna)
   const [markerPosition, setMarkerPosition] = useState([
     document.geolocation.latitude
@@ -1042,7 +1067,7 @@ function DocumentFormComponent({
           value={document.geolocation.latitude}
           onChange={handleLatitudeChange}
           id="formDocumentGeolocationLatitude"
-          disabled={document.geolocation.municipality === "Whole municipality"}
+          disabled={document.geolocation.municipality === "Entire municipality"}
           isInvalid={!!errors.latitude}
         />
         <Form.Control.Feedback type="invalid">
@@ -1055,7 +1080,7 @@ function DocumentFormComponent({
           step={0.00001}
           value={document.geolocation.latitude}
           onChange={handleLatitudeChange}
-          disabled={document.geolocation.municipality === "Whole municipality"}
+          disabled={document.geolocation.municipality === "Entire municipality"}
         />
 
         <Form.Label>Longitude</Form.Label>
@@ -1068,7 +1093,7 @@ function DocumentFormComponent({
           isInvalid={!!errors.longitude}
           onChange={handleLongitudeChange}
           id="formDocumentGeolocationLongitude"
-          disabled={document.geolocation.municipality === "Whole municipality"}
+          disabled={document.geolocation.municipality === "Entire municipality"}
         />
         <Form.Control.Feedback type="invalid">
           {errors.longitude}
@@ -1080,7 +1105,7 @@ function DocumentFormComponent({
           value={document.geolocation.longitude}
           isInvalid={!!errors.longitude}
           onChange={handleLongitudeChange}
-          disabled={document.geolocation.municipality === "Whole municipality"}
+          disabled={document.geolocation.municipality === "Entire municipality"}
         />
 
         <div style={{ height: "300px", marginBottom: "15px" }}>
@@ -1091,7 +1116,7 @@ function DocumentFormComponent({
           >
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             <Marker position={markerPosition} />
-            {document.geolocation.municipality === "Whole municipality" ? (
+            {document.geolocation.municipality === "Entire municipality" ? (
               <Polygon positions={kirunaBorderCoordinates} />
             ) : null}
             <MapClickHandler />
@@ -1103,15 +1128,15 @@ function DocumentFormComponent({
         </Form.Text>
         <Form.Check
           type="checkbox"
-          label="Whole municipality"
-          checked={document.geolocation.municipality === "Whole municipality"}
+          label="Entire municipality"
+          checked={document.geolocation.municipality === "Entire municipality"}
           onChange={(e) => {
             const isChecked = e.target.checked;
             setMarkerPosition(defaultPosition);
             handleChange("geolocation", {
               latitude: isChecked ? "" : document.geolocation.latitude,
               longitude: isChecked ? "" : document.geolocation.longitude,
-              municipality: isChecked ? "Whole municipality" : "",
+              municipality: isChecked ? "Entire municipality" : "",
             });
           }}
           className="mt-2"
