@@ -898,8 +898,8 @@ function DocumentFormComponent({
         <Form.Label>Latitude</Form.Label>
         <Form.Control
           type="number"
-          min={67.82295}
-          max={67.88398}
+          min={67.3564329180828}
+          max={69.05958911620179}
           step={0.00001}
           value={document.geolocation.latitude}
           onChange={handleLatitudeChange}
@@ -912,8 +912,8 @@ function DocumentFormComponent({
         </Form.Control.Feedback>
 
         <Form.Range
-          min={67.82295}
-          max={67.88398}
+          min={67.3564329180828}
+          max={69.05958911620179}
           step={0.00001}
           value={document.geolocation.latitude}
           onChange={handleLatitudeChange}
@@ -924,8 +924,8 @@ function DocumentFormComponent({
         <Form.Control
           type="number"
           value={document.geolocation.longitude || ""}
-          min={20.14402}
-          max={20.3687}
+          min={17.89900836116174}
+          max={23.28669305841499}
           step={0.00001}
           isInvalid={!!errors.longitude}
           onChange={handleLongitudeChange}
@@ -936,8 +936,8 @@ function DocumentFormComponent({
           {errors.longitude}
         </Form.Control.Feedback>
         <Form.Range
-          min={20.14402}
-          max={20.3687}
+          min={17.89900836116174}
+          max={23.28669305841499}
           step={0.00001}
           value={document.geolocation.longitude}
           isInvalid={!!errors.longitude}
