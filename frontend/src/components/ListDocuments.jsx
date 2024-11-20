@@ -17,7 +17,6 @@ export default function ListDocuments() {
   const [selectedDocumentToLink, setSelectedDocumentToLink] = useState(null);
   const [compactView, setCompactView] = useState(false);
 
-  // Fetch all document snippets
   useEffect(() => {
     API.getAllDocumentSnippets()
       .then(setDocuments)

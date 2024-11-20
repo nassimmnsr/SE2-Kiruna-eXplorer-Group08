@@ -503,14 +503,13 @@ export default function DocumentModal(props) {
           </Button>
         ) : (
           <div className="d-flex align-items-center">
-            <Button
-              title="Link to"
+            {/* <Button
               variant="primary"
               onClick={handleLinksClick}
               className="me-2"
             >
               Links
-            </Button>
+            </Button> */}
             <Button
               variant="primary"
               onClick={handleLinkToClick}
@@ -543,10 +542,10 @@ DocumentModal.propTypes = {
   show: PropTypes.bool.isRequired,
   onHide: PropTypes.func.isRequired,
   document: PropTypes.object.isRequired,
-  handleSave: PropTypes.func,
-  handleAdd: PropTypes.func,
-  onLinkToClick: PropTypes.func,
-  onSnippetClick: PropTypes.func.isRequired,
+  handleSave: PropTypes.func.isRequired,
+  handleAdd: PropTypes.func.isRequired,
+  onLinkToClick: PropTypes.func.isRequired,
+  onLinksClick: PropTypes.func.isRequired,
 };
 
 function ModalBodyComponent({ document }) {
