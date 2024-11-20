@@ -17,7 +17,6 @@ export default function ListDocuments() {
   const [selectedDocumentToLink, setSelectedDocumentToLink] = useState(null);
   const [compactView, setCompactView] = useState(false);
 
-  // Fetch all document snippets
   useEffect(() => {
     API.getAllDocumentSnippets()
       .then(setDocuments)
@@ -138,10 +137,11 @@ export default function ListDocuments() {
             </Button>
             <Button
               variant="secondary"
-              style={{ width: "90px" }}
+              style={{ width: "70px" }}
               onClick={() => {
                 handleExitLinkMode();
               }}
+              className="ms-2"
             >
               Exit
             </Button>
