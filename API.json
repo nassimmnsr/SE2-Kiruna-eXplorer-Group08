@@ -443,6 +443,46 @@
         }
       }
     },
+    "/api/v1/documents/links": {
+      "put": {
+        "summary": "Update a link",
+        "tags": [
+          "document"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/link"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "description": "The reason why the request was bad"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
     "/api/v1/documents/{id}/links": {
       "parameters": [
         {
@@ -524,46 +564,8 @@
           }
         },
         "responses": {
-          "203": {
+          "201": {
             "description": "Created"
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string",
-                  "description": "The reason why the request was bad"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found"
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        }
-      },
-      "put": {
-        "summary": "Update a link for a document",
-        "tags": [
-          "document"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/link"
-              }
-            }
-          }
-        },
-        "responses": {
-          "204": {
-            "description": "No content"
           },
           "400": {
             "description": "Bad request",
