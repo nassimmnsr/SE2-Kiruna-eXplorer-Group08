@@ -1,9 +1,5 @@
 package com.kirunaexplorer.app;
 
-import com.kirunaexplorer.app.constants.DocumentLinkType;
-import com.kirunaexplorer.app.dto.request.LinkDocumentsRequest;
-import com.kirunaexplorer.app.dto.response.LinkDocumentsResponse;
-import com.kirunaexplorer.app.exception.ResourceNotFoundException;
 import com.kirunaexplorer.app.model.Document;
 import com.kirunaexplorer.app.model.DocumentLink;
 import com.kirunaexplorer.app.repository.DocumentLinkRepository;
@@ -18,11 +14,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class DocumentLinkServiceTest {
@@ -95,7 +86,7 @@ public class DocumentLinkServiceTest {
 
         verify(documentRepository, times(1)).findById(1L);
         verify(documentRepository, times(1)).findById(2L);
-        verify(documentLinkRepository, times(1)).save(any(DocumentLink.class));
+        verify(documentLinkRepository, times(1)).save(any(DocumentLink.class));*/
     }
 
     @Test

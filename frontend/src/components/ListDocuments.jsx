@@ -17,7 +17,6 @@ export default function ListDocuments() {
   const [selectedDocumentToLink, setSelectedDocumentToLink] = useState(null);
   const [compactView, setCompactView] = useState(false);
 
-  // Fetch all document snippets
   useEffect(() => {
     API.getAllDocumentSnippets()
       .then(setDocuments)
@@ -28,13 +27,16 @@ export default function ListDocuments() {
     const newDoc = await API.getDocumentById(document.id);
     setSelectedDocument(newDoc);
     if (linking) {
-      if(selectedDocumentToLink && document.id === selectedDocumentToLink?.id) {
+      if (
+        selectedDocumentToLink &&
+        document.id === selectedDocumentToLink?.id
+      ) {
         return;
       }
       const alreadySelected = selectedLinkDocuments.some(
         (doc) => doc.document.id === document.id
       );
-      if(alreadySelected) {
+      if (alreadySelected) {
         setSelectedLinkDocuments((prevDocuments) =>
           prevDocuments.filter((doc) => doc.document.id !== document.id)
         );
@@ -50,8 +52,9 @@ export default function ListDocuments() {
 
   const handleSave = (document) => {
     API.updateDocument(document.id, document)
-      .then(() => setShow(false))
+      .then(() => API.getAllDocumentSnippets().then(setDocuments))
       .catch((error) => console.error("Error saving document:", error));
+    setShow(false);
   };
 
   const handleAdd = (document) => {
@@ -105,7 +108,7 @@ export default function ListDocuments() {
   const handleExitLinkMode = () => {
     setLinking(false);
     setSelectedLinkDocuments([]);
-  }
+  };
 
   return (
     <Container fluid className="scrollable-list-documents">
@@ -129,22 +132,23 @@ export default function ListDocuments() {
         <Col xs="auto">
           {linking ? (
             <>
-            <Button
-              title="Confirm links"
-              variant="success"
-              onClick={handleCompleteLink}
-            >
-              <i className="bi bi-check-square"></i>
-            </Button>
-            <Button
-              variant="secondary"
-              style={{ width: "90px" }}
-              onClick={() => {
-                handleExitLinkMode();
-              }}
-            >
-              Exit
-            </Button>
+              <Button
+                title="Confirm links"
+                variant="success"
+                onClick={handleCompleteLink}
+              >
+                <i className="bi bi-check-square"></i>
+              </Button>
+              <Button
+                title="Exit link mode"
+                variant="secondary"
+                onClick={() => {
+                  handleExitLinkMode();
+                }}
+                className="ms-2"
+              >
+                <i className="bi bi-box-arrow-left"></i>
+              </Button>
             </>
           ) : (
             <Button
@@ -173,10 +177,7 @@ export default function ListDocuments() {
           </Button>
         </Col>
       </Row>
-      <Row
-        className="g-2 mx-auto"
-        style={{ width: "100%" }}
-      >
+      <Row className="g-2 mx-auto" style={{ width: "100%" }}>
         {compactView ? (
           <Row className="g-4 mx-auto">
             <DocumentSnippetTableComponent
@@ -210,6 +211,7 @@ export default function ListDocuments() {
             handleSave={handleSave}
             handleDelete={handleDelete}
             handleAdd={handleAdd}
+            onSnippetClick={handleSelection}
           />
         )}
         {selectedDocumentToLink && showLinkModal && (
