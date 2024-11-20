@@ -46,7 +46,6 @@ public class DocumentLinkService {
         documentLink.setCreatedAt(LocalDateTime.now());
 
         documentLink = documentLinkRepository.save(documentLink);
-
         return new LinkDocumentsResponseDTO(documentLink.getId());
     }
 

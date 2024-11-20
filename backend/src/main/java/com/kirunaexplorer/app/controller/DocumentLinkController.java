@@ -25,6 +25,7 @@ public class DocumentLinkController {
 
     @PostMapping("/{id}/links")
     public ResponseEntity<Void> linkDocuments(@PathVariable Long id, @RequestBody @Validated({Default.class, PostLink.class}) LinkDocumentsRequestDTO request) {
+        System.out.println("Linking documents");
         LinkDocumentsResponseDTO response = documentLinkService.linkDocuments(id, request);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
             .path("/{id}")
