@@ -325,7 +325,7 @@ const MapKiruna = () => {
             }
             <MarkerClusterGroup>
             {documents.map((doc, index) => {
-              const position = doc.geolocation.latitude ? [doc.geolocation.longitude, doc.geolocation.latitude] : kirunaPosition;
+              const position = doc.geolocation.latitude ? [doc.geolocation.latitude, doc.geolocation.longitude] : kirunaPosition;
               //const icon = iconMapping[doc.type] || defaultIcon;
 
               return (
@@ -343,8 +343,8 @@ const MapKiruna = () => {
           {selectedDocument && selectedDocument.geolocation.latitude ? (
             <ZoomToMarker
               position={[
-                selectedDocument.geolocation.longitude,
                 selectedDocument.geolocation.latitude,
+                selectedDocument.geolocation.longitude
               ]}
               zoomLevel={15} // Zoom to level 15 for the selected document
             />
