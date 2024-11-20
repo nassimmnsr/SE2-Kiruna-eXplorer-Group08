@@ -53,8 +53,9 @@ export default function ListDocuments() {
 
   const handleSave = (document) => {
     API.updateDocument(document.id, document)
-      .then(() => setShow(false))
+      .then(() => API.getAllDocumentSnippets().then(setDocuments))
       .catch((error) => console.error("Error saving document:", error));
+    setShow(false);
   };
 
   const handleAdd = (document) => {

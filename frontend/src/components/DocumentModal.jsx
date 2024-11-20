@@ -312,7 +312,7 @@ export default function DocumentModal(props) {
         "Scale is required and must match one of the defined patterns.";
     } else if (document.scale.includes(":")) {
       const [first, second] = document.scale.split(":").map(Number);
-      if (first >= second) {
+      if (first > second) {
         newErrors.scale =
           "The first number of the scale must be smaller than the second one.";
       }
