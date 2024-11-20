@@ -118,7 +118,7 @@
               "area": {
                 "type": "string",
                 "description": "The area of the document",
-                "pattern": "Enitre municipality",
+                "pattern": "Entire municipality",
                 "minLength": 2,
                 "maxLength": 64
               }
@@ -232,7 +232,7 @@
               "area": {
                 "type": "string",
                 "description": "The area of the document",
-                "pattern": "Enitre municipality",
+                "pattern": "Entire municipality",
                 "minLength": 2,
                 "maxLength": 64
               }
