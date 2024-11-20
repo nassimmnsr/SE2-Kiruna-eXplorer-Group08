@@ -11,6 +11,7 @@ import {
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Document } from "../model/Document.mjs";
+import ListDocumentLinks from "./ListDocumentLinks.jsx";
 import dayjs from "dayjs";
 import "../App.css";
 
@@ -196,6 +197,7 @@ export default function DocumentModal(props) {
     [67.8774793377591, 20.170706869100258],
   ];
   const [isEditable, setIsEditable] = useState(false);
+  const [isSliderOpen, setSliderOpen] = useState(false);
 
   const [document, setDocument] = useState({
     title: "",
@@ -440,6 +442,18 @@ export default function DocumentModal(props) {
     }));
   };
 
+  const handleLinksClick = () => {
+    setSliderOpen(!isSliderOpen);
+  };
+
+  const handleCloseSlider = () => {
+    setSliderOpen(false);
+  };
+
+  const handleSnippetClick = (snippet) => {
+    setSelectedDocument(snippet);
+  };
+
   return (
     <Modal
       show={props.show}
@@ -482,6 +496,13 @@ export default function DocumentModal(props) {
           <div className="d-flex align-items-center">
             <Button
               variant="primary"
+              onClick={handleLinksClick}
+              className="me-2"
+            >
+              Links
+            </Button>
+            <Button
+              variant="primary"
               onClick={handleLinkToClick}
               className="me-2"
             >
@@ -490,6 +511,12 @@ export default function DocumentModal(props) {
           </div>
         )}
       </Modal.Footer>
+      <ListDocumentLinks
+        documentId={props.document.id}
+        isOpen={isSliderOpen}
+        onClose={handleCloseSlider}
+        onSnippetClick={handleSnippetClick}
+      />
     </Modal>
   );
 }
@@ -498,9 +525,10 @@ DocumentModal.propTypes = {
   show: PropTypes.bool.isRequired,
   onHide: PropTypes.func.isRequired,
   document: PropTypes.object.isRequired,
-  handleSave: PropTypes.func,
-  handleAdd: PropTypes.func,
-  onLinkToClick: PropTypes.func,
+  handleSave: PropTypes.func.isRequired,
+  handleAdd: PropTypes.func.isRequired,
+  onLinkToClick: PropTypes.func.isRequired,
+  onLinksClick: PropTypes.func.isRequired,
 };
 
 function ModalBodyComponent({ document }) {

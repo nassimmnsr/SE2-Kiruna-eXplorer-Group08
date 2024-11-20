@@ -195,3 +195,57 @@ button:hover {
   background-color: black;
   color: #333;
 }
+
+.slider {
+  position: fixed;
+  right: -320px;
+  top: 20px;
+  width: 300px;
+  height: calc(100% - 40px);
+  background: white;
+  box-shadow: -2px 0 5px rgba(0,0,0,0.5);
+  transition: right 0.3s ease, opacity 0.3s ease;
+  border-radius: 8px;
+  padding: 20px;
+  opacity: 0;
+}
+
+.slider.open {
+  right: 20px;
+  opacity: 1;
+}
+
+.close-button {
+  position: absolute;
+  bottom: 10px;
+  left: 85%;
+  transform: translateX(-50%);
+}
+
+.snippet-item {
+  padding: 10px;
+  border-bottom: 1px solid #e7ebda;
+}
+
+.snippet-title {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.snippet-type,
+.snippet-scale,
+.snippet-issuance-date {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.snippet-list {
+  max-height: calc(100% - 40px); /* Adjust based on header and padding */
+  overflow-y: auto;
+  scrollbar-width: none; /* For Firefox */
+  -ms-overflow-style: none;  /* For Internet Explorer and Edge */
+}
+
+.snippet-list::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Opera */
+}

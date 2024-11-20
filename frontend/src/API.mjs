@@ -35,6 +35,32 @@ const createLink = async (document, linkedDocument) => {
   }
 };
 
+// Retrieve all links of a document
+const getAllLinksOfDocument = async (documentId) => {
+  const links = await fetch(`${SERVER_URL}/api/v1/documents/${documentId}/links`)
+    .then(handleInvalidResponse)
+    .then((response) => response.json());
+  return links;
+};
+
+// Update a link for a document
+const updateLink = async (documentId, linkId, updatedLink) => {
+  return await fetch(`${SERVER_URL}/api/v1/documents/${documentId}/links`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(updatedLink),
+  }).then(handleInvalidResponse);
+};
+
+// Delete a link for a document
+const deleteLink = async (documentId, linkId) => {
+  return await fetch(`${SERVER_URL}/api/v1/documents/${documentId}/links/${linkId}`, {
+    method: "DELETE",
+  }).then(handleInvalidResponse);
+};
+
 /* ************************** *
  *       Documents APIs       *
  * ************************** */
@@ -201,5 +227,8 @@ const API = {
   // updateStakeholder,
   // deleteStakeholder,
   createLink,
+  getAllLinksOfDocument,
+  updateLink,
+  deleteLink,
 };
 export default API;
