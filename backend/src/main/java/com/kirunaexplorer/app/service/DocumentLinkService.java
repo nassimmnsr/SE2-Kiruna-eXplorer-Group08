@@ -1,13 +1,13 @@
 package com.kirunaexplorer.app.service;
 
-import com.kirunaexplorer.app.dto.request.LinkDocumentsRequest;
-import com.kirunaexplorer.app.dto.response.LinkDocumentsResponse;
+import com.kirunaexplorer.app.dto.request.LinkDocumentsRequestDTO;
+import com.kirunaexplorer.app.dto.response.LinkDocumentsResponseDTO;
 import com.kirunaexplorer.app.exception.ResourceNotFoundException;
 import com.kirunaexplorer.app.model.Document;
 import com.kirunaexplorer.app.model.DocumentLink;
-import com.kirunaexplorer.app.model.DocumentLinkId;
 import com.kirunaexplorer.app.repository.DocumentLinkRepository;
 import com.kirunaexplorer.app.repository.DocumentRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,17 +23,21 @@ public class DocumentLinkService {
         this.documentLinkRepository = documentLinkRepository;
     }
 
-    public LinkDocumentsResponse linkDocuments(LinkDocumentsRequest request) {
-        Document document = documentRepository.findById(request.idDocument1())
-                .orElseThrow(() -> new ResourceNotFoundException("Document not found with ID " + request.idDocument1()));
+    /***
+     * Link two documents
+     * @param id Document id
+     * @param request LinkDocumentsRequestDTO
+     * @return LinkDocumentsResponse
+     */
+    @Transactional
+    public LinkDocumentsResponseDTO linkDocuments(Long id, LinkDocumentsRequestDTO request) {
+        Document document = documentRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Document not found with ID " + id));
+        Document linkedDocument = documentRepository.findById(request.documentId())
+            .orElseThrow(() -> new ResourceNotFoundException("Document not found with ID " + request.documentId()));
 
-        Document linkedDocument = documentRepository.findById(request.idDocument2())
-                .orElseThrow(() -> new ResourceNotFoundException("Document not found with ID " + request.idDocument2()));
-
-        // Create and set the composite key
-        DocumentLinkId documentLinkId = new DocumentLinkId(document.getId(), linkedDocument.getId());
+        // Create a new document link
         DocumentLink documentLink = new DocumentLink();
-        documentLink.setId(documentLinkId); // Set the composite key
 
         // Set the other properties
         documentLink.setDocument(document);
@@ -41,9 +45,23 @@ public class DocumentLinkService {
         documentLink.setType(request.type());
         documentLink.setCreatedAt(LocalDateTime.now());
 
-        documentLinkRepository.save(documentLink);
+        documentLink = documentLinkRepository.save(documentLink);
 
-        return new LinkDocumentsResponse(request.idDocument1(), request.idDocument2(), request.type());
+        return new LinkDocumentsResponseDTO(documentLink.getId());
     }
 
+    /***
+     * Update a document link
+     * @param id Document link id
+     * @param request LinkDocumentsRequestDTO
+     */
+    @Transactional
+    public void updateLink(Long id, LinkDocumentsRequestDTO request) {
+        DocumentLink documentLink = documentLinkRepository.findById(request.linkId())
+            .orElseThrow(() -> new ResourceNotFoundException("Document link not found with ID " + request.linkId()));
+
+        documentLink.setType(request.type());
+
+        documentLinkRepository.save(documentLink);
+    }
 }

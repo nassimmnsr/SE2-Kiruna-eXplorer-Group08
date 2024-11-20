@@ -2,8 +2,8 @@ package com.kirunaexplorer.app.dto.request;
 
 import com.kirunaexplorer.app.dto.inout.GeoReferenceDTO;
 import com.kirunaexplorer.app.model.Document;
-import com.kirunaexplorer.app.validation.groups.PostDocument;
-import com.kirunaexplorer.app.validation.groups.PutDocument;
+import com.kirunaexplorer.app.validation.groups.document.PostDocument;
+import com.kirunaexplorer.app.validation.groups.document.PutDocument;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 
