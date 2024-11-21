@@ -21,7 +21,7 @@ services:
       retries: 5
 
   backend:
-    image: ghcr.io/nassimmnsr/se2-kiruna-explorer-group08/backend:latest
+    image: ghcr.io/nassimmnsr/se2-kiruna-explorer-group08/backend:v0.1.0
     container_name: kiruna-backend
     environment:
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
@@ -36,7 +36,7 @@ services:
       - kiruna-network
 
   frontend:
-    image: ghcr.io/nassimmnsr/se2-kiruna-explorer-group08/frontend:latest
+    image: ghcr.io/nassimmnsr/se2-kiruna-explorer-group08/frontend:v0.1.0
     container_name: kiruna-frontend
     ports:
       - "5173:4173"
