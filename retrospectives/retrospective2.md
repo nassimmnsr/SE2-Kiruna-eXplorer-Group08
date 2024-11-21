@@ -52,7 +52,7 @@ RETROSPECTIVE Team 08
 - Unit Testing:
     - Total hours estimated 5h
     - Total hours spent 5h30m
-    - Number of automated unit test cases 17
+    - Number of automated unit test cases 8
     - Coverage (if available) --
 - E2E testing:
     - Total hours estimated 4h
