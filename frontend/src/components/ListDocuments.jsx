@@ -16,6 +16,7 @@ export default function ListDocuments() {
   const [selectedLinkDocuments, setSelectedLinkDocuments] = useState([]);
   const [selectedDocumentToLink, setSelectedDocumentToLink] = useState(null);
   const [compactView, setCompactView] = useState(false);
+  const [links, setLinks] = useState([]);
 
   useEffect(() => {
     API.getAllDocumentSnippets()
@@ -24,26 +25,25 @@ export default function ListDocuments() {
   }, []);
 
   const handleSelection = async (document) => {
-    const newDoc = await API.getDocumentById(document.id);
-    setSelectedDocument(newDoc);
-    if (linking) {
-      if(selectedDocumentToLink && document.id === selectedDocumentToLink?.id) {
-        return;
-      }
-      const alreadySelected = selectedLinkDocuments.some(
-        (doc) => doc.document.id === document.id
-      );
-      if(alreadySelected) {
-        setSelectedLinkDocuments((prevDocuments) =>
-          prevDocuments.filter((doc) => doc.document.id !== document.id)
-        );
-      } else {
-        setShowLinkModal(true);
-        setSelectedDocument(newDoc);
-      }
-    } else {
+    try {
+      const newDoc = await API.getDocumentById(document.id);
       setSelectedDocument(newDoc);
-      setShow(true);
+
+      if (linking) {
+        const dLinks = await API.getAllLinksOfDocument(newDoc.id);
+        setLinks(dLinks);
+        if (
+          selectedDocumentToLink &&
+          document.id === selectedDocumentToLink.id
+        ) {
+          return;
+        }
+        setShowLinkModal(true);
+      } else {
+        setShow(true);
+      }
+    } catch (error) {
+      console.error("Error fetching document details:", error);
     }
   };
 
@@ -104,7 +104,7 @@ export default function ListDocuments() {
   const handleExitLinkMode = () => {
     setLinking(false);
     setSelectedLinkDocuments([]);
-  }
+  };
 
   return (
     <Container fluid className="scrollable-list-documents">
@@ -128,23 +128,23 @@ export default function ListDocuments() {
         <Col xs="auto">
           {linking ? (
             <>
-            <Button
-              title="Confirm links"
-              variant="success"
-              onClick={handleCompleteLink}
-            >
-              <i className="bi bi-check-square"></i>
-            </Button>
-            <Button
-              variant="secondary"
-              style={{ width: "70px" }}
-              onClick={() => {
-                handleExitLinkMode();
-              }}
-              className="ms-2"
-            >
-              Exit
-            </Button>
+              <Button
+                title="Confirm links"
+                variant="success"
+                onClick={handleCompleteLink}
+              >
+                <i className="bi bi-check-square"></i>
+              </Button>
+              <Button
+                variant="secondary"
+                style={{ width: "70px" }}
+                onClick={() => {
+                  handleExitLinkMode();
+                }}
+                className="ms-2"
+              >
+                Exit
+              </Button>
             </>
           ) : (
             <Button
@@ -173,10 +173,7 @@ export default function ListDocuments() {
           </Button>
         </Col>
       </Row>
-      <Row
-        className="g-2 mx-auto"
-        style={{ width: "100%" }}
-      >
+      <Row className="g-2 mx-auto" style={{ width: "100%" }}>
         {compactView ? (
           <Row className="g-4 mx-auto">
             <DocumentSnippetTableComponent
@@ -223,6 +220,7 @@ export default function ListDocuments() {
             selectedLinkDocuments={selectedLinkDocuments}
             document={selectedDocument}
             onLinkConfirm={handleLinkConfirm}
+            links={links}
           />
         )}
       </Row>
