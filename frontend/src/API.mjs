@@ -62,15 +62,11 @@ const getUserById = async (userId) => {
  * ********************* */
 
 const createLink = async (document, linkedDocument) => {
-  console.log("CREATE LINK: ", document, linkedDocument);
   const requestBody = {
     type: linkedDocument.linkType.toUpperCase(),
     linkId: null,
     documentId: linkedDocument.document.id,
   };
-  console.log("REQUEST BODY: ", requestBody);
-
-  // ("REQUEST BODY: ", requestBody);
   requestBody.type = linkedDocument.linkType.toUpperCase().replace(/ /g, "_");
   try {
     const response = await fetch(
@@ -80,6 +76,7 @@ const createLink = async (document, linkedDocument) => {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify(requestBody),
       }
     );
@@ -117,6 +114,7 @@ const updateLink = async (documentId, linkId, updatedLink) => {
     headers: {
       "Content-Type": "application/json",
     },
+    credentials: "include",
     body: JSON.stringify(updatedLink),
   }).then(handleInvalidResponse);
 };
@@ -127,6 +125,7 @@ const deleteLink = async (documentId, linkId) => {
     `${SERVER_URL}/api/v1/documents/${documentId}/links/${linkId}`,
     {
       method: "DELETE",
+      credentials: "include",
     }
   ).then(handleInvalidResponse);
 };
@@ -152,6 +151,7 @@ const addDocument = async (document) => {
     headers: {
       "Content-Type": "application/json",
     },
+    credentials: "include",
     body: JSON.stringify(document),
   }).then(handleInvalidResponse);
 };
@@ -172,6 +172,7 @@ const updateDocument = async (documentId, nextDocument) => {
     headers: {
       "Content-Type": "application/json",
     },
+    credentials: "include",
     body: JSON.stringify(nextDocument),
   }).then(handleInvalidResponse);
 };
@@ -180,6 +181,7 @@ const updateDocument = async (documentId, nextDocument) => {
 const deleteDocument = async (documentId) => {
   return await fetch(`${SERVER_URL}/documents/${documentId}`, {
     method: "DELETE",
+    credentials: "include",
   }).then(handleInvalidResponse);
 };
 
