@@ -6,6 +6,8 @@ import "../App.css";
 import DocumentModal from "./DocumentModal";
 import API from "../API";
 import LinkModal from "./LinkModal";
+import { useContext } from "react";
+import FeedbackContext from "../contexts/FeedbackContext";
 
 export default function ListDocuments() {
   const [documents, setDocuments] = useState([]);
@@ -17,14 +19,19 @@ export default function ListDocuments() {
   const [selectedDocumentToLink, setSelectedDocumentToLink] = useState(null);
   const [compactView, setCompactView] = useState(false);
 
+  const { setFeedbackFromError, setSholdRefresh } =
+    useContext(FeedbackContext);
+
   useEffect(() => {
     API.getAllDocumentSnippets()
       .then(setDocuments)
-      .catch((error) => console.error("Error fetching documents:", error));
+      .catch((error) => setFeedbackFromError(error));
   }, []);
 
   const handleSelection = async (document) => {
-    const newDoc = await API.getDocumentById(document.id);
+    const newDoc = await API.getDocumentById(document.id).catch((error) =>
+      setFeedbackFromError(error)
+    );
     setSelectedDocument(newDoc);
     if (linking) {
       if (
@@ -53,21 +60,21 @@ export default function ListDocuments() {
   const handleSave = (document) => {
     API.updateDocument(document.id, document)
       .then(() => API.getAllDocumentSnippets().then(setDocuments))
-      .catch((error) => console.error("Error saving document:", error));
+      .catch((error) => setFeedbackFromError(error));
     setShow(false);
   };
 
   const handleAdd = (document) => {
     API.addDocument(document)
       .then(() => API.getAllDocumentSnippets().then(setDocuments))
-      .catch((error) => console.error("Error adding document:", error));
+      .catch((error) => setFeedbackFromError(error));
     setShow(false);
   };
 
   const handleDelete = (documentId) => {
     API.deleteDocument(documentId)
       .then(() => API.getAllDocumentSnippets().then(setDocuments))
-      .catch((error) => console.error("Error deleting document:", error));
+      .catch((error) => setFeedbackFromError(error));
     setShow(false);
   };
 
@@ -88,12 +95,10 @@ export default function ListDocuments() {
           API.createLink(selectedDocumentToLink, linkedDoc)
         )
       );
-      alert("Links created successfully!");
       setLinking(false);
       setSelectedLinkDocuments([]);
     } catch (error) {
-      console.error("Error linking documents:", error);
-      alert("Failed to create links. Please try again.");
+      setFeedbackFromError(error);
     }
   };
 
