@@ -3,6 +3,41 @@ import Stakeholder from "./model/Stakeholder.mjs";
 
 const SERVER_URL = "http://localhost:8080/api/v1";
 
+/* **************************** *
+ *      Authentication APIs     *
+ * **************************** */
+
+// Given a credentials object containing username and passowrd it executes login
+const logIn = async (credentials) => {
+  return await fetch(SERVER_URL + "/sessions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringyfi(credentials),
+  })
+    .then(handleInvalidResponse)
+    .then((response) => response.json());
+};
+
+// Verifies if user is still logged-in. It returns a JSON with the user info
+const getUserInfo = async () => {
+  return await fetch(SERVER_URL + "/sessions/current", {
+    credentials: "include",
+  })
+    .then(handleInvalidResponse)
+    .then((response) => response.json);
+};
+
+// Destroys the current user's session (executing log-out)
+const logOut = async () => {
+  return await fetch(SERVER_URL + "/sessions/current", {
+    method: "DELETE",
+    credentials: "include",
+  }).then(handleInvalidResponse);
+};
+
 /* ************************** *
  *       Link APIs      *
  * ************************** */
@@ -18,21 +53,28 @@ const createLink = async (document, linkedDocument) => {
 
   // ("REQUEST BODY: ", requestBody);
   requestBody.type = linkedDocument.linkType.toUpperCase().replace(/ /g, "_");
-  console.log(document.id)
   try {
-    const response = await fetch(`${SERVER_URL}/documents/${document.id}/links`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(requestBody)
-    });
+    const response = await fetch(
+      `${SERVER_URL}/documents/${document.id}/links`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      }
+    );
 
     if (response.ok) {
-      const responseData = response.status !== 201 ? await response.json() : null;
+      const responseData =
+        response.status !== 201 ? await response.json() : null;
       console.log("Link creato con successo:", responseData);
     } else {
-      console.error("Errore nella creazione del link:", response.status, response.statusText);
+      console.error(
+        "Errore nella creazione del link:",
+        response.status,
+        response.statusText
+      );
     }
   } catch (error) {
     console.error("Errore nella richiesta:", error);
@@ -41,7 +83,9 @@ const createLink = async (document, linkedDocument) => {
 
 // Retrieve all links of a document
 const getAllLinksOfDocument = async (documentId) => {
-  const links = await fetch(`${SERVER_URL}/api/v1/documents/${documentId}/links`)
+  const links = await fetch(
+    `${SERVER_URL}/api/v1/documents/${documentId}/links`
+  )
     .then(handleInvalidResponse)
     .then((response) => response.json());
   return links;
@@ -60,9 +104,12 @@ const updateLink = async (documentId, linkId, updatedLink) => {
 
 // Delete a link for a document
 const deleteLink = async (documentId, linkId) => {
-  return await fetch(`${SERVER_URL}/api/v1/documents/${documentId}/links/${linkId}`, {
-    method: "DELETE",
-  }).then(handleInvalidResponse);
+  return await fetch(
+    `${SERVER_URL}/api/v1/documents/${documentId}/links/${linkId}`,
+    {
+      method: "DELETE",
+    }
+  ).then(handleInvalidResponse);
 };
 
 /* ************************** *

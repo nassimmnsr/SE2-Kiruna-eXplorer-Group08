@@ -299,6 +299,26 @@
             "description": "the username of the user",
             "minLength": 2,
             "maxLength": 16
+          }
+        }
+      },
+      "Users": {
+        "description": "schema for Users data structure",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/User"
+        }
+      },
+      "Credentials": {
+        "description": "schema for a Credentials data structure",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "the username of the user",
+            "minLength": 2,
+            "maxLength": 16
           },
           "password": {
             "type": "string",
@@ -308,15 +328,9 @@
           }
         },
         "required": [
-          "username"
+          "username",
+          "password"
         ]
-      },
-      "Users": {
-        "description": "schema for Users data structure",
-        "type": "array",
-        "items": {
-          "$ref": "#/components/schemas/User"
-        }
       }
     },
     "securitySchemes": {
@@ -799,8 +813,8 @@
           }
         }
       }
-    }, 
-    "/api/users/{userId}": {
+    },
+    "/api/v1/users/{userId}": {
       "get": {
         "tags": [
           "user"
@@ -850,44 +864,85 @@
         }
       }
     },
-    "/api/v1/users/authenticator": {
+    "/api/v1/sessions": {
       "post": {
-        "tags":[
-          "authenticator"
+        "tags": [
+          "auth"
         ],
         "summary": "Log in",
-        "description": "The user who wants to log in sends the user data to the authenticator which performs the operation. If the request for the login of a new user comes from an already authenticated user, the previous user is first logged out.",
-        "operationId": "authenticateUser",
+        "description": "Authenticate a user and return a session",
+        "operationId": "logIn",
         "requestBody": {
-          "description": "The data of the user who wants to perform log in. The data structure must contain username and password.",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/User"
+                "$ref": "#/components/schemas/Credentials"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
-          "204": {
-            "description": "No Content",
-            "headers": {
-              "Set-Cookie": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
                 "schema": {
-                  "type": "string",
-                  "example": "token=abcde12345; Path=/; HttpOnly"
+                  "$ref": "#/components/schemas/User"
                 }
               }
             }
           },
-          "400": {
-            "description": "Bad Request",
+          "401": {
+            "description": "Unauthorized",
             "content": {}
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/api/v1/sessions/current": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Get current user info",
+        "description": "Retrieve the information of the currently authenticated user",
+        "operationId": "getUserInfo",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized",
             "content": {}
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {}
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Log out",
+        "description": "Log out the current user",
+        "operationId": "logOut",
+        "responses": {
+          "204": {
+            "description": "No content"
           },
           "500": {
             "description": "Internal server error",
