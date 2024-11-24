@@ -1,4 +1,5 @@
 import { Document, DocumentSnippet } from "./model/Document.mjs";
+import { User } from "./model/User.mjs";
 import Stakeholder from "./model/Stakeholder.mjs";
 
 const SERVER_URL = "http://localhost:8080/api/v1";
@@ -38,9 +39,27 @@ const logOut = async () => {
   }).then(handleInvalidResponse);
 };
 
-/* ************************** *
- *       Link APIs      *
- * ************************** */
+/* ********************* *
+ *       User APIs       *
+ * ********************* */
+
+const getUsers = async () => {
+  return await fetch(SERVER_URL + "/users")
+    .then(handleInvalidResponse)
+    .then((response) => response.json())
+    .then((jsonArray) => jsonArray.map(User.fromJson));
+};
+
+const getUserById = async (userId) => {
+  return await fetch(`${SERVER_URL}/users/${userId}`)
+    .then(handleInvalidResponse)
+    .then((response) => response.json())
+    .then(User.fromJson);
+};
+
+/* ********************* *
+ *       Link APIs       *
+ * ********************* */
 
 const createLink = async (document, linkedDocument) => {
   console.log("CREATE LINK: ", document, linkedDocument);
@@ -121,7 +140,7 @@ const getAllDocumentSnippets = async (filter) => {
   const documents = await fetch(`${SERVER_URL}/documents`)
     .then(handleInvalidResponse)
     .then((response) => response.json())
-    .then(mapAPISnippetsToSnippet);
+    .then((jsonArray) => jsonArray.map(DocumentSnippet.fromJson));
   return documents;
 };
 
@@ -142,7 +161,7 @@ const getDocumentById = async (documentId) => {
   const document = await fetch(`${SERVER_URL}/documents/${documentId}`)
     .then(handleInvalidResponse)
     .then((response) => response.json())
-    .then(mapAPIDocumentToDocument);
+    .then(Document.fromJson);
   return document;
 };
 
@@ -229,43 +248,6 @@ function handleInvalidResponse(response) {
   return response;
 }
 
-function mapAPIStakeholdersToStakeholders(apiStakeholders) {
-  return apiStakeholders.map(
-    (apiStakeholder) => new Stakeholder(apiStakeholder.id, apiStakeholder.name)
-  );
-}
-
-async function mapAPIDocumentToDocument(apiDocument) {
-  return new Document(
-    apiDocument.id,
-    apiDocument.title,
-    apiDocument.stakeholders,
-    apiDocument.scale,
-    apiDocument.issuanceDate,
-    apiDocument.type,
-    apiDocument.nrConnections,
-    apiDocument.language,
-    apiDocument.nrPages,
-    apiDocument.geolocation,
-    apiDocument.description
-  );
-}
-
-async function mapAPISnippetsToSnippet(apiSnippets) {
-  return apiSnippets.map(
-    (apiSnippet) =>
-      new DocumentSnippet(
-        apiSnippet.id,
-        apiSnippet.title,
-        apiSnippet.scale,
-        apiSnippet.issuanceDate,
-        apiSnippet.type,
-        apiSnippet.geolocation,
-        apiSnippet.stakeholders
-      )
-  );
-}
-
 const API = {
   getAllDocumentSnippets,
   addDocument,
@@ -281,5 +263,10 @@ const API = {
   getAllLinksOfDocument,
   updateLink,
   deleteLink,
+  logIn,
+  getUserInfo,
+  logOut,
+  getUsers,
+  getUserById,
 };
 export default API;
