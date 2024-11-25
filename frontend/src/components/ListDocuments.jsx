@@ -71,7 +71,7 @@ export default function ListDocuments({ shouldRefresh }) {
         })
       )
       .catch((error) =>
-        setFeedbackFromError({ type: "danger", message: error })
+        setFeedbackFromError(error)
       );
     setShow(false);
     setShouldRefresh(true);
@@ -85,7 +85,7 @@ export default function ListDocuments({ shouldRefresh }) {
         setFeedback({ type: "success", message: "Document added successfully" })
       )
       .catch((error) =>
-        setFeedbackFromError({ type: "danger", message: error })
+        setFeedbackFromError(error)
       );
     setShow(false);
     setShouldRefresh(true);
@@ -102,7 +102,7 @@ export default function ListDocuments({ shouldRefresh }) {
         })
       )
       .catch((error) =>
-        setFeedbackFromError({ type: "danger", message: error })
+        setFeedbackFromError(error)
       );
     setShow(false);
     setShouldRefresh(true);
@@ -130,7 +130,7 @@ export default function ListDocuments({ shouldRefresh }) {
       setLinking(false);
       setSelectedLinkDocuments([]);
     } catch (error) {
-      setFeedbackFromError({ type: "danger", message: error });
+      setFeedbackFromError(error);
     }
   };
 
