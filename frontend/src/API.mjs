@@ -140,6 +140,8 @@ const stakeholders = [
   { id: 3, name: "Regional authority" },
   { id: 4, name: "Architecture firms" },
   { id: 5, name: "Citizen" },
+  { id: 6, name: "Kiruna kommun" },
+  { id: 7, name: "White Arkitekter"}
 ];
 
 // // Retrieve all stakeholders
