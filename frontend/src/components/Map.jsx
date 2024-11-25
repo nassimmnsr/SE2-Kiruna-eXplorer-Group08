@@ -172,6 +172,18 @@ const MapKiruna = () => {
                   icon={getIconForDocument(doc.type, doc.stakeholders)}
                   eventHandlers={{
                     click: () => handleDocumentClick(doc),
+                    mouseover: (e) => {
+                      const marker = e.target;
+                      marker.bindTooltip(doc.title, { 
+                        permanent: false, 
+                        offset: [2, -33],
+                        direction: 'top'
+                      }).openTooltip();
+                    },
+                    mouseout: (e) => {
+                      const marker = e.target;
+                      marker.closeTooltip();
+                    },
                   }}
                 />
               );

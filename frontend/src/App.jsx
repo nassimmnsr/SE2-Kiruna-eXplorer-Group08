@@ -7,6 +7,7 @@ import ListDocuments from "./components/ListDocuments";
 import SplashPage from "./components/SplashPage";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Map from "./components/Map";
+import LoginPage from "./components/LoginPage";
 import "./App.css";
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
           >
             <Route path="/documents" element={<ListDocuments />} />
             <Route path="/map" element={<Map />} />
+            <Route path="/login" element={<LoginPage />} />
             <Route path="/" element={<SplashPage />} />
             <Route
               path="*"
