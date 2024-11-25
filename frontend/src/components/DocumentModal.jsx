@@ -14,6 +14,7 @@ import { Document } from "../model/Document.mjs";
 import ListDocumentLinks from "./ListDocumentLinks.jsx";
 import dayjs from "dayjs";
 import "../App.css";
+import API from "../API.mjs";
 
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import getKirunaArea from "./KirunaArea.jsx";
@@ -510,10 +511,17 @@ function DocumentFormComponent({
       ? document.geolocation.longitude
       : defaultPosition[1],
   ]);
+  const [allStakeholders, setAllStakeholders] = useState([]);
 
   const dayRef = useRef(null);
   const monthRef = useRef(null);
   const yearRef = useRef(null);
+
+  useEffect(() => {
+      API.getAllStakeholders().then((stakeholders) => {
+        setAllStakeholders(stakeholders);
+      });
+    }, []);
 
   const handleDayChange = (e) => {
     const value = e.target.value;
@@ -617,22 +625,16 @@ function DocumentFormComponent({
       {/* STAKEHOLDERS */}
       <Form.Group className="mb-3" controlId="formDocumentStakeholders">
         <Form.Label>Stakeholders *</Form.Label>
-        {[
-          "LKAB",
-          "Municipality",
-          "Regional authority",
-          "Architecture firms",
-          "Citizen",
-        ].map((stakeholderOption) => (
+        {allStakeholders.map((stakeholderOption) => (
           <Form.Check
-            key={stakeholderOption}
+            key={stakeholderOption.id}
             type="checkbox"
-            label={stakeholderOption}
-            checked={document.stakeholders.includes(stakeholderOption)}
+            label={stakeholderOption.name}
+            checked={document.stakeholders.includes(stakeholderOption.name)}
             onChange={(e) => {
               const newStakeholders = e.target.checked
-                ? [...document.stakeholders, stakeholderOption]
-                : document.stakeholders.filter((s) => s !== stakeholderOption);
+                ? [...document.stakeholders, stakeholderOption.name]
+                : document.stakeholders.filter((s) => s !== stakeholderOption.name);
               handleChange("stakeholders", newStakeholders);
             }}
             isInvalid={!!errors.stakeholders}
@@ -641,13 +643,7 @@ function DocumentFormComponent({
         {document.stakeholders
           .filter(
             (stakeholder) =>
-              ![
-                "LKAB",
-                "Municipality",
-                "Regional authority",
-                "Architecture firms",
-                "Citizen",
-              ].includes(stakeholder)
+              !allStakeholders.map((s) => s.name).includes(stakeholder)
           )
           .map((stakeholder, index) => (
             <div key={index} className="d-flex mb-2">

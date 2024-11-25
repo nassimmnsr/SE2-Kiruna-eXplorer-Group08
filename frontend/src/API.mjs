@@ -18,21 +18,29 @@ const createLink = async (document, linkedDocument) => {
 
   // ("REQUEST BODY: ", requestBody);
   requestBody.type = linkedDocument.linkType.toUpperCase().replace(/ /g, "_");
-  console.log(document.id)
+  console.log(document.id);
   try {
-    const response = await fetch(`${SERVER_URL}/documents/${document.id}/links`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(requestBody)
-    });
+    const response = await fetch(
+      `${SERVER_URL}/documents/${document.id}/links`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      }
+    );
 
     if (response.ok) {
-      const responseData = response.status !== 201 ? await response.json() : null;
+      const responseData =
+        response.status !== 201 ? await response.json() : null;
       console.log("Link creato con successo:", responseData);
     } else {
-      console.error("Errore nella creazione del link:", response.status, response.statusText);
+      console.error(
+        "Errore nella creazione del link:",
+        response.status,
+        response.statusText
+      );
     }
   } catch (error) {
     console.error("Errore nella richiesta:", error);
@@ -41,7 +49,9 @@ const createLink = async (document, linkedDocument) => {
 
 // Retrieve all links of a document
 const getAllLinksOfDocument = async (documentId) => {
-  const links = await fetch(`${SERVER_URL}/api/v1/documents/${documentId}/links`)
+  const links = await fetch(
+    `${SERVER_URL}/api/v1/documents/${documentId}/links`
+  )
     .then(handleInvalidResponse)
     .then((response) => response.json());
   return links;
@@ -60,9 +70,12 @@ const updateLink = async (documentId, linkId, updatedLink) => {
 
 // Delete a link for a document
 const deleteLink = async (documentId, linkId) => {
-  return await fetch(`${SERVER_URL}/api/v1/documents/${documentId}/links/${linkId}`, {
-    method: "DELETE",
-  }).then(handleInvalidResponse);
+  return await fetch(
+    `${SERVER_URL}/api/v1/documents/${documentId}/links/${linkId}`,
+    {
+      method: "DELETE",
+    }
+  ).then(handleInvalidResponse);
 };
 
 /* ************************** *
@@ -117,55 +130,83 @@ const deleteDocument = async (documentId) => {
   }).then(handleInvalidResponse);
 };
 
-// /* ************************** *
-//  *      Stakeholders APIs     *
-//  * ************************** */
+/* ************************** *
+ *      Stakeholders APIs     *
+ * ************************** */
+
+const stakeholders = [
+  { id: 1, name: "LKAB" },
+  { id: 2, name: "Municipality" },
+  { id: 3, name: "Regional authority" },
+  { id: 4, name: "Architecture firms" },
+  { id: 5, name: "Citizen" },
+];
 
 // // Retrieve all stakeholders
-// const getAllStakeholders = async () => {
-//   const stakeholders = await fetch(`${SERVER_URL}/stakeholders`)
-//     .then(handleInvalidResponse)
-//     .then((response) => response.json())
-//     .then(mapAPIStakeholdersToStakeholders);
-//   return stakeholders;
-// };
+const getAllStakeholders = async () => {
+  // const stakeholders = await fetch(`${SERVER_URL}/stakeholders`)
+  //   .then(handleInvalidResponse)
+  //   .then((response) => response.json())
+  //   .then(mapAPIStakeholdersToStakeholders);
+  const sh = [];
+  stakeholders.forEach((s) => sh.push(Stakeholder.fromJSON(s)));
+  return sh;
+};
 
-// // Create a new stakeholder
-// const addStakeholder = async (stakeholder) => {
-//   return await fetch(`${SERVER_URL}/stakeholders`, {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(stakeholder),
-//   }).then(handleInvalidResponse);
-// };
+// Create a new stakeholder
+const addStakeholder = async (stakeholder) => {
+  //   return await fetch(`${SERVER_URL}/stakeholders`, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(stakeholder),
+  //   }).then(handleInvalidRiesponse);
+  const newId = stakeholders.length ? stakeholders[stakeholders.length - 1].id + 1 : 1;
+  const newStakeholder = { id: newId, name: stakeholder };
+  stakeholders.push(newStakeholder);
+};
 
-// // Retrieve a stakeholder by id
-// const getStakeholderById = async (stakeholderId) => {
-//   const stakeholder = await fetch(`${SERVER_URL}/stakeholders/${stakeholderId}`)
-//     .then(handleInvalidResponse)
-//     .then((response) => response.json());
-//   return stakeholder;
-// };
+// Retrieve a stakeholder by id
+const getStakeholderById = async (stakeholderId) => {
+  //   const stakeholder = await fetch(`${SERVER_URL}/stakeholders/${stakeholderId}`)
+  //     .then(handleInvalidResponse)
+  //     .then((response) => response.json());
+  //   return stakeholder;
+  return Stakeholder.fromJSON(
+    stakeholders.find((stakeholder) => stakeholder.id === stakeholderId)
+  );
+};
 
-// // Update a stakeholder given its id
-// const updateStakeholder = async (stakeholderId, nextStakeholder) => {
-//   return await fetch(`${SERVER_URL}/stakeholders/`, {
-//     method: "PUT",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(nextStakeholder),
-//   }).then(handleInvalidResponse);
-// };
+// Update a stakeholder given its id
+const updateStakeholder = async (stakeholderId, nextStakeholder) => {
+  //   return await fetch(`${SERVER_URL}/stakeholders/`, {
+  //     method: "PUT",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(nextStakeholder),
+  //   }).then(handleInvalidResponse);
+  const index = stakeholders.findIndex(
+    (stakeholder) => stakeholder.id === stakeholderId
+  );
+  if (index !== -1) {
+    stakeholders[index] = nextStakeholder;
+  }
+};
 
-// // Delete a stakeholder given its id
-// const deleteStakeholder = async (stakeholderId) => {
-//   return await fetch(`${SERVER_URL}/stakeholders/${stakeholderId}`, {
-//     method: "DELETE",
-//   }).then(handleInvalidResponse);
-// };
+// Delete a stakeholder given its id
+const deleteStakeholder = async (stakeholderId) => {
+  //   return await fetch(`${SERVER_URL}/stakeholders/${stakeholderId}`, {
+  //     method: "DELETE",
+  //   }).then(handleInvalidResponse);
+  const index = stakeholders.findIndex(
+    (stakeholder) => stakeholder.id === stakeholderId
+  );
+  if (index !== -1) {
+    stakeholders.splice(index, 1);
+  }
+};
 
 /* ************************** *
  *       Helper functions      *
@@ -225,11 +266,11 @@ const API = {
   getDocumentById,
   updateDocument,
   deleteDocument,
-  // getAllStakeholders,
-  // addStakeholder,
-  // getStakeholderById,
-  // updateStakeholder,
-  // deleteStakeholder,
+  getAllStakeholders,
+  addStakeholder,
+  getStakeholderById,
+  updateStakeholder,
+  deleteStakeholder,
   createLink,
   getAllLinksOfDocument,
   updateLink,

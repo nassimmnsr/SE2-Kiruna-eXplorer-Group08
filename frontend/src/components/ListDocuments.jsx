@@ -50,18 +50,96 @@ export default function ListDocuments() {
     }
   };
 
-  const handleSave = (document) => {
-    API.updateDocument(document.id, document)
-      .then(() => API.getAllDocumentSnippets().then(setDocuments))
-      .catch((error) => console.error("Error saving document:", error));
-    setShow(false);
+  // const handleSave = async (document) => {
+  //   try {
+  //     const allStakeholders = await API.getAllStakeholders();
+  //     const newStakeholders = document.stakeholders.filter(
+  //       (stakeholder) =>
+  //         !allStakeholders.some(
+  //           (existingStakeholder) => existingStakeholder.name === stakeholder.name
+  //         )
+  //     );
+
+  //     await Promise.all(
+  //       newStakeholders.map((stakeholder) => API.addStakeholder(stakeholder))
+  //     );
+
+  //     await API.updateDocument(document.id, document);
+  //     const updatedDocuments = await API.getAllDocumentSnippets();
+  //     setDocuments(updatedDocuments);
+  //   } catch (error) {
+  //     console.error("Error saving document:", error);
+  //   } finally {
+  //     setShow(false);
+  //   }
+  // };
+
+  // const handleAdd = async (document) => {
+  //   try {
+  //     const allStakeholders = await API.getAllStakeholders();
+  //     const newStakeholders = document.stakeholders.filter(
+  //       (stakeholder) =>
+  //         !allStakeholders.some(
+  //           (existingStakeholder) => existingStakeholder.name === stakeholder.name
+  //         )
+  //     );
+
+  //     await Promise.all(
+  //       newStakeholders.map((stakeholder) => API.addStakeholder(stakeholder))
+  //     );
+
+  //     await API.addDocument(document);
+  //     const updatedDocuments = await API.getAllDocumentSnippets();
+  //     setDocuments(updatedDocuments);
+  //   } catch (error) {
+  //     console.error("Error adding document:", error);
+  //   } finally {
+  //     setShow(false);
+  //   }
+  // };
+  const handleStakeholders = async (document) => {
+    const allStakeholders = await API.getAllStakeholders();
+    const uniqueStakeholders = [
+      ...new Map(
+        document.stakeholders.map((stakeholder) => [stakeholder.name, stakeholder])
+      ).values(),
+    ];
+    const newStakeholders = uniqueStakeholders.filter(
+      (stakeholder) =>
+        !allStakeholders.some(
+          (existingStakeholder) => existingStakeholder.name === stakeholder.name
+        )
+    );
+
+    await Promise.all(
+      newStakeholders.map((stakeholder) => API.addStakeholder(stakeholder))
+    );
   };
 
-  const handleAdd = (document) => {
-    API.addDocument(document)
-      .then(() => API.getAllDocumentSnippets().then(setDocuments))
-      .catch((error) => console.error("Error adding document:", error));
-    setShow(false);
+  const handleSave = async (document) => {
+    try {
+      await handleStakeholders(document);
+      await API.updateDocument(document.id, document);
+      const updatedDocuments = await API.getAllDocumentSnippets();
+      setDocuments(updatedDocuments);
+    } catch (error) {
+      console.error("Error saving document:", error);
+    } finally {
+      setShow(false);
+    }
+  };
+
+  const handleAdd = async (document) => {
+    try {
+      await handleStakeholders(document);
+      await API.addDocument(document);
+      const updatedDocuments = await API.getAllDocumentSnippets();
+      setDocuments(updatedDocuments);
+    } catch (error) {
+      console.error("Error adding document:", error);
+    } finally {
+      setShow(false);
+    }
   };
 
   const handleDelete = (documentId) => {
