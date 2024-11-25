@@ -9,7 +9,7 @@ import LinkModal from "./LinkModal";
 import { useContext } from "react";
 import FeedbackContext from "../contexts/FeedbackContext";
 
-export default function ListDocuments() {
+export default function ListDocuments({ shouldRefresh }) {
   const [documents, setDocuments] = useState([]);
   const [show, setShow] = useState(false);
   const [showLinkModal, setShowLinkModal] = useState(false);
@@ -19,14 +19,17 @@ export default function ListDocuments() {
   const [selectedDocumentToLink, setSelectedDocumentToLink] = useState(null);
   const [compactView, setCompactView] = useState(false);
 
-  const { setFeedbackFromError, setSholdRefresh } =
+  const { setFeedbackFromError, setShouldRefresh, setFeedback } =
     useContext(FeedbackContext);
 
   useEffect(() => {
-    API.getAllDocumentSnippets()
-      .then(setDocuments)
-      .catch((error) => setFeedbackFromError(error));
-  }, []);
+    if (shouldRefresh) {
+      API.getAllDocumentSnippets()
+        .then(setDocuments)
+        .then(() => setShouldRefresh(false))
+        .catch((error) => setFeedbackFromError(error));
+    }
+  }, [shouldRefresh, setShouldRefresh, setFeedbackFromError]);
 
   const handleSelection = async (document) => {
     const newDoc = await API.getDocumentById(document.id).catch((error) =>
@@ -60,22 +63,49 @@ export default function ListDocuments() {
   const handleSave = (document) => {
     API.updateDocument(document.id, document)
       .then(() => API.getAllDocumentSnippets().then(setDocuments))
-      .catch((error) => setFeedbackFromError(error));
+      .then(() => setShouldRefresh(false))
+      .then(() =>
+        setFeedback({
+          type: "success",
+          message: "Document updated successfully",
+        })
+      )
+      .catch((error) =>
+        setFeedbackFromError({ type: "danger", message: error })
+      );
     setShow(false);
+    setShouldRefresh(true);
   };
 
   const handleAdd = (document) => {
     API.addDocument(document)
       .then(() => API.getAllDocumentSnippets().then(setDocuments))
-      .catch((error) => setFeedbackFromError(error));
+      .then(() => setShouldRefresh(false))
+      .then(() =>
+        setFeedback({ type: "success", message: "Document added successfully" })
+      )
+      .catch((error) =>
+        setFeedbackFromError({ type: "danger", message: error })
+      );
     setShow(false);
+    setShouldRefresh(true);
   };
 
   const handleDelete = (documentId) => {
     API.deleteDocument(documentId)
       .then(() => API.getAllDocumentSnippets().then(setDocuments))
-      .catch((error) => setFeedbackFromError(error));
+      .then(() => setShouldRefresh(false))
+      .then(() =>
+        setFeedback({
+          type: "success",
+          message: "Document deleted successfully",
+        })
+      )
+      .catch((error) =>
+        setFeedbackFromError({ type: "danger", message: error })
+      );
     setShow(false);
+    setShouldRefresh(true);
   };
 
   const handleLinkToClick = () => {
@@ -95,10 +125,12 @@ export default function ListDocuments() {
           API.createLink(selectedDocumentToLink, linkedDoc)
         )
       );
+      setFeedback({ type: "success", message: "Document linked successfully" });
+      setShouldRefresh(true);
       setLinking(false);
       setSelectedLinkDocuments([]);
     } catch (error) {
-      setFeedbackFromError(error);
+      setFeedbackFromError({ type: "danger", message: error });
     }
   };
 
@@ -239,6 +271,7 @@ export default function ListDocuments() {
 
 ListDocuments.propTypes = {
   thinCardLayout: PropTypes.bool,
+  shouldRefresh: PropTypes.bool.isRequired,
 };
 
 function DocumentSnippetTableComponent({

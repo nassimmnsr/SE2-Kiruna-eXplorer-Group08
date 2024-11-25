@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Button, Card, Row, Col } from 'react-bootstrap';
 import API from '../API.mjs';
 import '../App.css';
